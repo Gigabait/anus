@@ -1,0 +1,11 @@
+"AddonInfo"
+{
+	"name"				"ANUS"
+	"version"			"1"
+	"up_date"			"00/00/00"
+	"author_name"			"Shinycow"
+	"author_email"			"http://facepunch.com/member.php?u=557341"
+	"author_url"			"http://facepunch.com/member.php?u=557341"
+	"info"				"an admin mod"
+	"override"			"0"
+}
