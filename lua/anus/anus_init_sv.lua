@@ -7,26 +7,6 @@ print([[------------------------------
 ------------------------------
 ------------------------------]])
 
-	-- moved to init_sh ??
---[[concommand.Add("anus_reload", function( pl )
-	if not pl:IsSuperAdmin() then return end
-	
-	--anus = nil
-	include("autorun/sh_load.lua")
-	
-	timer.Simple(0.1, function() file.CreateDir("anus") end)
-	timer.Simple(0.15, function() file.CreateDir("anus/users") end)
-	
-	if anus.Plugins then
-		anus.LoadPlugins()
-	else
-		print("ANUS NOT LOADING PLUGINS.")
-	end
-
-	pl:ChatPrint("Successfully reloaded anus.")
-end)]]
-
-
 util.AddNetworkString("anus_requestdc")
 util.AddNetworkString("anus_broadcastdc")
 util.AddNetworkString("anus_requestusers")

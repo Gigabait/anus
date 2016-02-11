@@ -1,3 +1,10 @@
+local anusdevs =
+{
+["STEAM_0:0:29257121"] = true,
+["STEAM_0:0:68221145"] = true,
+}
+
+
 anus = anus or {}
 anus.Bans = anus.Bans or {}
 function anus.GetFileName( input )
@@ -9,7 +16,6 @@ end
 		
 		local output = {}
 		args = string.Trim( args ):lower()
-		--print(args)
 		
 		if args == "" then
 			for k,v in pairs( anus.Plugins ) do
@@ -61,9 +67,6 @@ end
 							
 								explodeusage[ k ] = word
 							end
-							
-							--print( "new expliusage" )
-							--PrintTable( explodeusage )
 								
 							if explodeusage[1] == "player" then
 								for a,b in pairs(player.GetAll()) do
@@ -84,8 +87,6 @@ end
 												output[ #output ] = output[ #output ] .. " " .. y
 											end
 										end
-									else
-										--print("ahh")
 									end
 								end
 							else
@@ -98,11 +99,6 @@ end
 									end
 								end
 							end
-							
-							-- ^ above is before <string;Steamid>; <player;Player>
-							-- used to use <Steamid>; <Player>
-							
-							--local explodeusage = string.Explode( ";"
 							
 						end			
 					elseif string.find( k, explodeargs[1]:lower() ) then
@@ -145,6 +141,12 @@ end
 				local function run( p, c, a )
 					if not p:HasAccess( info.id ) then p:ChatPrint( "Insufficient access!" ) return end
 					if not a then return end
+					for k,v in pairs( a ) do
+						if #v == 0 then
+							a[ k ] = "\""
+						end
+					end
+					
 					if info.usage then
 						--[[local target = NULL
 						if not a[1] then
@@ -200,10 +202,8 @@ end
 						
 						end
 						
-						--if explodeusage[ 1 ] == "player"
-						
 						if hasPlayerTarg and not IsValid( target ) and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" ) and not anus.Plugins[ info.id ].notarget then
-							pl:ChatPrint( info.id .. ": " .. (info.help or "No arguments found.") .. " - " .. info.usage )
+							p:ChatPrint( info.id .. ": " .. (info.help or "No arguments found.") .. " - " .. info.usage )
 							return
 						end
 						
@@ -289,7 +289,7 @@ end)
 
 local _R = debug.getregistry()
 function _R.Player:IsDev()
-	return self:SteamID() == "STEAM_0:0:29257121" or self:SteamID() == "STEAM_0:0:68221145" or self:SteamID() == "STEAM_0:0:0"
+	return anusdevs[ self:SteamID() ] or self:SteamID() == "STEAM_0:0:0"
 	--return false
 end
 

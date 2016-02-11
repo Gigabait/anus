@@ -1,24 +1,23 @@
-function anus.FindPlayer( arg, type )
+function anus.FindPlayer( arg, argtype )
 	if not arg then return nil end
 	
 	local outputs = {}
-	if arg == "*" then
-		for k,v in pairs(player.GetAll()) do
-			outputs[ #outputs + 1 ] = v
+	if not argtype or argtype == "name" then
+		for k,v in next, player.GetAll() do
+			if string.lower(v:Nick()):find( arg:lower(), nil, true ) then
+				outputs[ #outputs + 1 ] = v
+			end
 		end
 	else
-		if not type or type == "name" then
-			for k,v in next, player.GetAll() do
-				if string.lower(v:Nick()):find( arg:lower(), nil, true ) then
-					outputs[ #outputs + 1 ] = v
-				end
+		for k,v in next, player.GetAll() do
+			if string.find(v:SteamID():lower(), arg:lower(), nil, true ) then
+				outputs[ #outputs + 1 ] = v
 			end
-		else
-			for k,v in next, player.GetAll() do
-				if string.find(v:SteamID():lower(), arg:lower(), nil, true ) then
-					outputs[ #outputs + 1 ] = v
-				end
-			end
+		end
+	end
+	if arg == "*" and #outputs == 0 then
+		for k,v in pairs(player.GetAll()) do
+			outputs[ #outputs + 1 ] = v
 		end
 	end
 	
