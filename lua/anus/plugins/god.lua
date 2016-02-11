@@ -5,7 +5,6 @@ plugin.author = "Shinycow"
 plugin.usage = "[player:Player]"
 plugin.help = "Toggles a player's godmode"
 plugin.category = "Fun"
-	-- chat command optional
 plugin.chatcommand = "god"
 plugin.defaultAccess = GROUP_ADMIN
 
@@ -70,7 +69,6 @@ plugin.author = "Shinycow"
 plugin.usage = "[player:Player]"
 plugin.help = "Turns off a player's godmode"
 plugin.category = "Fun"
-	-- chat command optional
 plugin.chatcommand = "ungod"
 
 function plugin:OnRun( pl, arg, target )
@@ -91,8 +89,7 @@ function plugin:OnRun( pl, arg, target )
 			v.AnusGodded = false		 
 			v:GodDisable()
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else

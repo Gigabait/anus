@@ -94,7 +94,7 @@ if SERVER then
 		
 		if anus.Users and anus.Users[ pl:SteamID() ] then
 			if anus.Users[ pl:SteamID() ].time then
-					-- anus_groups_sh takes care of the rest boi
+					-- anus_groups_sh takes care of the rest
 				if os.time() <= anus.Users[ pl:SteamID() ].time then
 					pl:SetUserGroup( anus.Users[ pl:SteamID() ].group )
 				end

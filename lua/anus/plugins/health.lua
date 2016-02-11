@@ -6,7 +6,6 @@ plugin.usage = "<player:Player>; <number:hp>; [boolean:Subtract]"
 plugin.args = {"Int;0;200","String;false"}
 plugin.help = "Sets the health of a player"
 plugin.category = "Fun"
-	-- chat command optional
 plugin.chatcommand = "hp"
 plugin.defaultAccess = GROUP_ADMIN
 

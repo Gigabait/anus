@@ -19,9 +19,7 @@ end
 --_R.Player.OldSetUserGroup = _R.Player.OldSetUserGroup or _R.Player.SetUserGroup
 	-- let's not broadcast our group, hm? c:
 function _R.Player:SetUserGroup( group, save, time )
-		-- ha u bastard i got u
 	if not anus.Groups[ group ] then return end
-		-- ha bastards i got u too
 	if not self.HasAuthed then return end
 	if game.SinglePlayer() then group = "owner" end
 	if self.UserGroup and self.UserGroup == group then return end
@@ -45,10 +43,6 @@ function _R.Player:SetUserGroup( group, save, time )
 		end
 	end
 	
-	--PrintTable(send)
-	--print("\n\n")
-	--PrintTable(player.GetAll())
-	
 	net.Start("anus_playerperms")
 		net.WriteEntity( self )
 		net.WriteString( group )
@@ -56,7 +50,6 @@ function _R.Player:SetUserGroup( group, save, time )
 		net.WriteBit( anus.Groups[ group ].isadmin or false )
 		net.WriteBit( anus.Groups[ group ].issuperadmin or false )
 		
-		print("perm count " .. table.Count(self.Perms))
 		net.WriteUInt( table.Count(self.Perms), 8 )
 		for k,v in next, self.Perms do
 			net.WriteString( k )

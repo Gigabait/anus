@@ -46,55 +46,6 @@ end
 anus.RegisterPlugin( PLUGIN )
 
 local PLUGIN = {}
-PLUGIN.id = "banf"
-PLUGIN.name = "Ban stylishly"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = "<player:Player>; [number:Time]; [string:Reason]"
-	-- String;Default reason
-PLUGIN.args = {"Int;0;1461", "String;No reason given."}
-PLUGIN.help = "Bans a player from the server in style"
-PLUGIN.category = "Utility"
-PLUGIN.chatcommand = "banf"
-PLUGIN.defaultAccess = GROUP_ADMIN
-
-function PLUGIN:OnRun( pl, arg, target )
-	local reason = "No reason given."
-	local newarg = {}
-	local time = 0
-	
-	if #arg > 0 then
-		time = arg[1] and tonumber(arg[1]) or 60
-		if #arg > 1 then
-			for i=2,#arg do
-				local v = arg[i]
-				newarg[ #newarg + 1 ] = v
-			end
-			
-			reason = table.concat( newarg, " " )
-		end
-	end
-	
-	if type(target) == "table" then pl:ChatPrint("Sorry, you can only target one player at a time.") return end
-		
-	if not pl:IsGreaterOrEqualTo( target ) then
-		pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-		return
-	end
-		
-	chat.AddText( team.GetColor( target:Team() ), target:Nick(), color_white, " has been banned for ", Color( 180,180,255, 255 ), reason, Color( 255, 255, 255, 255 ), " for ", Color( 180, 180, 255, 255 ), time, Color( 255, 255, 255, 255 ), " minutes" )
-	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-	target:PrintMessage( HUD_PRINTCONSOLE, "Banned from server by " .. pl:SteamID() .. " for " .. reason .. " for " .. time .. " minutes" )
-	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-	target:SendLua([[gui.OpenURL("http://tf2r.com/banned.swf")]])
-	timer.Simple(0.11, function()
-		if not IsValid(target) then return end
-		anus.BanPlayer( pl, target, reason, time )
-	end)
-end
-anus.RegisterPlugin( PLUGIN )
-
-
-local PLUGIN = {}
 PLUGIN.id = "banid"
 PLUGIN.name = "banid"
 PLUGIN.author = "Shinycow"
@@ -104,8 +55,6 @@ PLUGIN.args = {"String;STEAM_0:", "Int;0;1461;", "String;No reason given."}
 PLUGIN.help = "Bans a player using their steamid"
 PLUGIN.notarget = true
 PLUGIN.category = "Utility"
-	-- no chat command as this can cause SERIOUS problems with unbanning. Like, really. don't reenable this.
---PLUGIN.chatcommand = "banid"
 PLUGIN.defaultAcess = GROUP_ADMIN
 
 function PLUGIN:OnRun( pl, arg, target )

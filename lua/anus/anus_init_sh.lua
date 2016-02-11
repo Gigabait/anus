@@ -1,7 +1,5 @@
 local filename = anus.GetFileName(debug.getinfo(1, "S").short_src)
 
--- May 27, 2014 - i dont even think this file is needed lol
-
 print([[------------------------------
 ------------------------------
 	ANUS - ]] .. filename .. [[

@@ -51,8 +51,7 @@ function PLUGIN:OnRun( pl, arg, target )
 			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
 			return
 		end
-		
-		--chat.AddText( team.GetColor( target:Team() ), target:Nick(), color_white, " has been kicked for ", Color( 180,180,255, 255 ), reason )
+
 		anus.NotifyPlugin( pl, PLUGIN.id, color_white, "has kicked ", team.GetColor( target:Team() ), target:Nick(), color_white, " (", Color( 180, 180, 255, 255 ), reason, color_white, ")" )
 		
 		target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )

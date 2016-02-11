@@ -31,8 +31,7 @@ net.Receive("anus_broadcastusers", function()
 		anus.Users[ group ] = anus.Users[ group ] or {}
 		local steamid = net.ReadString()
 		anus.Users[ group ][ steamid ] = {name = net.ReadString()}
-		
-			-- shouldnt be too bad, right?
+
 		steamworks.RequestPlayerInfo( util.SteamIDTo64( steamid ) ) 
 	end
 	

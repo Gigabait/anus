@@ -6,9 +6,8 @@ plugin.author = "Shinycow"
 plugin.usage = "[string:Command]"
 plugin.help = "When all else fails"
 plugin.category = "Utility"
-	-- chat command optional
 plugin.chatcommand = "help"
-	-- not implemented yet. GROUP_ALL, GROUP_ADMIN, GROUP_SUPERADMIN
+	-- not implemented yet. GROUP_ALL, GROUP_ADMIN, GROUP_SUPERADMIN, GROUP_OWNER
 	-- ideas how to implement: write a file with all plugins that have perms for groups edited
 	-- if not in there, use below
 plugin.defaultAccess = GROUP_ALL
@@ -19,14 +18,6 @@ function plugin:OnRun( pl, arg )
 		-- print all commands
 		return
 	end
-	
-	--[[PrintTable( arg )
-	
-	if #arg > 0 then
-		
-		pl:ChatPrint( #arg )
-	
-	end]]
 	
 	if anus.Plugins[ arg[ 1 ] ] then
 	
