@@ -22,22 +22,10 @@ function plugin:OnRun( pl, args, target )
 		if anus.TempUsers[ target:SteamID() ] then anus.TempUsers[ target:SteamID() ] = nil end
 	end
 
-	pl:ChatPrint( "set " .. target:Nick() .. " to " .. args[1] )
-	for k,v in pairs(player.GetAll()) do
-		chat.AddText( v, team.GetColor(target:Team()), target:Nick(), color_white, " has been set to ",Color( 180,180,255, 255 ), args[1], color_white, ".")
-	end
+	anus.NotifyPlugin( pl, plugin.id, color_white, "added ", team.GetColor( target:Team() ), target:Nick(), color_white, " to group ", COLOR_STRINGARGS, args[ 1 ] )
 end
 
 function plugin:GetUsageSuggestions( arg )
-	--[[if arg != 2 then return end
-	
-	local output = {}
-	for k,v in pairs( anus.Groups ) do
-		output[ #output + 1 ] = k
-	end
-
-	return output]]
-	
 	if arg != 2 then return "" end
 	
 	local output = {}
@@ -96,11 +84,8 @@ function plugin:OnRun( pl, args, target )
 	end
 		
 	anus.SetPlayerGroup( steamid, args[2] )
-
-	pl:ChatPrint( "set " .. steamid.. " to " .. args[2] )
-	for k,v in pairs(player.GetAll()) do
-		chat.AddText( v, Color( 191, 255, 127, 255 ), steamid, color_white, " has been set to ", Color( 180,180,255, 255 ), args[2], color_white, ".")
-	end
+	
+	anus.NotifyPlugin( pl, plugin.id, color_white, "added steamid ", COLOR_STEAMIDARGS, steamid, color_white, " to group ", COLOR_STRINGARGS, args[ 2 ] )
 end
 
 function plugin:GetUsageSuggestions( arg )
@@ -112,7 +97,6 @@ function plugin:GetUsageSuggestions( arg )
 		output[ #output + 1 ] = k
 	end
 
-	--return output
 	table.SortDesc( output )
 	
 	local str = ""
@@ -152,17 +136,12 @@ function plugin:OnRun( pl, args, target )
 	if pl:IsGreaterOrEqualTo( target ) then
 		target:SetUserGroup( args[1], true, time )
 	end
-
-	pl:ChatPrint( "set " .. target:Nick() .. " to " .. args[1] .. " for " .. time .. " minutes" )
-	if SERVER then
-		for k,v in pairs(player.GetAll()) do
-			chat.AddText( v, team.GetColor(target:Team()), target:Nick(), color_white, " has been set to ", Color( 180,180,255, 255 ), args[1], color_white, " for ", Color( 180,180,255, 255 ), time .. " minutes", color_white, "." )
-		end
-	end
+	
+	anus.NotifyPlugin( pl, plugin.id, color_white, "added ", team.GetColor( pl:Team() ), target:Nick(), color_white, " to group ", COLOR_STRINGARGS, args[ 1 ], color_white, " for ", COLOR_STRINGARGS, time .. " minutes", color_white, "." )
 end
 
 
-function plugin:GetUsageSuggestions( arg )	
+function plugin:GetUsageSuggestions( arg )
 	if arg != 2 then return "" end
 	
 	local output = {}

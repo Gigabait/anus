@@ -75,14 +75,17 @@ end
 										-- if there's more than one usage option, display them.
 									if #explodeusage > 1 then
 										local explodeusageCOPY = string.Explode( ";", anus.Plugins[ k ].usage )
-												-- not needed?
 										table.remove(explodeusageCOPY, 1)
 										for x,y in pairs( explodeusageCOPY ) do
 											if anus.Plugins[ k ].GetUsageSuggestions then
-												--print( x, y )
-												local ynew = string.gsub( y, ">", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( 1 + 1 ) .. ")>" )
-												ynew = string.gsub( ynew, "]", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( 1 + 1 ) .. ")]" )
-												output[ #output ] = output[ #output ] .. " " .. ynew --y .. " (" .. anus.Plugins[ k ]:GetUsageSuggestions( 1 + 1 ) .. ")"
+												local res = anus.Plugins[ k ]:GetUsageSuggestions( x + 1 )
+												if res != "" then
+													local ynew = string.gsub( y, ">", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1 ) .. ")>" )
+													ynew = string.gsub( ynew, "]", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1 ) .. ")]" )
+													output[ #output ] = output[ #output ] .. " " .. ynew --y .. " (" .. anus.Plugins[ k ]:GetUsageSuggestions( 1 + 1 ) .. ")"
+												else
+													output[ #output ] = output[ #output ] .. " " .. y 
+												end
 											else
 												output[ #output ] = output[ #output ] .. " " .. y
 											end
