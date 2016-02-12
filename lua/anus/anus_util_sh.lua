@@ -229,12 +229,12 @@ if SERVER then
 			-- no, i can't do #arg
 		if table.Count(arg) == 1 then
 				-- yes, i have to use a for loop.
-			for k,v in pairs(arg) do
+			for k,v in next, arg do
 				output[ #output + 1 ] = team.GetColor( v:Team() )
 				output[ #output + 1 ] = v:Nick()
 			end
 		else
-			for k,v in pairs(arg) do
+			for k,v in next, arg do
 				if k != #arg then
 					output[ #output + 1 ] = team.GetColor( v:Team() )
 					output[ #output + 1 ] = v:Nick()
@@ -283,7 +283,7 @@ if SERVER then
 		if not anus.Plugins[ plugin ].anonymous then
 			ShowPlayer()
 		end
-		for k,v in pairs(player.GetAll()) do
+		for k,v in next, player.GetAll() do
 			if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] or v == pl then
 				ShowPlayer()
 			end
@@ -302,14 +302,17 @@ if SERVER then
 		local place_first = nil
 		local place_first2 = nil
 		local place_second = nil
+		local pl_places = {} 
 		for k,v in next, args do
-			if type(v) == "function" then
+			if type( v ) == "function" then
 				if not place_first then
 					place_first = k
 					place_first2 = k + 1
 				else
 					place_second = k
 				end
+			elseif type( v ) == "Player" then
+				pl_places[ k ] = v
 			else
 				if place_first and k == (place_first + 1) then
 					--print(v)
@@ -318,18 +321,23 @@ if SERVER then
 			end
 		end
 		
+		for k,v in next, pl_places do
+			table.insert( args, k, team.GetColor( v:Team() ) )
+			args[ k + 1 ] = v:Nick()
+		end
+		
 		local iLoop = 0
 		if #resultant > 0 then
 			place_first2 = nil
 			place_second = nil
 			
-			for k,v in pairs(resultant) do
+			for k,v in next, resultant do
 				table.insert( args, place_first + iLoop, v )
 				iLoop = iLoop + 1
 			end
 		end
 		
-		for k,v in pairs(player.GetAll()) do
+		for k,v in next, player.GetAll() do
 			chat.AddText( v, unpack( args ) )
 		end
 	end

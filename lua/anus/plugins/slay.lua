@@ -43,7 +43,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "slayed ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "slayed ", target )
 			 
 		target:Kill()
 	

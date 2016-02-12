@@ -32,7 +32,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has frozen ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "has frozen ", target )
 		
 		target:Lock()
 	
@@ -97,7 +97,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has unfrozen ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "has unfrozen ", target )
 
 		target:UnLock()
 			-- Player.UnLock ungods players.

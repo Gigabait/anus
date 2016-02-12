@@ -27,13 +27,10 @@ function plugin:OnRun( pl, arg, target )
 			for k,v in pairs( v:GetWeapons() ) do
 				v.OldWeapons[ #v.OldWeapons + 1 ] = v:GetClass()
 			end
-			--pl:ChatPrint( "Stripped " .. v:Nick() .. "s weapons" )
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", team.GetColor( v:Team() ), v:Nick() )
-			 
+
 			v:StripWeapons()
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
@@ -47,9 +44,8 @@ function plugin:OnRun( pl, arg, target )
 		for k,v in pairs( target:GetWeapons() ) do
 			target.OldWeapons[ #target.OldWeapons + 1 ] = v:GetClass()
 		end
-		
-		--pl:ChatPrint( "Stripped " .. target:Nick() .. "s weapons" )
-		anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", team.GetColor( target:Team() ), target:Nick() )
+
+		anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", target )
 			 
 		target:StripWeapons()
 	

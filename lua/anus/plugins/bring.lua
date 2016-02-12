@@ -84,7 +84,7 @@ function plugin:OnRun( pl, args, target )
 		
 		target:SetPos( pos )
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "brought ", team.GetColor( target:Team() ), target:Nick(), color_white, " to them." )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "brought ", target, color_white, " to them." )
 	
 	end
 end

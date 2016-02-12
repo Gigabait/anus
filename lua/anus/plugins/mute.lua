@@ -22,11 +22,9 @@ function plugin:OnRun( pl, args, target )
 				continue
 			end
 			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", team.GetColor( v:Team() ), v:Nick() )
 			v.AnusChatMuted = true
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
@@ -36,7 +34,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", target )
 		target.AnusChatMuted = true
 	
 	end
@@ -66,12 +64,10 @@ function plugin:OnRun( pl, args, target )
 				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
 				continue
 			end
-			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", team.GetColor( v:Team() ), v:Nick() )	 
+
 			v.AnusChatMuted = false
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
@@ -81,7 +77,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", target )
 		target.AnusChatMuted = false
 	
 	end

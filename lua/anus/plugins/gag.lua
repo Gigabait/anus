@@ -55,7 +55,7 @@ function plugin:OnRun( pl, args, target )
 		end
 		
 		--pl:ChatPrint( "Gagged " .. target:Nick() )
-		anus.NotifyPlugin( pl, plugin.id, color_white, "gagged ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "gagged ", target )
 		
 		if SERVER then
 			net.Start("anus_gag")
@@ -91,8 +91,6 @@ function plugin:OnRun( pl, args, target )
 				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
 				continue
 			end
-			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", team.GetColor( v:Team() ), v:Nick() )
 			 
 			if SERVER then
 				net.Start("anus_gag")
@@ -101,8 +99,7 @@ function plugin:OnRun( pl, args, target )
 				net.SendOmit( v )
 			end
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
@@ -112,7 +109,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", target )
 		
 		if SERVER then
 			net.Start("anus_gag")

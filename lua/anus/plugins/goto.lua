@@ -49,6 +49,6 @@ function plugin:OnRun( pl, args, target )
 		pl:SetPos( pos )
 	end
 		
-	anus.NotifyPlugin( pl, plugin.id, color_white, "teleported to ", team.GetColor( target:Team() ), target:Nick() )
+	anus.NotifyPlugin( pl, plugin.id, color_white, "teleported to ", target )
 end
 anus.RegisterPlugin( plugin )

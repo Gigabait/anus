@@ -45,7 +45,7 @@ function plugin:OnRun( pl, arg, target )
 		
 		target.AnusGodded = true
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", target )
 			 
 		target:GodEnable()
 	
@@ -102,7 +102,7 @@ function plugin:OnRun( pl, arg, target )
 		if not target:Alive() then pl:ChatPrint("You can't god " .. target:Nick() .. " while they're dead!") return end
 		
 		target.AnusGodded = false
-		anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", target )
 			 
 		target:GodDisable()
 	

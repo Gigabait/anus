@@ -27,9 +27,7 @@ function plugin:OnRun( pl, arg, target )
 				continue
 			end
 			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "has armed ", team.GetColor( v:Team() ), v:Nick() )
-			 
-			 if v.OldWeapons then
+			if v.OldWeapons then
 				for _,b in pairs( v.OldWeapons ) do
 					v:Give( b )
 				end
@@ -52,7 +50,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has armed ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "has armed ", target )
 			
 		if target.OldWeapons then
 			for _,b in pairs( target.OldWeapons ) do

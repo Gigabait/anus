@@ -22,12 +22,10 @@ function plugin:OnRun( pl, args, target )
 				target[ k ] = nil
 				continue
 			end
-			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", team.GetColor( v:Team() ), v:Nick() )
+
 			v:Spawn()
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", anus.StartPlayerList, target, anus.EndPlayerList )
 		
 	else
@@ -37,7 +35,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", team.GetColor( target:Team() ), target:Nick() )
+		anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", target )
 		target:Spawn()
 	
 	end

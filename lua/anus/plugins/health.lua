@@ -60,9 +60,9 @@ function plugin:OnRun( pl, args, target )
 		end
 		
 		if subtract then
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", team.GetColor( target:Team() ), target:Nick(), color_white, " from ", COLOR_STRINGARGS, target:Health() + amt, color_white, " to ", COLOR_STRINGARGS, target:Health() )
+			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", target, color_white, " from ", COLOR_STRINGARGS, target:Health() + amt, color_white, " to ", COLOR_STRINGARGS, target:Health() )
 		else
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", team.GetColor( target:Team() ), target:Nick(), color_white, " to ", COLOR_STRINGARGS, amt )
+			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", target, color_white, " to ", COLOR_STRINGARGS, amt )
 		end
 		
 	end

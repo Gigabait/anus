@@ -34,23 +34,7 @@ function plugin:OnRun( pl, args, target )
 			anus.NotifyPlugin( pl, plugin.id, color_white, (v.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", team.GetColor( v:Team() ), v:Nick() )
 			 
 			v:SetMoveType( nocliptbl[ v.AnusNoclipped ] )
-		end		
-		
-			-- new system
-		---anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	
-		-- actually never mind fUCK that lol
-	
-			-- pseudo new system:
-		---anus.NotifyPlugin( pl, plugin.id, color_white, "%s noclip for ", anus.StartPlayerList( "AnusNoclipped",  ), target, anus.EndPlayerList )
-		---
-		---
-		--[[
-			function anus.StartPlayerList( shithere )
-				if targettable[ shithere ] then
-					
-		----]]
+		end
 	
 	else
 		
@@ -65,8 +49,7 @@ function plugin:OnRun( pl, args, target )
 		end
 
 		target.AnusNoclipped = not (target.AnusNoclipped or false)
-		--pl:ChatPrint( (target.AnusNoclipped and "Enabled" or "Disabled") .. " noclip for " .. target:Nick() )
-		anus.NotifyPlugin( pl, plugin.id, color_white, (target.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", team.GetColor( target:Team() ), target:Nick() )			
+		anus.NotifyPlugin( pl, plugin.id, color_white, (target.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", target )			
 			
 		target:SetMoveType( nocliptbl[ target.AnusNoclipped ] )
 	
