@@ -31,7 +31,7 @@ function plugin:OnRun( pl, args, target )
 
 			v.AnusNoclipped = not (v.AnusNoclipped or false)
 			--pl:ChatPrint( (v.AnusNoclipped and "Enabled" or "Disabled") .. " noclip for " .. v:Nick() )
-			anus.NotifyPlugin( pl, plugin.id, color_white, (v.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", team.GetColor( v:Team() ), v:Nick() )
+			anus.NotifyPlugin( pl, plugin.id, (v.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", team.GetColor( v:Team() ), v:Nick() )
 			 
 			v:SetMoveType( nocliptbl[ v.AnusNoclipped ] )
 		end
@@ -49,7 +49,7 @@ function plugin:OnRun( pl, args, target )
 		end
 
 		target.AnusNoclipped = not (target.AnusNoclipped or false)
-		anus.NotifyPlugin( pl, plugin.id, color_white, (target.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", target )			
+		anus.NotifyPlugin( pl, plugin.id, (target.AnusNoclipped and "enabled" or "disabled") .. " noclip for ", target )			
 			
 		target:SetMoveType( nocliptbl[ target.AnusNoclipped ] )
 	

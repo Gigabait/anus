@@ -31,7 +31,7 @@ function plugin:OnRun( pl, arg, target )
 			v:StripWeapons()
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", anus.StartPlayerList, target, anus.EndPlayerList )
+		anus.NotifyPlugin( pl, plugin.id, "stripped the weapons of ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
 		
@@ -45,7 +45,7 @@ function plugin:OnRun( pl, arg, target )
 			target.OldWeapons[ #target.OldWeapons + 1 ] = v:GetClass()
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "stripped the weapons of ", target )
+		anus.NotifyPlugin( pl, plugin.id, "stripped the weapons of ", target )
 			 
 		target:StripWeapons()
 	

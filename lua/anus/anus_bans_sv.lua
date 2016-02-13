@@ -65,11 +65,12 @@ function anus.BanPlayer( caller, target, reason, time )
 end
 
 function anus.UnbanPlayer( caller, steamid, opt_reason )
+	opt_reason = opt_reason or "Unbanned"
 	local caller_color = Color( 10, 10, 10, 255 )
 	if IsValid(caller) then caller_color = team.GetColor( caller:Team() ) end
 	if anus.Bans[ steamid ] then
 		for k,v in next, player.GetAll() do
-			chat.AddText( v, Color( 191, 255, 127, 255 ), steamid, color_white, " (", Color( 191, 255, 127, 255 ), anus.Bans[ steamid ].name, color_white, ") was unbanned by ", caller_color, caller:Nick(), color_white, (opt_reason and " (" .. opt_reason .. ")" or "") )
+			chat.AddText( v, Color( 191, 255, 127, 255 ), steamid, color_white, " (", Color( 191, 255, 127, 255 ), anus.Bans[ steamid ].name, color_white, ") was unbanned by ", caller_color, caller:Nick(), color_white, " (", COLOR_STRINGARGS, opt_reason, color_white, ")" )
 		end
 		print( steamid .. " was unbanned by " .. caller:Nick() )
 	else

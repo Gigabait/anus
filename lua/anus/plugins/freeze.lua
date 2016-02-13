@@ -23,7 +23,7 @@ function plugin:OnRun( pl, arg, target )
 			v:Lock()
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
+		anus.NotifyPlugin( pl, plugin.id, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
 		
@@ -32,7 +32,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has frozen ", target )
+		anus.NotifyPlugin( pl, plugin.id, "has frozen ", target )
 		
 		target:Lock()
 	
@@ -88,7 +88,7 @@ function plugin:OnRun( pl, arg, target )
 			end)
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has unfrozen ", anus.StartPlayerList, target, anus.EndPlayerList )
+		anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
 		
@@ -97,7 +97,7 @@ function plugin:OnRun( pl, arg, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has unfrozen ", target )
+		anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", target )
 
 		target:UnLock()
 			-- Player.UnLock ungods players.

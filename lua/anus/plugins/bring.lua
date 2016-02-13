@@ -60,7 +60,7 @@ function plugin:OnRun( pl, args, target )
 		end
 		
 			-- new system baby
-		anus.NotifyPlugin( pl, plugin.id, color_white, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, color_white, " to them." )
+		anus.NotifyPlugin( pl, plugin.id, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, " to them." )
 	
 	else
 		
@@ -84,7 +84,7 @@ function plugin:OnRun( pl, args, target )
 		
 		target:SetPos( pos )
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "brought ", target, color_white, " to them." )
+		anus.NotifyPlugin( pl, plugin.id, "brought ", target, " to them." )
 	
 	end
 end

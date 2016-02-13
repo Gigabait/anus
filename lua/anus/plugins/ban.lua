@@ -33,8 +33,8 @@ function PLUGIN:OnRun( pl, arg, target )
 		pl:ChatPrint("Sorry, you can't target " .. target:Nick())
 		return
 	end
-		
-	chat.AddText( team.GetColor( target:Team() ), target:Nick(), color_white, " has been banned for ", Color( 180,180,255, 255 ), reason, Color( 255, 255, 255, 255 ), " for", Color( 180, 180, 255, 255 ), " " .. time, Color( 255, 255, 255, 255 ), " minutes" )
+
+	anus.NotifyPlugin( pl, PLUGIN.id, "banned ", target, " for ", COLOR_STRINGARGS, time .. " minutes ", "(", COLOR_STRINGARGS, reason, ")" )
 	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
 	target:PrintMessage( HUD_PRINTCONSOLE, "Banned from server by " .. pl:SteamID() .. " for " .. reason .. " for " .. time .. " minutes" )
 	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
@@ -82,9 +82,8 @@ function PLUGIN:OnRun( pl, arg, target )
 		pl:ChatPrint("This isn't a valid steamid.")
 		return
 	end
-	
-	--chat.AddText( Color( 191, 255, 127, 255 ), arg[1], color_white, " has been banned for ", Color( 180,180,255, 255 ), reason, Color( 255, 255, 255, 255 ), " for", Color( 180, 180, 255, 255 ), " " .. time, Color( 255, 255, 255, 255 ), " minutes" )
-	anus.NotifyPlugin( pl, PLUGIN.id, true, Color( 191, 255, 127, 255 ), arg[1], color_white, " has been banned for ", Color( 180,180,255, 255 ), reason, Color( 255, 255, 255, 255 ), " for", Color( 180, 180, 255, 255 ), " " .. time, Color( 255, 255, 255, 255 ), " minutes" )
+
+	anus.NotifyPlugin( pl, PLUGIN.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, time .. " minutes ", "(", COLOR_STRINGARGS, reason, ")" )
 	anus.BanPlayer( pl, arg[1], reason, time )
 end
 anus.RegisterPlugin( PLUGIN )

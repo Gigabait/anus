@@ -22,7 +22,7 @@ function plugin:OnRun( pl, args, target )
 		if anus.TempUsers[ target:SteamID() ] then anus.TempUsers[ target:SteamID() ] = nil end
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, color_white, "added ", target, color_white, " to group ", COLOR_STRINGARGS, args[ 1 ] )
+	anus.NotifyPlugin( pl, plugin.id, "added ", target, " to group ", COLOR_STRINGARGS, args[ 1 ] )
 end
 
 function plugin:GetUsageSuggestions( arg )
@@ -85,11 +85,10 @@ function plugin:OnRun( pl, args, target )
 		
 	anus.SetPlayerGroup( steamid, args[2] )
 	
-	anus.NotifyPlugin( pl, plugin.id, color_white, "added steamid ", COLOR_STEAMIDARGS, steamid, color_white, " to group ", COLOR_STRINGARGS, args[ 2 ] )
+	anus.NotifyPlugin( pl, plugin.id, "added steamid ", COLOR_STEAMIDARGS, steamid, " to group ", COLOR_STRINGARGS, args[ 2 ] )
 end
 
 function plugin:GetUsageSuggestions( arg )
-	print( "test" )
 	if arg != 2 then return "" end
 	
 	local output = {}
@@ -137,7 +136,7 @@ function plugin:OnRun( pl, args, target )
 		target:SetUserGroup( args[1], true, time )
 	end
 	
-	anus.NotifyPlugin( pl, plugin.id, color_white, "added ", target, color_white, " to group ", COLOR_STRINGARGS, args[ 1 ], color_white, " for ", COLOR_STRINGARGS, time .. " minutes", color_white, "." )
+	anus.NotifyPlugin( pl, plugin.id, "added ", target, " to group ", COLOR_STRINGARGS, args[ 1 ], " for ", COLOR_STRINGARGS, time .. " minutes", "." )
 end
 
 

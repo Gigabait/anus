@@ -16,7 +16,7 @@ function plugin:OnRun( pl, args, target )
 	end
 	
 	if type(target) == "table" then
-		pl:ChatPrint("Silly mortal, you can't go to more than one person at once!")
+		pl:ChatPrint("You can't teleport to more than one person at once!")
 		return
 	end
 		
@@ -49,6 +49,6 @@ function plugin:OnRun( pl, args, target )
 		pl:SetPos( pos )
 	end
 		
-	anus.NotifyPlugin( pl, plugin.id, color_white, "teleported to ", target )
+	anus.NotifyPlugin( pl, plugin.id, "teleported to ", target )
 end
 anus.RegisterPlugin( plugin )

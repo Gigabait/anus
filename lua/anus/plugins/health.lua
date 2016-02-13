@@ -37,9 +37,9 @@ function plugin:OnRun( pl, args, target )
 		end
 
 		if subtract then
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, color_white, " from their current to ", COlOR_STRINGARGS, amt )
+			anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " from their current to ", COLOR_STRINGARGS, amt )
 		else
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, color_white, " to ", COLOR_STRINGARGS, amt )
+			anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " to ", COLOR_STRINGARGS, amt )
 		end
 	
 	else
@@ -60,9 +60,9 @@ function plugin:OnRun( pl, args, target )
 		end
 		
 		if subtract then
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", target, color_white, " from ", COLOR_STRINGARGS, target:Health() + amt, color_white, " to ", COLOR_STRINGARGS, target:Health() )
+			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " from ", COLOR_STRINGARGS, target:Health() + amt, " to ", COLOR_STRINGARGS, target:Health() )
 		else
-			anus.NotifyPlugin( pl, plugin.id, color_white, "set the health of ", target, color_white, " to ", COLOR_STRINGARGS, amt )
+			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " to ", COLOR_STRINGARGS, amt )
 		end
 		
 	end

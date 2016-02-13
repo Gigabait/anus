@@ -43,7 +43,7 @@ function PLUGIN:OnRun( pl, arg, target )
 			end)
 		end
 		
-		anus.NotifyPlugin( pl, PLUGIN.id, color_white, "has kicked ", anus.StartPlayerList, target, anus.EndPlayerList, color_white, " (", Color( 180, 180, 255, 255 ), reason, color_white, ")" ) 
+		anus.NotifyPlugin( pl, PLUGIN.id, "has kicked ", anus.StartPlayerList, target, anus.EndPlayerList,  " (", Color( 180, 180, 255, 255 ), reason, ")" ) 
 	
 	else
 		
@@ -52,7 +52,7 @@ function PLUGIN:OnRun( pl, arg, target )
 			return
 		end
 
-		anus.NotifyPlugin( pl, PLUGIN.id, color_white, "has kicked ", target, color_white, " (", Color( 180, 180, 255, 255 ), reason, color_white, ")" )
+		anus.NotifyPlugin( pl, PLUGIN.id, "has kicked ", target, " (", Color( 180, 180, 255, 255 ), reason, ")" )
 		
 		target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
 		target:PrintMessage( HUD_PRINTCONSOLE, "Kicked from server by " .. pl:SteamID() .. " for " .. reason )

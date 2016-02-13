@@ -205,24 +205,7 @@ end]]
 
 
 
-if SERVER then
-	--[[function anus.NotifyPlugin( pl, ... )
-		if not pl then return end
-			
-		if pl.HideChatPlugins then
-			for k,v in pairs(player.GetAll()) do
-				if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] or v == pl then
-					chat.AddText( v, ... )
-				end
-			end
-		else
-			for k,v in pairs(player.GetAll()) do
-				chat.AddText( v, ... )
-			end
-		end		
-	end]]
-	
-		
+if SERVER then	
 	function anus.CreatePlayerList( arg )
 		
 		local output = {}
@@ -302,8 +285,12 @@ if SERVER then
 		local place_first = nil
 		local place_first2 = nil
 		local place_second = nil
-		local pl_places = {} 
-		for k,v in next, args do
+		local pl_places = {}
+		local white_places = {}
+		
+		local debug_islist = false
+		
+		for k,v in next, args do	
 			if type( v ) == "function" then
 				if not place_first then
 					place_first = k
@@ -313,10 +300,10 @@ if SERVER then
 				end
 			elseif type( v ) == "Player" then
 				pl_places[ k ] = v
-			else
+			else		
 				if place_first and k == (place_first + 1) then
-					--print(v)
 					resultant = anus.CreatePlayerList( v )
+					debug_islist = true
 				end
 			end
 		end
@@ -326,13 +313,37 @@ if SERVER then
 			args[ k + 1 ] = v:Nick()
 		end
 		
+		local white_places = {}
+		for k,v in next, args do
+			if type( v ) == "function" then
+				--white_places = {}
+				--break
+			end
+			if type( v ) == "string" and type( args[ k - 1 ] ) != "table" then
+				white_places[ #white_places + 1 ] = k
+			end
+		end
+		
+		--PrintTable( white_places )
+		for k,v in next, white_places do
+			table.insert( args, v + (k-1), color_white )
+		end
+		--table.insert( args, 3, color_white )
+		--table.insert( args, 5, color_white )
+		--table.insert( args, 6, "test" )
+		
+		--[[if debug_islist then
+			PrintTable( args )
+		end]]
+		
 		local iLoop = 0
 		if #resultant > 0 then
 			place_first2 = nil
 			place_second = nil
 			
 			for k,v in next, resultant do
-				table.insert( args, place_first + iLoop, v )
+				--table.insert( args, place_first + iLoop, v )
+				table.insert( args, 1 + place_first + iLoop, v )
 				iLoop = iLoop + 1
 			end
 		end

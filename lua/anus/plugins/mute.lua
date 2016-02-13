@@ -25,7 +25,7 @@ function plugin:OnRun( pl, args, target )
 			v.AnusChatMuted = true
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", anus.StartPlayerList, target, anus.EndPlayerList )
+		anus.NotifyPlugin( pl, plugin.id, "muted ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
 		
@@ -34,7 +34,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "muted ", target )
+		anus.NotifyPlugin( pl, plugin.id, "muted ", target )
 		target.AnusChatMuted = true
 	
 	end
@@ -68,7 +68,7 @@ function plugin:OnRun( pl, args, target )
 			v.AnusChatMuted = false
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", anus.StartPlayerList, target, anus.EndPlayerList )
+		anus.NotifyPlugin( pl, plugin.id, "unmuted ", anus.StartPlayerList, target, anus.EndPlayerList )
 	
 	else
 		
@@ -77,7 +77,7 @@ function plugin:OnRun( pl, args, target )
 			return
 		end
 		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "unmuted ", target )
+		anus.NotifyPlugin( pl, plugin.id, "unmuted ", target )
 		target.AnusChatMuted = false
 	
 	end
