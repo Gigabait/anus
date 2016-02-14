@@ -9,6 +9,13 @@ function anus.RegisterPlugin( tbl )
 	anus.Plugins[ tbl.id ].Filename = ANUS_FILENAME or "#ERROR"
 	anus.Plugins[ tbl.id ].FilenameStripped = ANUS_FILENAMESTRIPPED or "#ERROR"
 
+	if anus.CountGroupsAccess( tbl.id ) == 0 then
+		local group = tbl.defaultAccess
+		if not anus.Groups[ group ] then group = "user" end
+		
+		anus.Groups[ group ].Permissions[ tbl.id ] = true
+	end
+	
 	anus.AddCommand( tbl )
 end
 

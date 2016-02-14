@@ -7,8 +7,7 @@ plugin.args = {"Int;0;200","String;false"}
 plugin.help = "Sets the health of a player"
 plugin.category = "Fun"
 plugin.chatcommand = "hp"
-plugin.defaultAccess = GROUP_ADMIN
-
+plugin.defaultAccess = "admin"
 
 	-- add support for subtracting a % of their current health
 function plugin:OnRun( pl, args, target )
@@ -33,7 +32,7 @@ function plugin:OnRun( pl, args, target )
 			if v:Health() <= 0 then
 				v:Kill()
 			end
-				
+
 		end
 
 		if subtract then
@@ -41,30 +40,30 @@ function plugin:OnRun( pl, args, target )
 		else
 			anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " to ", COLOR_STRINGARGS, amt )
 		end
-	
+
 	else
 		
 		if not pl:IsGreaterOrEqualTo( target ) then
 			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
 			return
 		end
-		
+
 		if not target:Alive() then
 			pl:ChatPrint( target:Nick() .. " is dead!" )
 			return
 		end
-		
+
 		target:SetHealth( (subtract and target:Health() - amt or amt) )
 		if target:Health() <= 0 then
 			target:Kill()
 		end
-		
+
 		if subtract then
 			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " from ", COLOR_STRINGARGS, target:Health() + amt, " to ", COLOR_STRINGARGS, target:Health() )
 		else
 			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " to ", COLOR_STRINGARGS, amt )
 		end
-		
+
 	end
 end
 anus.RegisterPlugin( plugin )

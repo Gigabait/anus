@@ -8,6 +8,7 @@ plugin.help = "Brings a player to you"
 plugin.category = "Teleport"
 	-- chat command optional
 plugin.chatcommand = "bring"
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
 	if not IsValid( pl ) then
@@ -58,8 +59,7 @@ function plugin:OnRun( pl, args, target )
 			end
 				
 		end
-		
-			-- new system baby
+
 		anus.NotifyPlugin( pl, plugin.id, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, " to them." )
 	
 	else

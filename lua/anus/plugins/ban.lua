@@ -8,7 +8,7 @@ PLUGIN.args = {"Int;0;1461", "String;No reason given."}
 PLUGIN.help = "Bans a player from the server"
 PLUGIN.category = "Utility"
 PLUGIN.chatcommand = "ban"
-PLUGIN.defaultAccess = GROUP_ADMIN
+PLUGIN.defaultAccess = "admin"
 
 function PLUGIN:OnRun( pl, arg, target )
 	local reason = "No reason given."
@@ -55,7 +55,7 @@ PLUGIN.args = {"String;STEAM_0:", "Int;0;1461;", "String;No reason given."}
 PLUGIN.help = "Bans a player using their steamid"
 PLUGIN.notarget = true
 PLUGIN.category = "Utility"
-PLUGIN.defaultAcess = GROUP_ADMIN
+PLUGIN.defaultAcess = "superadmin"
 
 function PLUGIN:OnRun( pl, arg, target )
 	local time = 0
@@ -99,7 +99,7 @@ PLUGIN.help = "Unbans a player from the server"
 PLUGIN.notarget = true
 PLUGIN.category = "Utility"
 PLUGIN.chatcommand = "unban"
-PLUGIN.defaultAccess = GROUP_ADMIN
+PLUGIN.defaultAccess = "admin"
 
 function PLUGIN:OnRun( pl, arg, target )
 	if not string.match( arg[1], "STEAM_0:[0-1]:[0-9]+" ) then

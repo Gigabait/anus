@@ -23,7 +23,7 @@ end)
 
 net.Receive("anus_requestdc", function( len, pl )
 	if not pl:HasAccess( "unban" ) then return end
-	
+
 	net.Start("anus_broadcastdc")
 		net.WriteUInt( table.Count(anus.PlayerDC), 12 )
 			-- so the client can offset the time
@@ -46,7 +46,6 @@ local function anusBroadcastUsers( pl )
 			net.WriteString(v.group)
 			net.WriteString( k )
 			if v.name then
-				print(v.name)
 				net.WriteString( v.name )
 			else
 				net.WriteString( k )

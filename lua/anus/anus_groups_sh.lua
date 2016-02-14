@@ -1,6 +1,5 @@
 anus.Groups = anus.Groups or {}
 
-
 anus.Groups[ "user" ] =
 {
 	id = 1,
@@ -9,33 +8,6 @@ anus.Groups[ "user" ] =
 	Permissions = {	},
 	icon = "icon16/user.png",
 }
-
---[[anus.Groups[ "commoner" ] =
-{
-	id = 2,
-	name = "Commoner",
-	Inheritance = 1,
-	Permissions = {},
-	icon = "icon16/user_green.png",
-}
-
-anus.Groups[ "respected" ] =
-{
-	id = 3,
-	name = "Respected",
-	Inheritance = 2,
-	Permissions = {},
-	icon = "icon16/user_orange.png",
-}
-	
-anus.Groups[ "friend" ] =
-{
-	id = 4,
-	name = "Friend",
-	Inheritance = 3,
-	Permissions = {},
-	icon = "icon16/ruby.png",
-}]]
 
 anus.Groups[ "trusted" ] =
 {
@@ -60,10 +32,7 @@ anus.Groups[ "admin" ] =
 	isadmin = true,
 	Permissions = 
 	{
-		["kick"] = true,
 		["ban"] = true,
-		["gag"] = true,
-		["ungag"] = true,
 		["mute"] = true,
 		["unmute"] = true,
 		["slay"] = true,
@@ -86,63 +55,14 @@ anus.Groups[ "superadmin" ] =
 	issuperadmin = true,
 	Permissions =
 	{
-		["ban"] = true,
-		["kick"] = true,
-		["gag"] = true,
-		["ungag"] = true,
-		["mute"] = true,
-		["unmute"] = true,
-		["slay"] = true,
 		["noclip"] = true,
 		["god"] = true,
 		["ungod"] = true,
 		["unban"] = true,
-		["strip"] = true,
-		["arm"] = true,
 		["banid"] = true,
-		["respawn"] = true,
-		["freeze"] = true,
-		["unfreeze"] = true,
-		["bring"] = true,
 	},
 	icon = "icon16/shield_add.png",
 }
-
---[[anus.Groups[ "coowner" ] =
-{
-	id = 8,
-	name = "Co-Owner",
-	Inheritance = 7,
-	isadmin = true,
-	issuperadmin = true,
-	Permissions =
-	{
-		["ban"] = true,
-		["kick"] = true,
-		["gag"] = true,
-		["ungag"] = true,
-		["mute"] = true,
-		["unmute"] = true,
-		["slay"] = true,
-		["adduser"] = true,
-		["noclip"] = true,
-		["adduser_temp"] = true,
-		["god"] = true,
-		["ungod"] = true,
-		["unban"] = true,
-		["configuregroups"] = true,
-		["strip"] = true,
-		["arm"] = true,
-		["banid"] = true,
-		["respawn"] = true,
-		["freeze"] = true,
-		["unfreeze"] = true,
-		["bring"] = true,
-	},
-	icon = "icon16/lightning.png",
-		-- can edit perms, can't delete.
-	candelete = false,
-}]]
 
 anus.Groups[ "owner" ] =
 {
@@ -155,7 +75,6 @@ anus.Groups[ "owner" ] =
 	{
 			-- no need to add anything in here anymore, owner has everything.
 		["ban"] = true,
-		["banf"] = true,
 		["kick"] = true,
 		["gag"] = true,
 		["ungag"] = true,
@@ -182,6 +101,19 @@ anus.Groups[ "owner" ] =
 		-- can't delete or edit in any way
 	hardcoded = true,
 }
+
+function anus.CountGroupsAccess( plugin )
+	local count = 0
+	local groups = {}
+	for k,v in next, anus.Groups do
+		if v.Permissions[ plugin ] then
+			count = count + 1
+			groups[ #groups + 1 ] = k
+		end
+	end
+		
+	return count, groups
+end
 
 hook.Add("InitPostEntity", "anus_FixGroups", function()
 	

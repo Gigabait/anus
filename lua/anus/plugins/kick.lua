@@ -11,7 +11,7 @@ PLUGIN.category = "Utility"
 PLUGIN.chatcommand = "kick"
 	-- won't show who kicked the player (unless they type it in chat ha)
 PLUGIN.anonymous = true
-PLUGIN.defaultAccess = GROUP_ADMIN
+PLUGIN.defaultAccess = "admin"
 
 function PLUGIN:OnRun( pl, arg, target )
 	local reason = "No reason given."

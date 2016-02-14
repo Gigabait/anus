@@ -7,7 +7,7 @@ plugin.help = "Toggle users' noclip"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "noclip"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 local nocliptbl =
 {

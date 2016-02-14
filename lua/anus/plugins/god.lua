@@ -6,7 +6,7 @@ plugin.usage = "[player:Player]"
 plugin.help = "Toggles a player's godmode"
 plugin.category = "Fun"
 plugin.chatcommand = "god"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
 	if not target and IsValid( pl ) then

@@ -7,7 +7,7 @@ plugin.help = "Freezes a player"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "freeze"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
 		
@@ -21,6 +21,7 @@ function plugin:OnRun( pl, arg, target )
 			end
 
 			v:Lock()
+			v.AnusFrozen = true
 		end
 		
 		anus.NotifyPlugin( pl, plugin.id, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
@@ -35,26 +36,30 @@ function plugin:OnRun( pl, arg, target )
 		anus.NotifyPlugin( pl, plugin.id, "has frozen ", target )
 		
 		target:Lock()
+		target.AnusFrozen = true
 	
 	end
 end
-hook.Add("DoPlayerDeath", "anus_plugins_freeze", function( pl )
-	if pl:IsFrozen() then
-		pl.FreezeOldSpawn = pl:GetPos()
+local function isFrozen( pl )
+	if pl.AnusFrozen then return false end
+end
+hook.Add( "PlayerSpawnObject", "anus_plugins_freeze", isFrozen )
+hook.Add( "CanPlayerSuicide", "anus_plugins_freeze", isFrozen )
+hook.Add( "PlayerDeathThink", "anus_plugins_freeze", isFrozen )
+hook.Add( "DoPlayerDeath", "anus_plugins_freeze", function( pl )
+	if pl:IsFrozen() then 
+		pl.FreezeOldSpawn = pl:GetPos() 
+		pl:UnLock()
 	end
-end)
-hook.Add("PlayerDeath", "anus_plugins_freeze", function( pl )
-	if pl:IsFrozen() then
-		timer.Simple(0.1, function()
-			pl:Spawn()
-			timer.Simple(0.1, function()
-				if IsValid( pl ) and pl.FreezeOldSpawn then
-					pl:SetPos( pl.FreezeOldSpawn )
-				end
-			end)
-		end)
+end )
+hook.Add( "PlayerSpawn", "anus_plugins_freeze", function( pl )
+	if pl.AnusFrozen then
+		timer.CreatePlayer( pl, "FreezeRespawn", 0.1, 1, function()
+			pl:Lock()
+			pl:SetPos( pl.FreezeOldSpawn )
+		end )
 	end
-end)
+end )
 anus.RegisterPlugin( plugin )
 
 local plugin = {}
@@ -66,7 +71,7 @@ plugin.help = "Unfreezes a player"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "unfreeze"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
 		
@@ -80,6 +85,7 @@ function plugin:OnRun( pl, arg, target )
 			end
 			 
 			v:UnLock()
+			v.AnusFrozen = false
 				-- Player.UnLock ungods players.
 			timer.Create("anus_plugins_unfreeze_" .. tostring(v), 0.05, 1, function()
 				if IsValid(v) and v.AnusGodded then
@@ -100,6 +106,7 @@ function plugin:OnRun( pl, arg, target )
 		anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", target )
 
 		target:UnLock()
+		target.AnusFrozen = false
 			-- Player.UnLock ungods players.
 		timer.Simple(0.1, function()
 			if IsValid(target) and target.AnusGodded then

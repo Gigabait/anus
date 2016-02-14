@@ -7,7 +7,6 @@ local function anusBroadcastUsers( pl )
 			net.WriteString(v.group)
 			net.WriteString( k )
 			if v.name then
-				print(v.name)
 				net.WriteString( v.name )
 			else
 				net.WriteString( k )
@@ -63,10 +62,9 @@ function _R.Player:SetUserGroup( group, save, time )
 			anus.TempUsers[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + (time * 60), promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		else
 			if group == "user" then
-				--table.remove(anus.Users, self:SteamID())
 				for k,v in pairs(anus.Users) do
-					if v == self:SteamID() then
-						table.remove(anus.Users, k)
+					if k == self:SteamID() then
+						anus.Users[ k ] = nil
 						break
 					end
 				end

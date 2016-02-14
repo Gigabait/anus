@@ -7,7 +7,7 @@ plugin.help = "Turns off player spray looking capability (aka funny)"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "spray"
-plugin.defaultAccess = GROUP_SUPERADMIN
+plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
 	

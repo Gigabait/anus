@@ -7,7 +7,7 @@ plugin.usage = "<player:Player>; <string:Group>"
 plugin.args = {"Groups"}
 plugin.help = "Adds a user to a group"
 plugin.category = "Utility"
-plugin.defaultAccess = GROUP_SUPERADMIN
+plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
 	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
@@ -60,7 +60,7 @@ plugin.args = {"String;STEAM_0:", "Groups"}
 plugin.help = "Adds a steamid to a group"
 plugin.notarget = true
 plugin.category = "Utility"
-plugin.defaultAccess = GROUP_SUPERADMIN
+plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
 	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
@@ -123,7 +123,7 @@ plugin.usage = "<player:Player>; <string:Group>; <number:Time>"
 plugin.args = {"Groups", "Int;1;300;false"}
 plugin.help = "Adds a user to a group for a time in minutes"
 plugin.category = "Utility"
-plugin.defaultAccess = GROUP_SUPERADMIN
+plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
 	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end

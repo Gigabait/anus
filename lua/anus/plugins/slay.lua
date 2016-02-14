@@ -7,7 +7,7 @@ plugin.help = "Slays a player"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "slay"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
 	if type(target) == "table" then

@@ -7,7 +7,7 @@ plugin.help = "Prevents a player from chatting"
 plugin.category = "Chatting"
 	-- chat command optional
 plugin.chatcommand = "mute"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
 	if not target and IsValid( pl ) then
@@ -50,7 +50,7 @@ plugin.help = "Allows a player to chat"
 plugin.category = "Chatting"
 	-- chat command optional
 plugin.chatcommand = "unmute"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
 	if not target and IsValid( pl ) then

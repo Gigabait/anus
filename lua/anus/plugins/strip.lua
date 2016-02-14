@@ -7,7 +7,7 @@ plugin.help = "Strips a player of their weapons"
 plugin.category = "Fun"
 	-- chat command optional
 plugin.chatcommand = "strip"
-plugin.defaultAccess = GROUP_ADMIN
+plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
 	if not target and IsValid( pl ) then
