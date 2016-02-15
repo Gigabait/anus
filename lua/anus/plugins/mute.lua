@@ -45,7 +45,7 @@ local plugin = {}
 plugin.id = "unmute"
 plugin.name = "Unmute"
 plugin.author = "Shinycow"
-plugin.usage = "[player;Player]"
+plugin.usage = "[player:Player]"
 plugin.help = "Allows a player to chat"
 plugin.category = "Chatting"
 	-- chat command optional

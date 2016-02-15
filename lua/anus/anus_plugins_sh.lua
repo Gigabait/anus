@@ -8,7 +8,17 @@ function anus.RegisterPlugin( tbl )
 	anus.Plugins[ tbl.id ] = tbl
 	anus.Plugins[ tbl.id ].Filename = ANUS_FILENAME or "#ERROR"
 	anus.Plugins[ tbl.id ].FilenameStripped = ANUS_FILENAMESTRIPPED or "#ERROR"
+	anus.Plugins[ tbl.id ].usageargs = {}
+	local explodeusage = string.Explode( ";", anus.Plugins[ tbl.id ].usage and anus.Plugins[ tbl.id ].usage or "" )
+	for k,v in pairs( explodeusage or {} ) do 
+		local str = v 
+		local pattern = "([%a=]+)"
+		local start, endpos, word = string.find( str, pattern )
 
+		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = word 
+	end
+	 
+	
 	if anus.CountGroupsAccess( tbl.id ) == 0 then
 		local group = tbl.defaultAccess
 		if not anus.Groups[ group ] then group = "user" end

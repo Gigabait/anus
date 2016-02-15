@@ -16,33 +16,31 @@ function plugin:OnRun( pl, arg )
 		return
 	end
 
-	if anus.Plugins[ arg[ 1 ] ] then
+	if not anus.Plugins[ arg[ 1 ] ] then return end
 	
-		local plugin = anus.Plugins[ arg[ 1 ] ]
-		local calls =
-		{
-		{
-			"Command help",
-			"help",
-		},
-		{
-			"Usage",
-			"usage",
-		},
-		{
-			"Example",
-			"example",
-		}
-		}
-		local output = ""
+	local plugin = anus.Plugins[ arg[ 1 ] ]
+	local calls =
+	{
+	{
+		"Command help",
+		"help",
+	},
+	{
+		"Usage",
+		"usage",
+	},
+	{
+		"Example",
+		"example",
+	}
+	}
+	local output = ""
 
-		for k,v in ipairs( calls ) do
-			output = output .. v[ 1 ] .. ": " .. (plugin[ v[ 2 ] ] or "No information available") .. "\n"
-		end
-
-		pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. arg[ 1 ] .. "\"\n" .. output )
-
+	for k,v in ipairs( calls ) do
+		output = output .. v[ 1 ] .. ": " .. (plugin[ v[ 2 ] ] or "No information available") .. "\n"
 	end
+
+	pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. arg[ 1 ] .. "\"\n" .. output )
 
 end
 anus.RegisterPlugin( plugin )
