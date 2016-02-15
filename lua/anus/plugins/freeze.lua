@@ -60,6 +60,15 @@ hook.Add( "PlayerSpawn", "anus_plugins_freeze", function( pl )
 		end )
 	end
 end )
+if not oldnumpadActivate and SERVER then
+	oldnumpadActivate = numpad.Activate
+	function numpad.Activate( pl, num, bIsButton )
+		if pl.AnusFrozen then return end
+		
+		oldnumpadActivate( pl, num, bIsButton )
+	end
+end
+
 anus.RegisterPlugin( plugin )
 
 local plugin = {}
