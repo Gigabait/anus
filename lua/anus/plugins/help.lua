@@ -13,6 +13,12 @@ function plugin:OnRun( pl, arg )
 
 	if not arg[ 1 ] then
 		-- print all commands
+		for k,v in pairs( anus.Plugins ) do
+			pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. k .. "\"\n" )
+		end
+		
+		pl:PrintMessage( HUD_PRINTCONSOLE, "\tType one of the above for more information on that plugin" )
+		
 		return
 	end
 

@@ -132,78 +132,195 @@ if CLIENT or SERVER then
 	end, CLIENT and anus_AutoComplete )
 end
 
-function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
-	if SERVER then
-
-		if type(info) == "table" then
-			local function run( p, c, a )
-				if not p:HasAccess( info.id ) then p:ChatPrint( "Insufficient access!" ) return end
-				if not a then return end
-				for k,v in pairs( a ) do
-					if #v == 0 then
-						a[ k ] = "\""
-					end
-				end
-
-				if info.usage then				
-					local target = NULL
-
-					if not a[1] then
-						if string.sub(info.usage, 1, 1) != "[" or not IsValid(p) then p:ChatPrint( info.id .. ": " .. (info.help or "No arguments found.") .. " - " .. info.usage ) return end
-
-						target = p
-					end
-
-					local hasPlayerTarg = false
-					
-					for k,v in pairs( anus.Plugins[ info.id ].usageargs ) do
-
-						if v == "player" then
-							hasPlayerTarg = true
-							break
-						end
-					end
-
-					if hasPlayerTarg and not IsValid( target ) and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" ) and not anus.Plugins[ info.id ].notarget then
-						p:ChatPrint( info.id .. ": " .. (info.help or "No arguments found.") .. " - " .. info.usage )
-						return
-					end
-
-					if anus.Plugins[info.id].notarget or not hasPlayerTarg then
-						info.OnRun( self, p, a, nil )
-					else
-						local target = IsValid(target) and target or anus.FindPlayer( a[1] )
-						if not target then target = anus.FindPlayer( a[1], "steam" ) end
-
-						local args = a
-						table.remove(args, 1)
-
-						--PrintTable( info )
-						--print( "\n" )
-						--PrintTable( args )
-							
-						info.OnRun( self, p, args, target )
-					end
-
-
-				else
-					if not a[1] then p:ChatPrint( info.id .. ": " .. (info.help or "No arguments found.") .. ((info.usage and " - " .. info.usage) or "") ) return end
-
-					info.OnRun( self, p, a, nil )
-				end
-			end
-
-			concommand.Add( "anus_" .. info.id, function( p, c, a )
-				run( p, c, a )
-			end )
+--[[function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
+	if not SERVER or type( info ) != "table" then return end
 	
-			if info.chatcommand then
-				chatcommand.Add( info.chatcommand, function( p, c, a )
-					run( p, c, a )
-				end )
+	local function run( p, c, a )
+		if not a then return end
+		if not p:HasAccess( info.id ) then
+			p:ChatPrint( "Access denied!" )
+			return
+		end
+		
+		for k,v in next, a do
+			if #v == 0 then
+				a[ k ] = "\""
 			end
 		end
+		
+		if not info.usage then
+			if not a[ 1 ] then
+				p:ChatPrint( info.id .. ": " .. info.help )
+				return
+			end
+
+			info.OnRun( self, p, a, nil )
+			return
+		end
+
+		local target = NULL
+
+		if not a[ 1 ] then
+			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
+					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+				return
+			end
+				
+			target = p
+		end
+			
+		local hasPlayerTarg = false
+		
+		for k,v in next, anus.Plugins[ info.id ].usageargs do
+			if v.type == "player" then
+				hasPlayerTarg = true
+				break
+			end
+		end
+		
+		if hasPlayerTarg and not IsValid( target )
+		and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" )
+		and not anus.Plugins[ info.id ].notarget then
+			p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+			return
+		end
+		
+		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
+			info.OnRun( self, p, a, nil )
+		else
+			target = IsValid( target ) and target or anus.FindPlayer( a[ 1 ] )
+			if not target then target = anus.FindPlayer( a[ 1 ], "steam" ) end
+			
+			local args = a
+			table.remove( args, 1 )
+			
+			info.OnRun( self, p, args, target )
+		end
+	end
 	
+	
+	concommand.Add( "anus_" .. info.id, function( p, c, a )
+		run( p, c, a )
+	end )
+	
+	if info.chatcommand then
+		chatcommand.Add( info.chatcommand, function( p, c, a )
+			run( p, c, a )
+		end )
+	end
+end]]
+function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
+	if not SERVER or type( info ) != "table" then return end
+	
+	local function run( p, c, a )
+		if not a then return end
+		if not p:HasAccess( info.id ) then
+			p:ChatPrint( "Access denied!" )
+			return
+		end
+		
+		for k,v in next, a do
+			if #v == 0 then
+				a[ k ] = "\""
+			end
+		end
+		
+		if not info.usage then
+			if not a[ 1 ] then
+				p:ChatPrint( info.id .. ": " .. info.help )
+				return
+			end
+
+			info.OnRun( self, p, a, nil )
+			return
+		end
+
+		local target = NULL
+
+		if not a[ 1 ] then
+			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
+					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+				return
+			end
+				
+			target = p
+		end
+			
+		local hasPlayerTarg = false
+		
+		for k,v in next, anus.Plugins[ info.id ].usageargs do
+			if v.type == "player" then
+				hasPlayerTarg = true
+				break
+			end
+		end
+		
+		for k,v in next, a do
+			local usageargs = anus.Plugins[ info.id ].usageargs[ k ]
+			if usageargs then
+				if usageargs.type == "player" then
+					local foundPlayer = false
+					foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
+					
+					if not foundPlayer then
+						p:ChatPrint( info.id .. ": No player found for argument " .. k )
+						break
+					end
+				elseif usageargs.type == "number" then
+					if not tonumber( v ) then
+						p:ChatPrint( info.id .. ": No number found for argument " .. k )
+						break
+					end
+				elseif usageargs.type == "boolean" then
+					v = tobool( v )
+				end
+			end
+		end
+		
+		local required = 0
+		for k,v in next, anus.Plugins[ info.id ].usageargs do
+			if not v.optional then
+				required = required + 1
+			end
+		end
+		
+		if #a < required then
+			p:ChatPrint( info.id .. ": Missing required argument (\"" .. anus.Plugins[ info.id ].usageargs[ #a + 1 ].type .. "\"?)" )
+			return
+		end
+
+			-- havent messed with below yet. but should work.
+			-- oh well gonna push update anyways.
+		
+		if hasPlayerTarg and not IsValid( target )
+		and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" )
+		and not anus.Plugins[ info.id ].notarget then
+			p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+			return
+		end
+		
+		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
+			info.OnRun( self, p, a, nil )
+		else
+			target = IsValid( target ) and target or anus.FindPlayer( a[ 1 ] )
+			if not target then target = anus.FindPlayer( a[ 1 ], "steam" ) end
+			
+			local args = a
+			table.remove( args, 1 )
+			
+			info.OnRun( self, p, args, target )
+		end
+	end
+	
+	
+	concommand.Add( "anus_" .. info.id, function( p, c, a )
+		run( p, c, a )
+	end )
+	
+	if info.chatcommand then
+		chatcommand.Add( info.chatcommand, function( p, c, a )
+			run( p, c, a )
+		end )
 	end
 end
 function anus.RemoveCommand( name )
