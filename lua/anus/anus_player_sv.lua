@@ -15,13 +15,17 @@ local function anusBroadcastUsers( pl )
 	net.Send( pl )
 end
 
---_R.Player.OldSetUserGroup = _R.Player.OldSetUserGroup or _R.Player.SetUserGroup
 	-- let's not broadcast our group, hm? c:
 function _R.Player:SetUserGroup( group, save, time )
 	if not anus.Groups[ group ] then return end
 	if not self.HasAuthed then return end
 	if game.SinglePlayer() then group = "owner" end
-	if self.UserGroup and self.UserGroup == group then return end
+	if self:IsTempUser() then
+		anus.TempUsers[ self:SteamID() ] = nil
+		self.UserGroup = "user"
+	end
+		-- temp commented out?
+	--if self.UserGroup and self.UserGroup == group then return end
 	
 	self.Perms = {}
 	if group == "owner" then
@@ -35,26 +39,28 @@ function _R.Player:SetUserGroup( group, save, time )
 	end
 	self.UserGroup = group
 	
-	local send = { self }
+	local send = {}
 	for k,v in next, player.GetAll() do
-		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] and v != self then
+		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
 			send[ #send + 1 ] = v
 		end
 	end
-	
-	net.Start("anus_playerperms")
-		net.WriteEntity( self )
-		net.WriteString( group )
-		net.WriteUInt( ((save and time) and time) or 0, 18 )
-		net.WriteBit( anus.Groups[ group ].isadmin or false )
-		net.WriteBit( anus.Groups[ group ].issuperadmin or false )
-		
-		net.WriteUInt( table.Count(self.Perms), 8 )
-		for k,v in next, self.Perms do
-			net.WriteString( k )
-			net.WriteString( tostring(v) )
-		end
-	net.Send( send )
+
+	for _,v in next, send do
+		net.Start( "anus_playerperms" )
+			net.WriteEntity( v )
+			net.WriteString( v.UserGroup )
+			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
+			net.WriteBit( anus.Groups[ v.UserGroup ].isadmin or false )
+			net.WriteBit( anus.Groups[ v.UserGroup ].issuperadmin or false )
+			
+			net.WriteUInt( table.Count( v.Perms ), 8 )
+			for a,b in next, v.Perms do
+				net.WriteString( a )
+				net.WriteString( tostring( b ) )
+			end
+		net.Send( send )
+	end
 	
 	if save then
 		if time then
@@ -183,6 +189,10 @@ function _R.Entity:ChatPrint( str )
 	else
 		self:OldChatPrintP( str )
 	end
+end
+
+function _R.Entity:IsTempUser()
+	return anus.TempUsers[ self:SteamID() ] != nil
 end
 
 _R.Player.OldSteamIDP = _R.Player.OldSteamIDP or _R.Player.SteamID

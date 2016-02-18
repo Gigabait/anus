@@ -23,30 +23,6 @@ if SERVER then
 		ChatCommands[ "!" .. name ] = nil
 	end
 	
-	--[[local function anus_ChatCommandsHandler( str )
-			-- thanks to whoever gave this code out
-			-- some very minor changes by me
-		
-		local cmd, strargs = str:match( "(%w+)%s?(.+)" )
-		
-		local nargs = {}
-		strargs = strargs:gsub( "(%b\"\")", function( m )
-			table.insert(nargs, (m:gsub("\"", "")))
-			return "{" .. #nargs .. "}"
-		end)
-		
-		local args = string.Explode( " ", strargs )
-		for k,v in ipairs(args) do
-			local n = tonumber(v:match("{ [%d} }"))
-			if n then
-				args[k] = nargs[n]
-			end
-		end
-		
-			-- returns chat command used, and table of arguments
-		return args
-	end]]
-		
 	hook.Add("PlayerSay", "anus_ChatCommandsHandler", function( pl, txt, all )
 		local tab = string.Explode( " ", txt )
 		local func = ChatCommands[ tab[ 1 ] ]
@@ -110,9 +86,9 @@ if SERVER then
 		if pl:IsBot() then return end
 		timer.Create("anus_authenticate_" .. pl:UserID(), 8.5, 1, function()
 			if not IsValid(pl) then return end
-			if not pl.HasAuthed and not pl:IsDev() then game.ConsoleCommand("kickid " .. pl:UserID() .. " Failed to auth. Sorry, this happens every once in a while. Just reconnect. Or don't. I don't really care.\n") end
+			if not pl.HasAuthed and not pl:IsDev() then game.ConsoleCommand("kickid " .. pl:UserID() .. " Failed to auth. Try to reconnect.\n") end
 			
-			local fakegroups = {"unknown usergroup", "user", "esp undetectable"}
+			local fakegroups = {"user"}
 			pl:SetNWString("UserGroup", fakegroups[ math.random(1, #fakegroups) ])
 		end)
 	end)

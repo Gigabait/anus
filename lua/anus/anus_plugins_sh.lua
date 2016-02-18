@@ -18,8 +18,7 @@ function anus.RegisterPlugin( tbl )
 
 		local optional = string.sub( str, 1, 1 ) != " " and string.sub( str, 1, 1 ) or string.sub( str, 2, 2 )
 		optional = optional == "[" or false
-		
-		--anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = word 
+
 		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = {type=word, optional=optional}
 	end
 	 

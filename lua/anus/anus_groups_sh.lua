@@ -114,16 +114,3 @@ function anus.CountGroupsAccess( plugin )
 		
 	return count, groups
 end
-
-hook.Add("InitPostEntity", "anus_FixGroups", function()
-	
-	if not SERVER then return end
-	
-	timer.Simple(0.1, function()
-		if not file.Exists("anus/groups.txt", "DATA") then
-			print("hey we should do something here right guys")
-		end
-	end)
-
-end)
-

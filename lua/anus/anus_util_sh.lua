@@ -207,7 +207,6 @@ end]]
 
 if SERVER then	
 	function anus.CreatePlayerList( arg )
-		
 		local output = {}
 			-- no, i can't do #arg
 		if table.Count(arg) == 1 then
@@ -237,9 +236,6 @@ if SERVER then
 			output[ #output + 1 ] = Color( 255, 255, 255, 255 )
 			output[ #output + 1 ] = "nobody"
 		end
-		
-		--print("\n")
-		--PrintTable(output)
 		
 		return output
 	end

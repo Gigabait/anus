@@ -11,8 +11,8 @@ plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
 	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
-	if not args[1] or not anus.Groups[ args[1] ] then pl:ChatPrint("You have to give the right group!") return end
-	if anus.TempUsers[ pl:SteamID() ] then pl:ChatPrint("You already have temp admin!") return end
+	if not anus.Groups[ args[1] ] then pl:ChatPrint("You have to give the right group!") return end
+	if pl:IsTempUser() then pl:ChatPrint("Access denied: You are a temporary admin") return end
 	if IsValid(pl) then
 		if anus.Groups[ pl.UserGroup ].id < anus.Groups[ args[1] ].id then pl:ChatPrint("You can't set players to a higher group than yours!") return end
 	end

@@ -34,7 +34,6 @@ function anus.BanPlayer( caller, target, reason, time )
 		end
 		timer.Simple(0.03, function()
 			anus.Bans[ info.steamid ] = {name = info.name, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid}
-			print("time is " .. info.time)
 		
 			file.Write("anus/bans.txt", von.serialize( anus.Bans ))
 			for k,v in next, player.GetAll() do
