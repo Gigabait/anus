@@ -5,7 +5,7 @@
 	"up_date"			"00/00/00"
 	"author_name"			"Shinycow"
 	"author_email"			"http://facepunch.com/member.php?u=557341"
-	"author_url"			"http://facepunch.com/member.php?u=557341"
+	"author_url"			"http://steamcommunity.com/profiles/76561198018779970/"
 	"info"				"an admin mod"
 	"override"			"0"
 }

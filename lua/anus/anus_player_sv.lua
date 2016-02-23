@@ -163,7 +163,7 @@ _R.Player.OldAdmin = _R.Player.OldAdmin or _R.Player.IsAdmin
 _R.Player.OldSuperAdmin = _R.Player.OldSuperAdmin or _R.Player.IsSuperAdmin
 function _R.Entity:IsAdmin() if not IsValid(self) then return true end return false end
 function _R.Player:IsAdmin()
-	if not IsValid(self) then print("console is admin anus_player_sv") return true end
+	if not IsValid(self) then return true end
 	return self.UserGroup and anus.Groups[ self.UserGroup ].isadmin or self:OldAdmin()
 end
 function _R.Entity:IsSuperAdmin() if not IsValid(self) then return true end return false end
