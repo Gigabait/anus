@@ -12,7 +12,6 @@ plugin.defaultAccess = "user"
 function plugin:OnRun( pl, arg )
 
 	if not arg[ 1 ] then
-		-- print all commands
 		for k,v in pairs( anus.Plugins ) do
 			pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. k .. "\"\n" )
 		end

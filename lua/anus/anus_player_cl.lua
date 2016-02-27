@@ -19,7 +19,6 @@ function _R.Player:GetUserGroup()
 end
 
 hook.Add("Initialize", "anus_sendauth", function()
-		-- go ahead and block this. you won't be able to be demoted / promoted. or do anything else.
 	timer.Simple(0.1, function()
 		net.Start("anus_authenticate2")
 		net.SendToServer()
@@ -27,19 +26,6 @@ hook.Add("Initialize", "anus_sendauth", function()
 end)
 
 net.Receive("anus_playerperms", function()
-	print('yaya')
-	--[[local group = net.ReadString()
-	local admin = net.ReadBit()
-	local sadmin = net.ReadBit()
-	
-	LocalPlayer().PlayerInfo = { ["group"] = group, ["admin"] = admin, ["superadmin"] = sadmin, ["perms"] = {} }
-		
-	local amt = net.ReadUInt( 8 )
-	for i=1,amt do
-		print(i)
-		LocalPlayer().PlayerInfo[ "perms" ][ net.ReadString() ] = net.ReadString()
-	end]]
-	
 	local pl = net.ReadEntity()
 	local group = net.ReadString()
 	local time = net.ReadUInt( 18 )

@@ -12,8 +12,7 @@ PLUGIN.anonymous = true
 PLUGIN.defaultAccess = "superadmin"
 
 function PLUGIN:OnRun( pl, arg, t, cmd )
-	print("hello", cmd )
-	output = cmd--table.concat( arg, " " )
+	output = cmd
 
 	game.ConsoleCommand( output .. "\n" )
 

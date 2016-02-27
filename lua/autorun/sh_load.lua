@@ -36,8 +36,6 @@ local function anus_AutoComplete( cmd, args )
 			-- 1	= unfreeze
 			-- 2 	= unfreeze sh .. etc etc
 		local explodeargs = string.Explode( " ", args )
-			
-		--PrintTable( explodeargs )
 
 		for k,v in pairs( anus.Plugins ) do
 			if LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ LocalPlayer() ]["perms"][ k ] then
@@ -48,15 +46,11 @@ local function anus_AutoComplete( cmd, args )
 							
 					if anus.Plugins[ k ].usage then
 						local explodeusage = string.Explode( ";", anus.Plugins[ k ].usage )
-						--PrintTable( explodeusage )
+
 						for k,v in pairs(explodeusage) do
-							--explodeusage[ k ] = string.gsub( v, "%A", "" )
-							
-					
-							local str = v--"player:Player"
+							local str = v
 							local pattern = "([%a=]+)"
 							local start, endpos, word = string.find( str, pattern )
-							--print( start, endpos, word )
 					
 							explodeusage[ k ] = word
 						end
@@ -132,26 +126,19 @@ if CLIENT or SERVER then
 	
 			-- might as well try old way too.
 		if util.NetworkStringToID( "anus_ccplugin_" .. lcmd ) == 0 then
-			print( "not running net :-(" )
-		
 			local cmd = a[1]
 			table.remove( a, 1 )
 		
 			RunConsoleCommand( "anus_" .. cmd, unpack( a ) )
 		else
-			print( "running net :-)" )
-			
 			sargs = string.gsub( sargs, a[ 1 ], "", 1 )
 			sargs = string.TrimLeft( sargs )
 			
 			if CLIENT then
 				net.Start( "anus_CCPlugin_" .. lcmd )
-					--print( #sargs )
-					--print( sargs )
 					net.WriteString( sargs )
 				net.SendToServer()
 			else
-				--anus.RunCommand( a[ 1 ], p, c, a, sargs )
 				_G[ "anus" ][ "RunCommand_" .. lcmd ]( p, c, a, sargs )
 			end
 		end
@@ -159,83 +146,6 @@ if CLIENT or SERVER then
 	end, CLIENT and anus_AutoComplete )
 end
 
---[[function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
-	if not SERVER or type( info ) != "table" then return end
-	
-	local function run( p, c, a )
-		if not a then return end
-		if not p:HasAccess( info.id ) then
-			p:ChatPrint( "Access denied!" )
-			return
-		end
-		
-		for k,v in next, a do
-			if #v == 0 then
-				a[ k ] = "\""
-			end
-		end
-		
-		if not info.usage then
-			if not a[ 1 ] then
-				p:ChatPrint( info.id .. ": " .. info.help )
-				return
-			end
-
-			info.OnRun( self, p, a, nil )
-			return
-		end
-
-		local target = NULL
-
-		if not a[ 1 ] then
-			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
-					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
-				return
-			end
-				
-			target = p
-		end
-			
-		local hasPlayerTarg = false
-		
-		for k,v in next, anus.Plugins[ info.id ].usageargs do
-			if v.type == "player" then
-				hasPlayerTarg = true
-				break
-			end
-		end
-		
-		if hasPlayerTarg and not IsValid( target )
-		and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" )
-		and not anus.Plugins[ info.id ].notarget then
-			p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
-			return
-		end
-		
-		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
-			info.OnRun( self, p, a, nil )
-		else
-			target = IsValid( target ) and target or anus.FindPlayer( a[ 1 ] )
-			if not target then target = anus.FindPlayer( a[ 1 ], "steam" ) end
-			
-			local args = a
-			table.remove( args, 1 )
-			
-			info.OnRun( self, p, args, target )
-		end
-	end
-	
-	
-	concommand.Add( "anus_" .. info.id, function( p, c, a )
-		run( p, c, a )
-	end )
-	
-	if info.chatcommand then
-		chatcommand.Add( info.chatcommand, function( p, c, a )
-			run( p, c, a )
-		end )
-	end
-end]]
 function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	if not SERVER or type( info ) != "table" then return end
 	
@@ -326,8 +236,6 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			return
 		end
 		
-		--print( "sargs: " .. sargs )
-		
 		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
 			info.OnRun( self, p, a, nil, sargs )
 		else
@@ -343,24 +251,6 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	
 	concommand.Add( "anus_" .. info.id, function( p, c, a, sargs )
-		--[[local function pack(...)
-			return {...}
-		end
-		
-		local packed = pack( sargs )
-		local output = ""
-		for k,v in pairs( packed ) do
-			output = output .. v .. " "
-		end
-		
-		print( "out: " , output )]]
-		
-		print( sargs )
-		
-		print( "Test: ", tostring( p ), c, a, sargs )
-		PrintTable( a )
-		
-		
 		run( p, c, a, sargs )
 	end )
 	
@@ -371,9 +261,6 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		local a = {}
 		a = string.Explode( " ", sargs )
 		
-				print( "runcommand: ", tostring(p), "anus_" .. info.id, tostring(a), sargs )
-		PrintTable( a )
-		
 		run( p, "anus_" .. info.id, a, sargs )
 	end
 	
@@ -382,9 +269,6 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		local s = net.ReadString()
 		local a = {}
 		a = string.Explode( " ", s )
-		
-		print( tostring(p), "anus_" .. info.id, a, s )
-		PrintTable( a )
 		
 		run( p, "anus_" .. info.id, a, s )
 	end )
@@ -420,9 +304,6 @@ if CLIENT then
 	include("anus/skins/anus_actual.lua")
 	include("anus/vgui/anus_mainmenu.lua")
 	include("anus/newvgui/anus_mainmenu.lua")
-	--[[include("vgui/anus_bansmenu.lua")
-	include("vgui/anus_pluginsmenu.lua")
-	include("vgui/anus_groupsmenu.lua")]]
 end
 
 local function ReloadPlugins()
@@ -446,7 +327,6 @@ end)
 local _R = debug.getregistry()
 function _R.Player:IsDev()
 	return anusdevs[ self:SteamID() ] or self:SteamID() == "STEAM_0:0:0"
-	--return false
 end
 
 

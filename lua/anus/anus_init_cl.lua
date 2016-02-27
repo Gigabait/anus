@@ -26,7 +26,6 @@ net.Receive("anus_broadcastusers", function()
 	
 	local amt = net.ReadUInt( 8 )
 	for i=1,amt do
-		--print(i)
 		local group = net.ReadString()
 		anus.Users[ group ] = anus.Users[ group ] or {}
 		local steamid = net.ReadString()

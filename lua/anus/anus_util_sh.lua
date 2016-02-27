@@ -311,26 +311,14 @@ if SERVER then
 		
 		local white_places = {}
 		for k,v in next, args do
-			if type( v ) == "function" then
-				--white_places = {}
-				--break
-			end
 			if type( v ) == "string" and type( args[ k - 1 ] ) != "table" then
 				white_places[ #white_places + 1 ] = k
 			end
 		end
-		
-		--PrintTable( white_places )
+
 		for k,v in next, white_places do
 			table.insert( args, v + (k-1), color_white )
 		end
-		--table.insert( args, 3, color_white )
-		--table.insert( args, 5, color_white )
-		--table.insert( args, 6, "test" )
-		
-		--[[if debug_islist then
-			PrintTable( args )
-		end]]
 		
 		local iLoop = 0
 		if #resultant > 0 then
