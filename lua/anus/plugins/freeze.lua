@@ -53,7 +53,7 @@ hook.Add( "DoPlayerDeath", "anus_plugins_freeze", function( pl )
 	end
 end )
 hook.Add( "PlayerSpawn", "anus_plugins_freeze", function( pl )
-	if pl.AnusFrozen then
+	if pl.AnusFrozen and pl.FreezeOldSpawn then
 		timer.CreatePlayer( pl, "FreezeRespawn", 0.1, 1, function()
 			pl:Lock()
 			pl:SetPos( pl.FreezeOldSpawn )

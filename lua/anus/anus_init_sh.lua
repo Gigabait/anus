@@ -24,6 +24,8 @@ concommand.Add("anus_reload", function( pl )
 	timer.Simple(0.1, function() file.CreateDir("anus") end)
 	timer.Simple(0.15, function() file.CreateDir("anus/users") end)
 	
+	hook.Call( "inherit", nil )
+	
 	if anus.Plugins then
 		anus.LoadPlugins()
 	else

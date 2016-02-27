@@ -11,13 +11,74 @@ PLUGIN.chatcommand = "rcon"
 PLUGIN.anonymous = true
 PLUGIN.defaultAccess = "superadmin"
 
-function PLUGIN:OnRun( pl, arg )
-	cmd = table.concat( arg, " " )
+function PLUGIN:OnRun( pl, arg, t, cmd )
+	print("hello", cmd )
+	output = cmd--table.concat( arg, " " )
 
-	game.ConsoleCommand( cmd .. "\n" )
+	game.ConsoleCommand( output .. "\n" )
 
-	if #arg == 1 and cvars.String( cmd ) then
-		pl:ChatPrint( "CVar " .. cmd .. " returns: " .. cvars.String( cmd ) )
+	if #arg == 1 and cvars.String( output ) then
+		pl:ChatPrint( "CVar " .. output .. " returns: " .. cvars.String( output ) )
 	end
 end
 anus.RegisterPlugin( PLUGIN )
+
+local PLUGIN = {}
+PLUGIN.id = "lua"
+PLUGIN.name = "Lua"
+PLUGIN.author = "Shinycow"
+PLUGIN.usage = "<string:Lua>"
+PLUGIN.help = "Executes a lua string on the server"
+PLUGIN.example = "anus lua ME:SetHealth( 100 )"
+PLUGIN.category = "Utility"
+	-- won't show who kicked the player (unless they type it in chat ha)
+PLUGIN.anonymous = true
+PLUGIN.defaultAccess = "superadmin"
+
+function PLUGIN:OnRun( pl, arg, t, cmd )
+	ME, THIS = pl, pl:GetEyeTrace().Entity
+	
+	RunString( cmd )
+	
+	
+	--[[
+	PrintTable( arg )
+	
+	
+	local res = table.concat( arg, " " )
+	
+	print( res )
+	
+	res = CompileString( res, "[anus]", true )
+	
+	if not res then
+		
+		local code, err = pcall( res ) 
+		
+		if err then
+			print( "ERROR FOunD", err )
+		else
+			print( code )
+		end
+	
+	else
+	
+		
+		res()
+		
+	end]]
+	
+	--local res = table.concat( arg, " " )
+	
+	--print( cmd )
+	
+	--PrintTable( arg )
+	
+	--RunString( arg[ 1 ] )
+	
+	--RunString( cmd )
+	
+	ME, THIS = nil, nil
+end
+anus.RegisterPlugin( PLUGIN )
+

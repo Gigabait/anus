@@ -46,6 +46,8 @@ function _R.Player:SetUserGroup( group, save, time )
 		end
 	end
 
+	local send_pp = send
+	send_pp[ #send_pp + 1 ] = self
 	for _,v in next, send do
 		net.Start( "anus_playerperms" )
 			net.WriteEntity( v )
@@ -59,7 +61,7 @@ function _R.Player:SetUserGroup( group, save, time )
 				net.WriteString( a )
 				net.WriteString( tostring( b ) )
 			end
-		net.Send( send )
+		net.Send( send_pp )
 	end
 	
 	if save then

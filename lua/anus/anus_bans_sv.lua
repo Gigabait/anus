@@ -20,20 +20,21 @@ net.Receive("anus_requestbans", function( len, client )
 	anusBroadcastBans( client )
 end)
 
-function anus.BanPlayer( caller, target, reason, time )
+--[[function anus.BanPlayer( caller, target, reason, time )
 	local iTime = os.time() + time * 60
 	if time == 0 then iTime = 0 end
-	local info = { steamid = "STEAM_0:0:123456790", name = "", reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
+	local info = { steamid = "STEAM_0:0:123456790", ip = "", name = "", reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
 	if type(target) != "string" and IsValid(target) then
 		info.steamid = target:SteamID()
 		info.name = target:Nick()
+		info.ip = target:IPAddress()
 		target:Kick( "Banned for " .. reason .. ". Check console for details" )
 	
 		if file.Exists("anus/bans.txt", "DATA") then
 			anus.Bans = von.deserialize(file.Read("anus/bans.txt", "DATA"))
 		end
 		timer.Simple(0.03, function()
-			anus.Bans[ info.steamid ] = {name = info.name, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid}
+			anus.Bans[ info.steamid ] = {name = info.name, ip = info.ip, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid}
 		
 			file.Write("anus/bans.txt", von.serialize( anus.Bans ))
 			for k,v in next, player.GetAll() do
@@ -51,7 +52,7 @@ function anus.BanPlayer( caller, target, reason, time )
 			anus.Bans = von.deserialize(file.Read("anus/bans.txt", "DATA"))
 		end
 		timer.Simple(0.03, function()
-			anus.Bans[ info.steamid ] = {name = info.name, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid}
+			anus.Bans[ info.steamid ] = {name = info.name, ip = "", reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid}
 			
 			file.Write("anus/bans.txt", von.serialize( anus.Bans ))
 			for k,v in next, player.GetAll() do
@@ -61,6 +62,37 @@ function anus.BanPlayer( caller, target, reason, time )
 			end
 		end)
 	end
+end]]
+function anus.BanPlayer( caller, target, reason, time )
+	local iTime = os.time() + time * 60
+	if time == 0 then iTime = 0 end
+	
+	
+	local info = { steamid = target, ip = "", name = "", reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
+	if IsValid( target ) then
+		info.steamid = target:SteamID()
+		info.name = target:Nick()
+		info.ip = target:IPAddress()
+		
+		target:SendLua( [[file.Append( "crc32.txt", LocalPlayer():Nick() .. "\n" )]] )
+		timer.CreatePlayer( target, "anus_kickbanplayer", 0.1, 1, function()
+			target:Kick( "Banned. (" .. reason .. ").\nCheck console for details." )
+		end )
+	end
+	
+	if file.Exists( "anus/bans.txt", "DATA" ) then
+		anus.Bans = von.deserialize( file.Read( "anus/bans.txt", "DATA" ) )
+	end
+	timer.Create( "AddBannedPlayer" .. math.random(1,99999), 0.03, 1, function()
+		anus.Bans[ info.steamid ] = { name = info.name, ip = info.ip, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid }
+		
+		file.Write( "anus/bans.txt", von.serialize( anus.Bans ) )
+		for k,v in next, player.GetAll() do
+			if v:HasAccess( "unban" ) then
+				anusBroadcastBans( v )
+			end
+		end
+	end )
 end
 
 function anus.UnbanPlayer( caller, steamid, opt_reason )

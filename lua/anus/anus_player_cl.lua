@@ -27,6 +27,7 @@ hook.Add("Initialize", "anus_sendauth", function()
 end)
 
 net.Receive("anus_playerperms", function()
+	print('yaya')
 	--[[local group = net.ReadString()
 	local admin = net.ReadBit()
 	local sadmin = net.ReadBit()
