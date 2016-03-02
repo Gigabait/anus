@@ -1,5 +1,7 @@
 anus.Groups = anus.Groups or {}
 
+print( "load groups" )
+
 anus.Groups[ "user" ] =
 {
 	id = 1,
@@ -122,31 +124,61 @@ function anus.GetGroupInheritance( group )
 end
 
 local function anus_GroupsInherit()
-		-- insert into these groups that have already have all permissions synced.
-	local has_inherited = {"user"}
-	
-	while table.Count( anus.Groups ) > table.Count( has_inherited ) do
-		for k,v in pairs( anus.Groups ) do
-			if not v.Inheritance then
-				has_inherited[ #has_inherited + 1 ] =k
-				continue
-			end
-			print( "hm", v.Inheritance )
-			table.Inherit( v.Permissions, anus.Groups[ v.Inheritance ].Permissions )
-			has_inherited[ #has_inherited + 1 ] = k
-		end
-	end
-	
-	local function runBaseClass( group, tbl )
-		if tbl.BaseClass then
-			table.Inherit( anus.Groups[ group ].Permissions, tbl.BaseClass )
+	--local output = {}
+	for k,v in pairs( anus.Groups ) do
+		if not v.Inheritance then continue end
+		
+		--output[ k ] = {}
+		
+		local function loopThrough( group, inheritance, permissions )
+				-- will need to manually sort through and replace all occurences'
 			
-			runBaseClass( group, tbl.BaseClass )
+				-- for debugging
+			--output[ group ][ inheritance ] = output[ group ][ inheritance ] or {}
+			--output[ group ][ inheritance ] = permissions
+			--print( "group: " .. group, "inheritance: ", inheritance )
+
+			for a,b in pairs( permissions ) do
+				anus.Groups[ group ].Permissions[ a ] = b
+			end
+			
+			if not anus.Groups[ inheritance ].Inheritance then return end
+	
+			if anus.Groups[ inheritance ].Inheritance then
+				loopThrough( group, anus.Groups[ inheritance ].Inheritance, anus.Groups[ anus.Groups[ inheritance ].Inheritance ].Permissions )
+			end
 		end
 		
-		return nil
+		loopThrough( k, v.Inheritance, anus.Groups[ v.Inheritance ].Permissions )
 	end
+	
+	--THEOUTPUT = output
 end
 hook.Add( "Initialize", "anus_groupinheritance", anus_GroupsInherit )
 hook.Add( "inherit", "fa", anus_GroupsInherit )
 
+function anus.CreateGroup( name, inheritance )
+	if not name then
+		error( "Name not found!")
+	end
+	if not inheritance then
+		error( "Inheritance not found!" )
+	end
+	
+	local inherit = anus.Groups[ inheritance ] and inheritance or "user"
+	
+		-- id key is really not neccessary.
+		-- remnants left over from old permission checking
+		-- todo for that ^: Add function to return groups inherited from
+		-- use that for every check for ids.
+	anus.Groups[ name:lower() ] =
+	{
+	id = math.random( 6, 99999 ),
+	name = name,
+	Inheritance = inherit,
+	Permissions = {},
+	icon = "",
+	}
+	
+	anus_GroupsInherit()
+end

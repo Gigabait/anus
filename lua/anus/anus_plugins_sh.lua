@@ -26,7 +26,8 @@ function anus.RegisterPlugin( tbl )
 	if anus.CountGroupsAccess( tbl.id ) == 0 then
 		local group = tbl.defaultAccess
 		if not anus.Groups[ group ] then group = "user" end
-		
+
+		anus.Groups[ group ].Permissions = anus.Groups[ group ].Permissions or {}
 		anus.Groups[ group ].Permissions[ tbl.id ] = true
 	end
 	

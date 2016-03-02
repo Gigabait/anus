@@ -1,6 +1,5 @@
 anus.Users = anus.Users or {}
 anus.TempUsers = anus.TempUsers or {}
-anus.Groups = anus.Groups or {}
 
 hook.Add("InitPostEntity", "anus_GrabDataInfo", function()
 	if file.Exists( "anus/users.txt", "DATA" ) then
