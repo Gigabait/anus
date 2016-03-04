@@ -1,10 +1,8 @@
 anus.Groups = anus.Groups or {}
 
-print( "load groups" )
-
 anus.Groups[ "user" ] =
 {
-	id = 1,
+	--id = 1,
 	name = "Guest",
 	Inheritance = nil,
 	Permissions = {	},
@@ -13,7 +11,7 @@ anus.Groups[ "user" ] =
 
 anus.Groups[ "trusted" ] =
 {
-	id = 2,
+	--id = 2,
 	name = "Trusted Player",
 	Inheritance = "user",
 	Permissions =
@@ -28,7 +26,7 @@ anus.Groups[ "trusted" ] =
 
 anus.Groups[ "admin" ] =
 {
-	id = 3,
+	--id = 3,
 	name = "Admin",
 	Inheritance = "trusted",
 	isadmin = true,
@@ -50,7 +48,7 @@ anus.Groups[ "admin" ] =
 
 anus.Groups[ "superadmin" ] =
 {
-	id = 4,
+	--id = 4,
 	name = "Superadmin",
 	Inheritance = "admin",
 	isadmin = true,
@@ -68,7 +66,7 @@ anus.Groups[ "superadmin" ] =
 
 anus.Groups[ "owner" ] =
 {
-	id = 5,
+	--id = 5,
 	name = "Owner",
 	Inheritance = "superadmin",
 	isadmin = true,
@@ -123,22 +121,47 @@ function anus.GetGroupInheritance( group )
 	return anus.Groups[ group ].Inheritance
 end
 
+function anus.GetGroupInheritanceTree( group )
+	if not group then return nil end
+	if not anus.Groups[ group ].Inheritance then return { group } end
+	
+	
+	local output = {}
+	output = { group }
+	
+	local function loopThrough( prev, inheritance )
+		output[ #output + 1 ] = inheritance
+		
+		if anus.Groups[ inheritance ].Inheritance then
+			loopThrough( inheritance, anus.Groups[ inheritance ].Inheritance )
+		end
+	end
+	loopThrough( nil, anus.Groups[ group ].Inheritance )
+	
+	return output
+end
+
+function anus.GroupHasInheritanceFrom( group1, group2, samegroup )
+	if not group1 or not group2 then return nil end
+	if group1 == group2 and not samegroup then return false end
+	
+	local tree = anus.GetGroupInheritanceTree( group1 )
+	for k,v in next, tree do
+		if v == group2 then
+			return true
+		end
+	end
+	
+	return false
+end
+		
+
 local function anus_GroupsInherit()
-	--local output = {}
-	for k,v in pairs( anus.Groups ) do
+	for k,v in next, anus.Groups do
 		if not v.Inheritance then continue end
 		
-		--output[ k ] = {}
-		
 		local function loopThrough( group, inheritance, permissions )
-				-- will need to manually sort through and replace all occurences'
-			
-				-- for debugging
-			--output[ group ][ inheritance ] = output[ group ][ inheritance ] or {}
-			--output[ group ][ inheritance ] = permissions
-			--print( "group: " .. group, "inheritance: ", inheritance )
-
-			for a,b in pairs( permissions ) do
+			for a,b in next, permissions do
 				anus.Groups[ group ].Permissions[ a ] = b
 			end
 			
@@ -151,8 +174,6 @@ local function anus_GroupsInherit()
 		
 		loopThrough( k, v.Inheritance, anus.Groups[ v.Inheritance ].Permissions )
 	end
-	
-	--THEOUTPUT = output
 end
 hook.Add( "Initialize", "anus_groupinheritance", anus_GroupsInherit )
 hook.Add( "inherit", "fa", anus_GroupsInherit )
@@ -173,7 +194,7 @@ function anus.CreateGroup( name, inheritance )
 		-- use that for every check for ids.
 	anus.Groups[ name:lower() ] =
 	{
-	id = math.random( 6, 99999 ),
+	--id = math.random( 6, 99999 ),
 	name = name,
 	Inheritance = inherit,
 	Permissions = {},
@@ -181,4 +202,6 @@ function anus.CreateGroup( name, inheritance )
 	}
 	
 	anus_GroupsInherit()
+	
+	return anus.Groups[ name:lower() ]
 end

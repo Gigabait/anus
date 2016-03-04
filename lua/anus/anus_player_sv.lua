@@ -70,7 +70,7 @@ function _R.Player:SetUserGroup( group, save, time )
 			anus.TempUsers[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + (time * 60), promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		else
 			if group == "user" then
-				for k,v in pairs(anus.Users) do
+				for k,v in next, anus.Users do
 					if k == self:SteamID() then
 						anus.Users[ k ] = nil
 						break
@@ -123,24 +123,28 @@ end
 function _R.Entity:IsGreaterThan( target )
 	if not IsValid(self) then return true end
 	if not anus.Groups[ self.UserGroup or "user" ] then return false end
-	
-	if anus.Groups[ self.UserGroup or "user" ].id > anus.Groups[ target.UserGroup or "user" ].id then return true end
+
+	if anus.GroupHasInheritanceFrom( self.UserGroup or "user", target.UserGroup or "user" ) then
+		return true
+	end
 	
 	return false
 end
 function _R.Entity:IsEqualTo( target )
 	if not IsValid(self) then return true end
 	if not anus.Groups[ self.UserGroup or "user" ] then return false end
-	
-	if anus.Groups[ self.UserGroup or "user" ].id == anus.Groups[ target.UserGroup or "user" ].id then return true end
+
+	if self.UserGroup == target.UserGroup then return true end
 	
 	return false
 end
 function _R.Entity:IsGreaterOrEqualTo( target )
 	if not IsValid(self) then return true end
 	if not anus.Groups[ self.UserGroup or "user" ] then return false end
-	
-	if anus.Groups[ self.UserGroup or "user" ].id >= anus.Groups[ target.UserGroup or "user" ].id then return true end
+
+	if anus.GroupHasInheritanceFrom( self.UserGroup or "user", target.UserGroup or "user", true ) then
+		return true
+	end
 	
 	return false
 end
