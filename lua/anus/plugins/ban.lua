@@ -72,8 +72,8 @@ function PLUGIN:OnRun( pl, arg, target )
 			reason = table.concat( newarg, " " )
 		end
 	end
-	
-	if anus.Users[ arg[1] ] and anus.Groups[ anus.Users[ arg[1] ].group ].id > anus.Groups[ pl.UserGroup or "user" ].id then
+
+	if anus.Users[ arg[ 1 ] ] and anus.GroupHasInheritanceFrom( anus.Groups[ anus.Users[ arg[ 1 ] ].group ], pl.UserGroup ) then
 		pl:ChatPrint("Sorry, this player is higher ranked than you!")
 		return
 	end

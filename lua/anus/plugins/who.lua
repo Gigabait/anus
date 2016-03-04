@@ -22,7 +22,7 @@ function PLUGIN:OnRun( pl, arg, t, cmd )
 	for k,v in next, groups do
 		group_output[ k ] = group_output[ k ] or ""
 		
-		for a,b in pairs( v ) do
+		for a,b in next, v do
 			group_output[ k ] = group_output[ k ] .. "\t" .. a .. "\t" .. b .. "\n"
 		end
 	end

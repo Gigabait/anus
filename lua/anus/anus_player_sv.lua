@@ -156,6 +156,7 @@ function _R.Entity:CanTargetPlayer( target, cmd )
 	return true
 end
 
+	-- check immunity
 function _R.Entity:HasAccess( plugin )
 	if not IsValid( self ) then return true end
 	if not self.Perms then return false end
@@ -194,6 +195,14 @@ function _R.Entity:ChatPrint( str )
 		print( str )
 	else
 		self:OldChatPrintP( str )
+	end
+end
+_R.Entity.OldPrintMessage = _R.Entity.OldPrintMessage or _R.Player.PrintMessage
+function _R.Entity:PrintMessage( type, msg )
+	if not IsValid( self ) then
+		print( msg )
+	else
+		self:OldPrintMessage( type, msg )
 	end
 end
 

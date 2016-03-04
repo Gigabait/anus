@@ -34,7 +34,7 @@ PLUGIN.anonymous = true
 PLUGIN.defaultAccess = "superadmin"
 
 function PLUGIN:OnRun( pl, arg, t, cmd )
-	ME, THIS = pl, pl:GetEyeTrace().Entity
+	ME, THIS = pl, IsValid( pl ) and pl:GetEyeTrace().Entity or NULL
 	
 	local res = table.concat( arg, " " )
 	
