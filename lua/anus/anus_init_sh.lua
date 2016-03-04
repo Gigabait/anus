@@ -7,11 +7,6 @@ print([[------------------------------
 ------------------------------
 ------------------------------]])
 
-GROUP_ALL = 1
-GROUP_ADMIN = 2
-GROUP_SUPERADMIN = 3
-GROUP_OWNER = 4
-
 COLOR_STRINGARGS = Color( 180, 180, 255, 255 )
 COLOR_STEAMIDARGS = Color( 191, 255, 127, 255 )
 

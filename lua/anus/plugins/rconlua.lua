@@ -6,13 +6,12 @@ PLUGIN.usage = "<string:Command>"
 PLUGIN.help = "Runs a server command and optionally outputs its results"
 PLUGIN.example = "!rcon sv_allowcslua 1"
 PLUGIN.category = "Utility"
-PLUGIN.chatcommand = "rcon"
 	-- won't show who kicked the player (unless they type it in chat ha)
 PLUGIN.anonymous = true
 PLUGIN.defaultAccess = "superadmin"
 
 function PLUGIN:OnRun( pl, arg, t, cmd )
-	output = cmd
+	local output = cmd
 
 	game.ConsoleCommand( output .. "\n" )
 
@@ -37,16 +36,7 @@ PLUGIN.defaultAccess = "superadmin"
 function PLUGIN:OnRun( pl, arg, t, cmd )
 	ME, THIS = pl, pl:GetEyeTrace().Entity
 	
-	RunString( cmd )
-	
-	
-	--[[
-	PrintTable( arg )
-	
-	
 	local res = table.concat( arg, " " )
-	
-	print( res )
 	
 	res = CompileString( res, "[anus]", true )
 	
@@ -55,28 +45,17 @@ function PLUGIN:OnRun( pl, arg, t, cmd )
 		local code, err = pcall( res ) 
 		
 		if err then
-			print( "ERROR FOunD", err )
+			pl:ChatPrint( "Error found in code: " .. err )
 		else
 			print( code )
 		end
 	
 	else
-	
 		
 		res()
 		
-	end]]
-	
-	--local res = table.concat( arg, " " )
-	
-	--print( cmd )
-	
-	--PrintTable( arg )
-	
-	--RunString( arg[ 1 ] )
-	
-	--RunString( cmd )
-	
+	end
+
 	ME, THIS = nil, nil
 end
 anus.RegisterPlugin( PLUGIN )
