@@ -5,7 +5,7 @@ PLUGIN.author = "Shinycow"
 PLUGIN.usage = ""
 PLUGIN.help = "Prints a list of players and their usergroups"
 PLUGIN.category = "Utility"
-PLUGIN.chatcommand = "!who"
+PLUGIN.chatcommand = "who"
 PLUGIN.defaultAccess = "user"
 
 function PLUGIN:OnRun( pl, arg, t, cmd )

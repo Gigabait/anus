@@ -10,10 +10,19 @@ plugin.category = "Utility"
 plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
-	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
-	if not anus.Groups[ args[1] ] then pl:ChatPrint("You have to give the right group!") return end
-	if pl:IsTempUser() then pl:ChatPrint("Access denied: You are a temporary admin") return end
-	if IsValid(pl) then
+	if type( target ) == "table" then 
+		pl:ChatPrint( "You can only add one person to a group at a time!" )
+		return
+	end
+	if not anus.Groups[ args[1] ] then
+		pl:ChatPrint( "You have to give the right group!" )
+		return
+	end
+	if pl:IsTempUser() then 
+		pl:ChatPrint( "Access denied: You are a temporary admin" )
+		return 
+	end
+	if IsValid( pl ) then
 		if anus.GroupHasInheritanceFrom( args[ 1 ], pl.UserGroup ) then
 			pl:ChatPrint( "Unable to add user to group: Group is ranked higher than yours!" )
 			return
@@ -32,11 +41,10 @@ function plugin:GetUsageSuggestions( arg )
 	if arg != 2 then return "" end
 	
 	local output = {}
-	for k,v in pairs( anus.Groups ) do
+	for k,v in next, anus.Groups do
 		output[ #output + 1 ] = k
 	end
 
-	--return output
 	table.SortDesc( output )
 	
 	local str = ""
@@ -66,26 +74,36 @@ plugin.category = "Utility"
 plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
-	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
-	if not args[2] or not anus.Groups[ args[2] ] then pl:ChatPrint("You have to give the right group!") return end
-	if anus.TempUsers[ pl:SteamID() ] then pl:ChatPrint("You already have temp admin!") return end
-	if IsValid(pl) then
+	if type( target ) == "table" then
+		pl:ChatPrint( "You can only add one person to a group at a time!" )
+		return
+	end
+	if not args[ 2 ] or not anus.Groups[ args[ 2 ] ] then
+		pl:ChatPrint( "You have to give the right group!" )
+		return
+	end
+	if anus.TempUsers[ pl:SteamID() ] then
+		pl:ChatPrint( "You already have temp admin!" ) 
+		return
+	end
+	
+	if IsValid( pl ) then
 		if anus.GroupHasInheritanceFrom( args[ 2 ], pl.UserGroup ) then
 			pl:ChatPrint( "Unable to add user to group: Group is ranked higher than yours!" )
 			return
 		end
 	end
 	
-	local steamid = args[1]
+	local steamid = args[ 1 ]
 	
 	if not string.match( steamid, "STEAM_0:[0-1]:[0-9]+" ) then
-		pl:ChatPrint("This isn't a valid steamid.")
+		pl:ChatPrint( "This isn't a valid steamid." )
 		return
 	end
 		
-	for k,v in pairs(player.GetAll()) do
+	for k,v in next, player.GetAll() do
 		if v:SteamID() == steamid then
-			pl:Chatrint("You can't use this command on a player who is in the server! Use anus adduserid instead!")
+			pl:ChatPrint( "You can't use this command on a player who is in the server! Use anus adduserid instead!" )
 		end
 	end
 		
@@ -98,7 +116,7 @@ function plugin:GetUsageSuggestions( arg )
 	if arg != 2 then return "" end
 	
 	local output = {}
-	for k,v in pairs( anus.Groups ) do
+	for k,v in next, anus.Groups do
 		output[ #output + 1 ] = k
 	end
 
@@ -132,14 +150,23 @@ plugin.category = "Utility"
 plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
-	if type(target) == "table" then pl:ChatPrint("You can only add one person to a group at a time!") return end
-	if not args[1] or not anus.Groups[ args[1] ] or args[1] == "user" then pl:ChatPrint("You have to give the right group!") return end
-	if anus.TempUsers[ pl:SteamID() ] then pl:ChatPrint("You already have temp admin!") return end
+	if type( target ) == "table" then
+		pl:ChatPrint( "You can only add one person to a group at a time!" )
+		return 
+	end
+	if not args[ 1 ] or not anus.Groups[ args[ 1 ] ] or args[ 1 ] == "user" then
+		pl:ChatPrint( "You have to give the right group!" ) 
+		return
+	end
+	if anus.TempUsers[ pl:SteamID() ] then
+		pl:ChatPrint( "You already have temp admin!" )
+		return 
+	end
 	
-	local time = args[2] and math.Clamp(tonumber(args[2]), 1, 300) or 10
+	local time = args[ 2 ] and math.Clamp( tonumber( args[ 2 ] ), 1, 300 ) or 10
 	
 	if pl:IsGreaterOrEqualTo( target ) then
-		target:SetUserGroup( args[1], true, time )
+		target:SetUserGroup( args[ 1 ], true, time )
 	end
 	
 	anus.NotifyPlugin( pl, plugin.id, "added ", target, " to group ", COLOR_STRINGARGS, args[ 1 ], " for ", COLOR_STRINGARGS, time .. " minutes", "." )
@@ -150,11 +177,10 @@ function plugin:GetUsageSuggestions( arg )
 	if arg != 2 then return "" end
 	
 	local output = {}
-	for k,v in pairs( anus.Groups ) do
+	for k,v in next, anus.Groups do
 		output[ #output + 1 ] = k
 	end
 
-	--return output
 	table.SortDesc( output )
 	
 	local str = ""

@@ -12,8 +12,7 @@ COLOR_STEAMIDARGS = Color( 191, 255, 127, 255 )
 
 concommand.Add("anus_reload", function( pl )
 	if not pl:IsSuperAdmin() then return end
-	
-	--anus = nil
+
 	include("autorun/sh_load.lua" )
 	
 	timer.Simple(0.1, function() file.CreateDir("anus") end)

@@ -4,7 +4,7 @@ PLUGIN.name = "RCon"
 PLUGIN.author = "Shinycow"
 PLUGIN.usage = "<string:Command>"
 PLUGIN.help = "Runs a server command and optionally outputs its results"
-PLUGIN.example = "!rcon sv_allowcslua 1"
+PLUGIN.example = "anus rcon sv_allowcslua 1"
 PLUGIN.category = "Utility"
 	-- won't show who kicked the player (unless they type it in chat ha)
 PLUGIN.anonymous = true

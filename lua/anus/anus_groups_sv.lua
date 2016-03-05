@@ -1,7 +1,7 @@
 anus.Users = anus.Users or {}
 anus.TempUsers = anus.TempUsers or {}
 
-hook.Add("InitPostEntity", "anus_GrabDataInfo", function()
+hook.Add("Initialize", "anus_GrabDataInfo", function()
 	if file.Exists( "anus/users.txt", "DATA" ) then
 		anus.Users = von.deserialize( file.Read( "anus/users.txt", "DATA" ) )
 		for k,v in next, anus.Users do
@@ -18,7 +18,9 @@ hook.Add("InitPostEntity", "anus_GrabDataInfo", function()
 			file.Write( "anus/groups.txt", von.serialize( anus.Groups ) )
 		end )
 	end
-
+	
+	ANUSGROUPSLOADED = true
+	hook.Call( "anus_SVGroupsLoaded", nil )
 end)
 
 if not timer.Exists("anus_refreshtemps") then
