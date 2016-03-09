@@ -97,3 +97,11 @@ function anus.TeleportPlayer( from, to, bForce )
 
 	return tr.HitPos
 end
+
+function anus.ServerLog( msg, isdebug )
+	ServerLog( "[anus] " .. msg .. "\n" )
+	local date = os.date( "%d_%m_%Y", os.time() )
+	local time = os.date( "%H:%M:%S", os.time() )
+	local path = not isdebug and "logs" or "debuglogs" 
+	file.Append( "anus/" .. path .. "/" .. date .. ".txt", time .. " - " .. msg .. "\n" )
+end
