@@ -335,8 +335,17 @@ if SERVER then
 		for k,v in next, player.GetAll() do
 			chat.AddText( v, unpack( args ) )
 		end
-	end
+		
+		local resultant_string = ""
+		for k,v in next, args do
+			if type( v ) != "string" then continue end
 			
+			resultant_string = resultant_string .. " " .. v
+		end
+	
+		anus.ServerLog( resultant_string ) 
+	end
+	
 end
 
 function anus.DebugNotify( msg )

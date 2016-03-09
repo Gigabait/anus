@@ -31,7 +31,9 @@ function anus.RegisterPlugin( tbl )
 		anus.Groups[ group ].Permissions[ tbl.id ] = true
 	end
 	
-	anus.AddCommand( tbl )
+	if not tbl.notRunnable then
+		anus.AddCommand( tbl )
+	end
 end
 
 function anus.LoadPlugins( dir )
@@ -80,3 +82,13 @@ function anus.LoadPlugins( dir )
 	end
 end
 hook.Add( "anus_SVGroupsLoaded", "RunLoadPlugins", anus.LoadPlugins )
+
+function anus.GetPlugins()
+	return anus.Plugins
+end
+
+function anus.PluginLoad( plugin )
+end
+
+function anus.PluginUnLoad( plugin )
+end

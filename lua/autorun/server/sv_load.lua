@@ -67,6 +67,7 @@ if SERVER then
 	net.Receive("anus_authenticate2", function( len, pl )
 		if not IsValid(pl) or pl.HasAuthed then return end
 		pl.HasAuthed = true
+		hook.Call( "anus_PlayerAuthenticated", nil, pl )
 		
 		if anus.Users and anus.Users[ pl:SteamID() ] then
 			if anus.Users[ pl:SteamID() ].time then

@@ -293,36 +293,40 @@ anus.DeleteCommand = anus.RemoveCommand
 	
 
 if CLIENT then
-	include("anus/anus_init_cl.lua")
-	include("anus/anus_init_sh.lua")
-	include("anus/anus_util_sh.lua")
-	include("anus/anus_bans_cl.lua")
-	include("anus/anus_groups_sh.lua")
-	include("anus/anus_player_cl.lua")
-	include("anus/anus_plugins_sh.lua")
-	include("anus/skins/anus.lua")
-	include("anus/skins/anus_actual.lua")
-	include("anus/vgui/anus_mainmenu.lua")
-	include("anus/newvgui/anus_mainmenu.lua")
+	include( "anus/anus_init_cl.lua" )
+	include( "anus/anus_init_sh.lua" )
+	include( "anus/anus_util_sh.lua" )
+	include( "anus/anus_bans_cl.lua" )
+	include( "anus/anus_groups_sh.lua" )
+	include( "anus/anus_player_cl.lua" )
+	include( "anus/anus_plugins_sh.lua" )
+	include( "anus/skins/anus.lua" )
+	include( "anus/skins/anus_actual.lua" )
+	include( "anus/vgui/anus_mainmenu.lua" )
+	include( "anus/newvgui/anus_mainmenu.lua" )
 end
 
 local function ReloadPlugins()
 	if anus.Plugins then
 		anus.LoadPlugins()
 	else
-		print("ANUS NOT LOADING PLUGINS.")
+		print( "ANUS NOT LOADING PLUGINS." )
 	end
 end
 
 
-hook.Add("Initialize", "anus_LoadThings", function()
+hook.Add( "Initialize", "anus_LoadThings", function()
 	if SERVER then
-		file.CreateDir("anus")
-		timer.Simple(0.1, function() file.CreateDir("anus/users") end)
+		file.CreateDir( "anus" )
+		timer.Simple( 0.1, function()
+			file.CreateDir( "anus/users" )
+			file.CreateDir( "anus/logs" )
+			file.CreateDir( "anus/debuglogs" )
+		end )
 	end
 	
 	ReloadPlugins()
-end)
+end )
 
 local _R = debug.getregistry()
 function _R.Player:IsDev()
