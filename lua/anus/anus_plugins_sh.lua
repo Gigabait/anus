@@ -3,13 +3,17 @@ anus.Plugins = {}
 if anus.LoadPlugins then anus.LoadPlugins() end
 
 function anus.RegisterPlugin( tbl )
-	if not tbl then Error( debug.getinfo(1, "S").short_src .. " didn't supply table." ) return end
+	if not tbl then
+		Error( debug.getinfo( 1, "S" ).short_src .. " didn't supply plugin table." ) 
+		return
+	end
 
-	anus.Plugins[ tbl.id ] = tbl
+	anus.Plugins[ tbl.id ] = anus.Plugins[ tbl.id ] or tbl
 	anus.Plugins[ tbl.id ].Filename = ANUS_FILENAME or "#ERROR"
 	anus.Plugins[ tbl.id ].FilenameStripped = ANUS_FILENAMESTRIPPED or "#ERROR"
 	anus.Plugins[ tbl.id ].help = anus.Plugins[ tbl.id ].help or "No help found."
 	anus.Plugins[ tbl.id ].usageargs = {}
+	
 	local explodeusage = string.Explode( ";", anus.Plugins[ tbl.id ].usage and anus.Plugins[ tbl.id ].usage or "" )
 	for k,v in next, ( explodeusage or {} ) do 
 		local str = v 
@@ -30,10 +34,28 @@ function anus.RegisterPlugin( tbl )
 		anus.Groups[ group ].Permissions = anus.Groups[ group ].Permissions or {}
 		anus.Groups[ group ].Permissions[ tbl.id ] = true
 	end
-	
+
 	if not tbl.notRunnable then
 		anus.AddCommand( tbl )
 	end
+	
+	--anus.RegisterPluginHooks( tbl )
+	
+end
+
+if CLIENT then
+	function anus.RegisterCategory( tbl )
+		if not tbl then
+			Error( debug.getinfo( 1, "S" ).short_src .. " didn't supply category table." )
+			return
+		end
+
+		anus.AddCategory( tbl )
+	end
+end
+
+anus.RegisteredHooks = {}
+function anus.RegisterHook( name, id, func )
 end
 
 function anus.LoadPlugins( dir )
@@ -60,6 +82,11 @@ function anus.LoadPlugins( dir )
 				else
 					include( "anus/plugins/" .. v .. "/" .. b )
 				end
+			elseif b == "cl_" .. v .. ".lua" then
+				AddCSLuaFile( "anus/plugins/" .. v .. "/" .. b )
+				if CLIENT then
+					include( "anus/plugins/" .. v .. "/" .. b )
+				end
 			else
 				if SERVER then
 					AddCSLuaFile( "anus/plugins/" .. v .. "/" .. b )
@@ -74,7 +101,12 @@ function anus.LoadPlugins( dir )
 		ANUS_FILENAME = v:lower()
 		ANUS_FILENAMESTRIPPED = string.sub( ANUS_FILENAME, 1, -(#string.GetExtensionFromFilename(ANUS_FILENAME) + 2) )
 		
-		include( "anus/plugins/" .. v )
+		if string.sub( v, 1, 3 ) == "cl_" and CLIENT then
+			print( "cl file ", v )
+			include( "anus/plugins/" .. v )
+		elseif string.sub( v, 1, 3 ) != "cl_" then
+			include( "anus/plugins/" .. v )
+		end
 		
 		if SERVER then
 			AddCSLuaFile( "anus/plugins/" .. v )
@@ -86,6 +118,7 @@ hook.Add( "anus_SVGroupsLoaded", "RunLoadPlugins", anus.LoadPlugins )
 function anus.GetPlugins()
 	return anus.Plugins
 end
+
 
 function anus.PluginLoad( plugin )
 end

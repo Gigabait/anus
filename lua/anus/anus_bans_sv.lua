@@ -68,8 +68,8 @@ function anus.BanPlayer( caller, target, reason, time )
 	if time == 0 then iTime = 0 end
 	
 	
-	local info = { steamid = target, ip = "", name = "", reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
-	if IsValid( target ) then
+	local info = { steamid = target, ip = "", name = target, reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
+	if type( target ) != "string" and IsValid( target ) then
 		info.steamid = target:SteamID()
 		info.name = target:Nick()
 		info.ip = target:IPAddress()

@@ -84,26 +84,6 @@ concommand.Add("anus_menu", function( pl )
 	end
 end)
 
-concommand.Add("anus_menu_new", function( pl )
-	if IsValid(anus_MainMenuNew) then
-		anus_MainMenuNew:Remove()
-		anus_MainMenuNew = nil
-		
-		if IsValid(anus_qkick_menu) then
-			anus_qkick_menu:Remove()
-			anus_qkick_menu = nil
-		end
-		if IsValid(anus_qban_menu) then
-			anus_qban_menu:Remove()
-			anus_qban_menu = nil
-		end
-		
-		gui.EnableScreenClicker( false )
-	else
-		anus_MainMenuNew = vgui.Create("anus_mainmenu_new")
-	end
-end)
-
 hook.Add("ChatText", "anus_RemoveKickBan", function( index, name, text, type )
 	if type == "joinleave" and string.find(text, "Check console") then
 		return true

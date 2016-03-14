@@ -299,11 +299,19 @@ if CLIENT then
 	include( "anus/anus_bans_cl.lua" )
 	include( "anus/anus_groups_sh.lua" )
 	include( "anus/anus_player_cl.lua" )
+	include( "anus/vgui/anus_content.lua" )
+	include( "anus/anus_vgui_cl.lua" )
 	include( "anus/anus_plugins_sh.lua" )
-	include( "anus/skins/anus.lua" )
-	include( "anus/skins/anus_actual.lua" )
-	include( "anus/vgui/anus_mainmenu.lua" )
-	include( "anus/newvgui/anus_mainmenu.lua" )
+	include( "anus/vgui/anus_main.lua" )
+end
+
+local files, dirs = file.Find( "anus/vgui/categories/*", "LUA" )
+for k,v in next, files do
+	if SERVER then
+		AddCSLuaFile( "anus/vgui/categories/" .. v )
+	elseif CLIENT then
+		include( "anus/vgui/categories/" .. v )
+	end
 end
 
 local function ReloadPlugins()
