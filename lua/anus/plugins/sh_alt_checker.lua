@@ -1,3 +1,4 @@
+	-- todo : check for family sharing
 local PLUGIN = {}
 PLUGIN.id = "altcheck"
 PLUGIN.name = "Alt Checker"

@@ -24,8 +24,8 @@ function plugin:OnRun( pl, arg, target )
 			end
 				
 			v.OldWeapons = {}
-			for k,v in pairs( v:GetWeapons() ) do
-				v.OldWeapons[ #v.OldWeapons + 1 ] = v:GetClass()
+			for _,b in pairs( v:GetWeapons() ) do
+				v.OldWeapons[ #v.OldWeapons + 1 ] = b:GetClass()
 			end
 
 			v:StripWeapons()

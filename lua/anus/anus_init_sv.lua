@@ -60,43 +60,26 @@ net.Receive("anus_requestusers", function( len, pl )
 	anusBroadcastUsers( pl )
 end)
 
-	-- Thanks ULX. Will remove if requested.
-function anus.TeleportPlayer( from, to, bForce )
-	if not to:IsInWorld() and not bForce then return false end
-
-	local yawForward = to:EyeAngles().yaw
-	local directions = { -- Directions to try
-		math.NormalizeAngle( yawForward - 180 ), -- Behind first
-		math.NormalizeAngle( yawForward + 180 ), -- Front
-		math.NormalizeAngle( yawForward + 90 ), -- Right
-		math.NormalizeAngle( yawForward - 90 ), -- Left
-		yawForward,
-	}
-
-	local t = {}
-	t.start = to:GetPos() + Vector( 0, 0, 15 ) -- Move them up a bit so they can travel across the ground
-	t.filter = { to, from }
-
-	local i = 1
-	t.endpos = to:GetPos() + Angle( 0, directions[ i ], 0 ):Forward() * 47 -- (33 is player width, this is sqrt( 33^2 * 2 ))
-	local tr = util.TraceEntity( t, from )
-	while tr.Hit do -- While it's hitting something, check other angles
-		i = i + 1
-		if i > #directions then  -- No place found
-			if bForce then
-				return to:GetPos() + Angle( 0, directions[ 1 ], 0 ):Forward() * 47
-			else
-				return false
-			end
+--[[concommand.Add( "test", function( pl )
+	local a = 1
+	timer.Create( "testpos", 0.1, 360, function()
+		local pos = anus.TeleportPlayer2( Entity(2), pl, false, a )
+		if pos then 
+			Entity(2):SetPos( pos ) 
 		end
+		a = a + 1
+	end )
+end )
 
-		t.endpos = to:GetPos() + Angle( 0, directions[ i ], 0 ):Forward() * 47
-
-		tr = util.TraceEntity( t, from )
+concommand.Add( "test2", function( pl )
+	for k,v in next, player.GetBots() do 
+		local pos = anus.TeleportPlayer2( v, pl, false  )
+		if pos then 
+			v:SetPos( pos )
+		end
 	end
+end )]]
 
-	return tr.HitPos
-end
 
 function anus.ServerLog( msg, isdebug )
 	ServerLog( "[anus] " .. msg .. "\n" )

@@ -18,6 +18,17 @@ function _R.Player:GetUserGroup()
 	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ]["group"] or self:OldGetUserGroup()
 end
 
+	-- check immunity
+function _R.Entity:HasAccess( plugin )
+	if not IsValid( self ) then return true end
+	if not LocalPlayer().PlayerInfo or not LocalPlayer().PlayerInfo[ self ] then return false end
+	if LocalPlayer().PlayerInfo[ self ].perms[ plugin ] then return true end
+	if self.UserGroup == "owner" then return true end
+
+	return false
+end
+
+
 hook.Add("Initialize", "anus_sendauth", function()
 	timer.Simple(0.1, function()
 		net.Start("anus_authenticate2")

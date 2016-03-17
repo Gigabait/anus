@@ -73,136 +73,75 @@ end
     Part of Library: chat
     Available On: Server
 ------------------------------------------------------------------------------------------------*/
-	// Credits to Overv.
---[[if ( SERVER ) then
-	util.AddNetworkString( "AddText" )
+// Credits to Overv.
+// And MeepDarkness
+     
+local BITS              = 4;
 
+local E_DUN             = 0;
+local E_STR             = 1;
+local E_COL             = 2;
+local function IsColor(obj)
+	local need = {
+		r = true;
+		g = true;
+		b = true;
+		a = true;
+	};
+	for k,v in pairs(obj) do
+		if(need[k]) then continue; end
+		return false;
+	end
+	return true;
+end
+if(SERVER) then
+           
+	util.AddNetworkString("AddText")
+     
+           
 	chat = chat or {}
-    function chat.AddText( ... )
+	function chat.AddText(ply, ...)
 		local arg = {...}
-        if ( type( arg[1] ) == "Player" ) then
-			ply = arg[1] 
-		end
-		
-		if ply and not IsValid(ply) then
-			ply = nil
-		end
-		
-		--print(#arg)
-		
+
 		net.Start( "AddText" )
-			net.WriteUInt( #arg, 12 )
-			for _, v in pairs( arg ) do
-				if type( v ) == "string" then
-					print( v )
-					net.WriteString( v )
-				elseif type( v ) == "table" then
-					if not v.r then continue end
-						-- yeah um, this shit's weird. half the time it adds an extra character and i dont know why.. lol
-						-- 16 should work fine but i seem to have to keep increasing the #
-					net.WriteUInt( math.Clamp(v.r, 0, 255), 8 )
-					net.WriteUInt( math.Clamp(v.g, 0, 255), 8 )
-					net.WriteUInt( math.Clamp(v.b, 0, 255), 8 )
-					net.WriteUInt( math.Clamp(v.a, 0, 255), 8 )
-				end
+		for _, v in pairs(arg) do
+			if type(v) == "function" then continue end
+				
+			if(type(v) == "string") or type(v) == "boolean" or type(v) == "number" then
+				net.WriteUInt(E_STR, BITS);
+				net.WriteString(tostring(v))
+			elseif(IsColor(v)) then
+				net.WriteUInt(E_COL, BITS);
+				if not v.r then continue end
+				net.WriteUInt(v.r, 8)
+				net.WriteUInt(v.g, 8)
+				net.WriteUInt(v.b, 8)
+				net.WriteUInt(v.a, 8)
 			end
-		if ply != nil then
-			net.Send( ply )
+		end
+		net.WriteUInt(E_DUN, BITS);
+		if(ply ~= nil) then
+			net.Send(ply)
 		else
 			net.Broadcast()
 		end
-    end
-else	
-	net.Receive( "AddText", function()
-		local argc = net.ReadUInt( 12 )
+	end
+else  
+	net.Receive("AddText", function()
 		local args = {}
-		for i=1, argc / 2, 1 do
-			args[ #args + 1 ] = Color( net.ReadUInt( 8 ), net.ReadUInt( 8 ), net.ReadUInt( 8 ), net.ReadUInt( 8 ) )
-			local strings = net.ReadString()
-			--print( tostring(i) .. ": " .. strings)
-			strings = string.gsub(strings, ".%z", "")
-			args[ #args + 1 ] = strings
-		end
-		
-		chat.AddText( unpack( args ) )
-	end )
-end]]
-
-	
-
-    // Credits to Overv.
-	// And MeepDarkness
-     
-    local BITS              = 4;
-     
-    local E_DUN             = 0;
-    local E_STR             = 1;
-    local E_COL             = 2;
-    local function IsColor(obj)
-            local need = {
-                    r = true;
-                    g = true;
-                    b = true;
-                    a = true;
-            };
-			if type( obj ) != "table" then
-				print( obj )
+		while(true) do
+			local type = net.ReadUInt(BITS);
+			if(type == E_COL) then
+				args[#args + 1] = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8));
+			elseif(type == E_STR) then
+				args[ #args + 1 ] = net.ReadString();
+			elseif(type == E_DUN) then
+				break;
 			end
-            for k,v in pairs(obj) do
-                    if(need[k]) then continue; end
-                    return false;
-            end
-            return true;
-    end
-    if(SERVER) then
-           
-            util.AddNetworkString("AddText")
-     
-           
-            chat = chat or {}
-            function chat.AddText(ply, ...)
-                    local arg = {...}
-               
-                    net.Start( "AddText" )
-                            for _, v in pairs(arg) do
-									if type(v) == "function" then continue end
-									
-                                    if(type(v) == "string") or type(v) == "boolean" or type(v) == "number" then
-                                            net.WriteUInt(E_STR, BITS);
-                                            net.WriteString(tostring(v))
-                                    elseif(IsColor(v)) then
-                                            net.WriteUInt(E_COL, BITS);
-                                            if not v.r then continue end
-                                            net.WriteUInt(v.r, 8)
-                                            net.WriteUInt(v.g, 8)
-                                            net.WriteUInt(v.b, 8)
-                                            net.WriteUInt(v.a, 8)
-                                    end
-                            end
-                            net.WriteUInt(E_DUN, BITS);
-                    if(ply ~= nil) then
-                            net.Send(ply)
-                    else
-                            net.Broadcast()
-                    end
-            end
-    else  
-            net.Receive("AddText", function()
-                    local args = {}
-                    while(true) do
-                            local type = net.ReadUInt(BITS);
-                            if(type == E_COL) then
-                                    args[#args + 1] = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8));
-                            elseif(type == E_STR) then
-                                    args[ #args + 1 ] = net.ReadString();
-                            elseif(type == E_DUN) then
-                                    break;
-                            end
-                    end
-                    chat.AddText(unpack(args));
-            end);
-    end
-
+		end
+		chat.AddText(unpack(args));
+	end);
+end
 
 
 if SERVER then	

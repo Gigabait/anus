@@ -1,8 +1,16 @@
 local panel = {}
 
+surface.CreateFont( "anus_SmallText",
+{
+	font = "Verdana",
+	weight = 640,
+	size = 16,
+} )
+
 function panel:Init()
 	--self:SetSize( 
 	--self:DockMargin( 60, 20, 20, 20 )
+	self:DockPadding( 0, 20, 0, 20 )
 end
 
 function panel:SetTitle( strTitle )
@@ -23,7 +31,7 @@ end
 
 function panel:Think()
 	for k,v in next, self:GetChildren() do
-		v:DockMargin( 20, 80, 20, 20 )
+		v:DockMargin( 20, 40, 20, -10 )
 	end
 end
 

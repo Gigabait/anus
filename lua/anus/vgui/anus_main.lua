@@ -6,21 +6,11 @@ surface.CreateFont( "anus_SmallTitle",
 	font = "Verdana",
 	size = 21,
 } )
-surface.CreateFont( "anus_SmallTitleFancy",
-{
-	font = "Wide Latin",
-	size = 20,
-} )
 surface.CreateFont( "anus_MediumTitle",
 {
 	font = "Verdana",
 	weight = 900,
 	size = 23,
-} )
-surface.CreateFont( "anus_MediumTitleFancy",
-{
-	font = "Dayton", --"Wide Latin",
-	size = 22,
 } )
 surface.CreateFont( "anus_BigTitle",
 {
@@ -28,14 +18,9 @@ surface.CreateFont( "anus_BigTitle",
 	font = "Verdana",
 	size = 26,
 } )
-surface.CreateFont( "anus_BigTitleFancy",
-{
-	font = "Dayton", --"Wide Latin",
-	size = 25,
-} )
 
 local psizew,psizeh = 960, 640
-local bgColor = Color( 218, 218, 218, 255 )
+local bgColor = Color( 231, 230, 237, 255 )
 
 function panel:Init()
 	self:SetSize( psizew, psizeh )
@@ -43,7 +28,7 @@ function panel:Init()
 	self:SetKeyBoardInputEnabled( true )
 	gui.EnableScreenClicker( true )
 	
-	self.Categories = self:Add( "DScrollPanel" )
+	self.Categories = self:Add( "anus_scrollpanel" )
 	self.Categories:SetSize( self:GetSize() / 7, self:GetTall() )
 	--self.Categories:SetPos( 0, 0 )
 	self.Categories:Dock( LEFT )
@@ -64,14 +49,22 @@ function panel:Init()
 		self.CategoryList.k.Paint = function( pnl, w, h )
 				-- Perimeter of button
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
+			
+			local height = h - 1
+			if self.Categories.pnlCanvas:GetChildren()[ #self.Categories.pnlCanvas:GetChildren() ] == pnl and pnl.Pressed then
+				height = h
+			end
+			
 				-- interior of button
-			draw.RoundedBox( 0, 0, 0, w - 1, h - 1, color_white )
+			draw.RoundedBox( 0, 0, 0, w - (pnl.Pressed and 0 or 1), height, pnl.Pressed and bgColor or color_white )
 		end
 		self.CategoryList.k.DoClick = function( pnl )
 			if self.CategoryLastClicked then
 				self.Content:Remove()
+				self.CategoryLastClicked.Pressed = false
 			end
 			self.CategoryLastClicked = pnl
+			pnl.Pressed = true
 		
 			local categoryposx, categoryposy = self.Categories:GetPos()
 		

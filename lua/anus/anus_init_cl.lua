@@ -1,27 +1,27 @@
 anus_MainMenu = anus_MainMenu or nil
-
-hook.Add("OnReloaded", "anus_closemenus", function()
-	if IsValid(anus_MainMenu) then
+ 
+hook.Add( "OnReloaded", "anus_closemenus", function()
+	if IsValid( anus_MainMenu ) then
 		anus_MainMenu:Remove()
 		anus_MainMenu = nil
 	end
-end)
+end )
 
 anus.PlayerDC = anus.PlayerDC or {}
-net.Receive("anus_broadcastdc", function()
+net.Receive( "anus_broadcastdc", function()
 	anus.PlayerDC = {}
 	
 	local amt = net.ReadUInt( 16 )
 	local server_hour = net.ReadUInt( 6 )
 	for i=1,amt do
-		anus.PlayerDC[ net.ReadString() ] = {name = net.ReadString(), kills = net.ReadUInt( 16 ), hour = net.ReadUInt( 6 ), minute = net.ReadUInt( 8 ), second = net.ReadUInt( 8 )}
+		anus.PlayerDC[ net.ReadString() ] = { name = net.ReadString(), kills = net.ReadUInt( 16 ), hour = net.ReadUInt( 6 ), minute = net.ReadUInt( 8 ), second = net.ReadUInt( 8 ) }
 	end
 	
 	anus.ServerHour = server_hour
-end)
+end )
 
 anus.Users = anus.Users or {}
-net.Receive("anus_broadcastusers", function()
+net.Receive( "anus_broadcastusers", function()
 	anus.Users = {}
 	
 	local amt = net.ReadUInt( 8 )
@@ -29,63 +29,72 @@ net.Receive("anus_broadcastusers", function()
 		local group = net.ReadString()
 		anus.Users[ group ] = anus.Users[ group ] or {}
 		local steamid = net.ReadString()
-		anus.Users[ group ][ steamid ] = {name = net.ReadString()}
+		anus.Users[ group ][ steamid ] = { name = net.ReadString() }
 
 		steamworks.RequestPlayerInfo( util.SteamIDTo64( steamid ) ) 
 	end
 	
-	hook.Call("OnPlayerGroupsChanged")
-end)
+	hook.Call( "OnPlayerGroupsChanged" )
+end )
 
-concommand.Add("+anus_menu", function( pl )
+concommand.Add( "+anus_menu", function( pl )
 	if IsValid(anus_MainMenu) then
 		anus_MainMenu:Remove()
 		anus_MainMenu = nil
 	else
-		anus_MainMenu = vgui.Create("anus_mainmenu")
+		anus_MainMenu = vgui.Create( "anus_mainmenu" )
 	end
-end)
+end )
 
-concommand.Add("-anus_menu", function( pl )
-	if IsValid(anus_MainMenu) then
+concommand.Add( "-anus_menu", function( pl )
+	if IsValid( anus_MainMenu ) then
 		anus_MainMenu:Remove()
 		anus_MainMenu = nil
 		
-		if IsValid(anus_qkick_menu) then
+		if IsValid( anus_qkick_menu ) then
 			anus_qkick_menu:Remove()
 			anus_qkick_menu = nil
 		end
-		if IsValid(anus_qban_menu) then
+		if IsValid( anus_qban_menu ) then
 			anus_qban_menu:Remove()
 			anus_qban_menu = nil
 		end
 		
 		gui.EnableScreenClicker( false )
 	end
-end)
+end )
 
-concommand.Add("anus_menu", function( pl )
-	if IsValid(anus_MainMenu) then
+concommand.Add( "anus_menu", function( pl )
+	if IsValid( anus_MainMenu ) then
 		anus_MainMenu:Remove()
 		anus_MainMenu = nil
 		
-		if IsValid(anus_qkick_menu) then
+		if IsValid( anus_qkick_menu ) then
 			anus_qkick_menu:Remove()
 			anus_qkick_menu = nil
 		end
-		if IsValid(anus_qban_menu) then
+		if IsValid( anus_qban_menu ) then
 			anus_qban_menu:Remove()
 			anus_qban_menu = nil
 		end
 		
 		gui.EnableScreenClicker( false )
 	else
-		anus_MainMenu = vgui.Create("anus_mainmenu")
+		anus_MainMenu = vgui.Create( "anus_mainmenu" )
 	end
 end)
 
-hook.Add("ChatText", "anus_RemoveKickBan", function( index, name, text, type )
-	if type == "joinleave" and string.find(text, "Check console") then
+hook.Add( "ChatText", "anus_RemoveKickBan", function( index, name, text, type )
+	if type == "joinleave" and string.find( text, "Check console" ) then
 		return true
 	end
-end)
+end )
+
+hook.Add( "Initialize", "anus_RequestBans", function()
+	timer.Simple( 3, function()
+		if not LocalPlayer():HasAccess( "unban" ) then return end
+		
+		net.Start( "anus_requestbans" )
+		net.SendToServer()
+	end )
+end )

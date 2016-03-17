@@ -56,8 +56,8 @@ local function anus_AutoComplete( cmd, args )
 						end
 
 						if explodeusage[1] == "player" then
-							for a,b in pairs(player.GetAll()) do
-								if explodeargs[ 2 ] and not string.find(string.lower(b:Nick()), explodeargs[ 2 ]) then continue end
+							for a,b in next, player.GetAll() do
+								if explodeargs[ 2 ] and not string.find( string.lower( b:Nick() ), explodeargs[ 2 ], nil, true ) then continue end
 								output[ #output + 1 ] = "anus " .. k .. " \"" .. b:Nick() .. "\""
 									-- if there's more than one usage option, display them.
 								if #explodeusage > 1 then
@@ -261,6 +261,12 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		local a = {}
 		a = string.Explode( " ", sargs )
 		
+		for k,v in next, a do
+			if #v == 0 then
+				a[ k ] = " "
+			end
+		end
+		
 		run( p, "anus_" .. info.id, a, sargs )
 	end
 	
@@ -269,6 +275,12 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		local s = net.ReadString()
 		local a = {}
 		a = string.Explode( " ", s )
+
+		for k,v in next, a do
+			if #v == 0 then
+				a[ k ] = " "
+			end
+		end
 		
 		run( p, "anus_" .. info.id, a, s )
 	end )
@@ -300,6 +312,10 @@ if CLIENT then
 	include( "anus/anus_groups_sh.lua" )
 	include( "anus/anus_player_cl.lua" )
 	include( "anus/vgui/anus_content.lua" )
+	include( "anus/vgui/anus_scrollbargrip.lua" )
+	include( "anus/vgui/anus_dvscrollbar.lua" )
+	include( "anus/vgui/anus_scrollpanel.lua" )
+	include( "anus/vgui/anus_button.lua" )
 	include( "anus/anus_vgui_cl.lua" )
 	include( "anus/anus_plugins_sh.lua" )
 	include( "anus/vgui/anus_main.lua" )

@@ -66,7 +66,10 @@ end]]
 function anus.BanPlayer( caller, target, reason, time )
 	local iTime = os.time() + time * 60
 	if time == 0 then iTime = 0 end
-	
+
+	if type( target ) == "string" then
+		target = string.gsub( target, "\"", "" )
+	end
 	
 	local info = { steamid = target, ip = "", name = target, reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
 	if type( target ) != "string" and IsValid( target ) then
