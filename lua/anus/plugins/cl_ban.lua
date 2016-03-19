@@ -39,6 +39,11 @@ function CATEGORY:Initialize( parent )
 		menu:AddOption( "Edit Reason" )
 		menu:AddSpacer()
 		menu:AddOption( "Close" )
+		menu.Think = function( pnl2 )
+			if not IsValid( pnl ) then
+				menu:Remove()
+			end
+		end
 		--DisableClipping( false )
 	end
 	

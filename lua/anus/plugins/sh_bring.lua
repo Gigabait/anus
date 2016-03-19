@@ -40,22 +40,28 @@ function plugin:OnRun( pl, args, target )
 			local pos = anus.TeleportPlayer( v, pl, (force or v:GetMoveType() == "MOVETYPE_NOCLIP") )
 			if pos then
 				v:SetPos( pos )
+				v:SetLocalVelocity( Vector( 0, 0, 0 ) )
 				target_tele[ #target_tele + 1 ] = v
 			else
-					-- hey don't give up just yet!
+					-- don't give up just yet!
 				local pos2
-				for a,b in pairs( target_tele ) do
-					pos2 = anus.TeleportPlayer( v, b, (force or v:GetMoveType() == "MOVETYPE_NOCLIP") )
+				local noTele = false
+				for a,b in next, target_tele do
+					pos2 = anus.TeleportPlayer( v, b, ( force or v:GetMoveType() == "MOVETYPE_NOCLIP" ) )
 					if pos2 then
 						v:SetPos( pos2 )
+						v:SetLocalVelocity( Vector( 0, 0, 0 ) )
 						target_tele[ #target_tele + 1 ] = v
 						break
-					else
-							-- ok fine, give up.
+					end
+					
+						-- ok give up.
+					if #target_tele == a then
 						target[ k ] = nil
 						break
 					end
 				end
+				
 			end
 				
 		end
@@ -83,6 +89,7 @@ function plugin:OnRun( pl, args, target )
 		if not pos then pl:ChatPrint("Couldn't find a spot to put " .. target:Nick() .. " in.") return end
 		
 		target:SetPos( pos )
+		target:SetLocalVelocity( Vector( 0, 0, 0 ) )
 		
 		anus.NotifyPlugin( pl, plugin.id, "brought ", target, " to them." )
 	

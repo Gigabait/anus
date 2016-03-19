@@ -44,9 +44,12 @@ function plugin:OnRun( pl, args, target )
 			pl:SetMoveType( MOVETYPE_NOCLIP )
 			pl.AnusNoclipped = true
 			pl:SetPos( target:GetPos() )
+		else
+			return
 		end
 	else
 		pl:SetPos( pos )
+		pl:SetLocalVelocity( Vector( 0, 0, 0 ) )
 	end
 
 	anus.NotifyPlugin( pl, plugin.id, "teleported to ", target )

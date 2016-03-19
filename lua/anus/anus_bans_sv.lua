@@ -16,6 +16,7 @@ local function anusBroadcastBans( pl )
 end
 net.Receive("anus_requestbans", function( len, client )
 	if not client:HasAccess( "unban" ) then return end
+	print( client:Nick() .. " hase requested bnas" )
 	
 	anusBroadcastBans( client )
 end)

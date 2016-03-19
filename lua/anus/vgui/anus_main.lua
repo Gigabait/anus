@@ -56,7 +56,13 @@ function panel:Init()
 			end
 			
 				-- interior of button
-			draw.RoundedBox( 0, 0, 0, w - (pnl.Pressed and 0 or 1), height, pnl.Pressed and bgColor or color_white )
+				
+				
+				-- old, without border on press
+		--	draw.RoundedBox( 0, 0, 0, w - (pnl.Pressed and 0 or 1), height, pnl.Pressed and bgColor or color_white )
+				-- new, with border on press, with old bg color
+		--	draw.RoundedBox( 0, 0, 0, w - 1, height, pnl.Pressed and bgColor or color_white )
+			draw.RoundedBox( 0, 0, 0, w - 1, height, pnl.Pressed and Color( 225, 225, 225, 255 ) or color_white )
 		end
 		self.CategoryList.k.DoClick = function( pnl )
 			if self.CategoryLastClicked then
