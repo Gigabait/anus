@@ -49,7 +49,7 @@ anus.Groups[ "admin" ] =
 anus.Groups[ "superadmin" ] =
 {
 	--id = 4,
-	name = "Superadmin",
+	name = "SuperAdmin",
 	Inheritance = "admin",
 	isadmin = true,
 	issuperadmin = true,

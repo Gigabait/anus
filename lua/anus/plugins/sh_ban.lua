@@ -6,7 +6,7 @@ PLUGIN.usage = "<player:Player>; [string:Time]; [string:Reason]"
 	-- String;Default reason
 PLUGIN.args = {"Int;0;1461", "String;No reason given."}
 PLUGIN.help = "Bans a player from the server"
-PLUGIN.example = "!ban bot01 1440 1 day ban." 
+PLUGIN.example = "!ban bot01 1d 1 day ban." 
 PLUGIN.category = "Utility"
 PLUGIN.chatcommand = "ban"
 PLUGIN.defaultAccess = "admin"
@@ -53,13 +53,13 @@ anus.RegisterPlugin( PLUGIN )
 
 local PLUGIN = {}
 PLUGIN.id = "banid"
-PLUGIN.name = "banid"
+PLUGIN.name = "BanID"
 PLUGIN.author = "Shinycow"
 PLUGIN.usage = "<string:SteamID>; [string:Time]; [string:Reason]"
 	-- String;Default reason
 PLUGIN.args = {"String;STEAM_0:", "Int;0;1461;", "String;No reason given."}
 PLUGIN.help = "Bans a player using their steamid"
-PLUGIN.example = "anus banid STEAM_0:1:99213 30 trolling"
+PLUGIN.example = "anus banid STEAM_0:1:99213 30m trolling"
 PLUGIN.notarget = true
 PLUGIN.category = "Utility"
 PLUGIN.defaultAcess = "superadmin"

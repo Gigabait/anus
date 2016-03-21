@@ -1,7 +1,5 @@
 net.Receive( "anus_broadcastbans", function()
 	anus.Bans = {}
-
-	print( "banns broadcasted :)" )
 	
 	local amt = net.ReadUInt( 32 )
 	for i=1,amt do

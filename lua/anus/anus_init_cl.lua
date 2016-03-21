@@ -98,3 +98,8 @@ hook.Add( "Initialize", "anus_RequestBans", function()
 		net.SendToServer()
 	end )
 end )
+
+hook.Add( "OnPlayerGroupsChanged", "anus_RequestBans", function()
+	net.Start( "anus_requestbans" )
+	net.SendToServer()
+end )
