@@ -118,7 +118,7 @@ function PANEL:PerformLayout()
 end
 
 function PANEL:SizeToContents()
-	local txtsizew, txtsizeh = surface.GetTextSize( self:GetFont() )
+	local txtsizew, txtsizeh = surface.GetTextSize( self:GetText() )
 	
 	self:SetWide( txtsizew + 5 )
 	self:SetTall( txtsizeh + 5 )

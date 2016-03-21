@@ -2,7 +2,7 @@ local CATEGORY = {}
 
 	-- Optional: Player must be able to run this command to view this category
 CATEGORY.pluginid = "unban"
-CATEGORY.CategoryName = "View Bans"
+CATEGORY.CategoryName = "Bans"
 
 function CATEGORY:Initialize( parent )
 	
@@ -10,11 +10,11 @@ function CATEGORY:Initialize( parent )
 	parent.panel:SetTitle( "Manage Bans" )
 	parent.panel:Dock( FILL )
 	
-	parent.panel.listview = parent.panel:Add( "DListView" )
+	parent.panel.listview = parent.panel:Add( "anus_listview" )
 	parent.panel.listview:SetMultiSelect( false )
 	parent.panel.listview:AddColumn( "Name" )
 	parent.panel.listview:AddColumn( "SteamID" )
-	parent.panel.listview:AddColumn( "Banned Until" )
+	parent.panel.listview:AddColumn( "Unban Date" )
 	parent.panel.listview:AddColumn( "Admin" )
 	parent.panel.listview:AddColumn( "Reason" )
 	parent.panel.listview:Dock( FILL )

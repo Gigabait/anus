@@ -1,6 +1,6 @@
 local CATEGORY = {}
 
-CATEGORY.CategoryName = "View Players"
+CATEGORY.CategoryName = "Players"
 
 function CATEGORY:Initialize()
 end

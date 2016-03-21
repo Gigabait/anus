@@ -1,14 +1,14 @@
 local CATEGORY = {}
 
 CATEGORY.pluginid = "addgroup"
-CATEGORY.CategoryName = "Player Ranks"
+CATEGORY.CategoryName = "Player Groups"
 
 function CATEGORY:Initialize( parent )
 	parent.panel = parent:Add( "anus_contentpanel" )
-	parent.panel:SetTitle( "Edit Ranks" )
+	parent.panel:SetTitle( "Player Groups" )
 	parent.panel:Dock( FILL )
 	
-	parent.panel.listview = parent.panel:Add( "DListView" )
+	parent.panel.listview = parent.panel:Add( "anus_listview" )
 	parent.panel.listview:SetMultiSelect( false )
 	parent.panel.listview:AddColumn( "Name" )
 	parent.panel.listview:AddColumn( "SteamID" )

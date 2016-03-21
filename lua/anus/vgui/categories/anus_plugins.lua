@@ -1,6 +1,6 @@
 local CATEGORY = {}
 
-CATEGORY.CategoryName = "View Plugins"
+CATEGORY.CategoryName = "Plugins"
 
 function CATEGORY:Initialize()
 end

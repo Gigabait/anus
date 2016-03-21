@@ -178,8 +178,8 @@ end
 hook.Add( "Initialize", "anus_groupinheritance", anus_GroupsInherit )
 hook.Add( "inherit", "fa", anus_GroupsInherit )
 
-function anus.CreateGroup( name, inheritance )
-	if not name then
+function anus.CreateGroup( id, name, inheritance, icon )
+	if not id or not name then
 		error( "Name not found!")
 	end
 	if not inheritance then
@@ -192,16 +192,26 @@ function anus.CreateGroup( name, inheritance )
 		-- remnants left over from old permission checking
 		-- todo for that ^: Add function to return groups inherited from
 		-- use that for every check for ids.
-	anus.Groups[ name:lower() ] =
+	anus.Groups[ id:lower() ] =
 	{
 	--id = math.random( 6, 99999 ),
 	name = name,
 	Inheritance = inherit,
 	Permissions = {},
-	icon = "",
+	icon = icon or "",
 	}
 	
 	anus_GroupsInherit()
 	
 	return anus.Groups[ name:lower() ]
+end
+
+function anus.RemoveGroup( id )
+	if not id then 
+		error( "ID not found!" )
+	end
+	
+	anus.Groups[ id:lower() ] = nil
+	
+	anus_GroupsInherit()
 end

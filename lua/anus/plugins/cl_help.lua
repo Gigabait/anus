@@ -2,7 +2,7 @@ local CATEGORY = {}
 
 	-- Optional: Player must be able to run this command to view this category
 CATEGORY.pluginid = "help"
-CATEGORY.CategoryName = "View Help"
+CATEGORY.CategoryName = "Help"
 
 function CATEGORY:Initialize( parent )
 	
@@ -10,7 +10,7 @@ function CATEGORY:Initialize( parent )
 	parent.panel:SetTitle( "Command Help" )
 	parent.panel:Dock( FILL )
 	
-	parent.panel.listview = parent.panel:Add( "DListView" )
+	parent.panel.listview = parent.panel:Add( "anus_listview" )
 	parent.panel.listview:SetMultiSelect( false )
 	parent.panel.listview:AddColumn( "Command" )
 	parent.panel.listview:AddColumn( "Description" )

@@ -52,6 +52,8 @@ function PANEL:Init()
 	self.Lines = {}
 	self.Sorted = {}
 
+	self.Icons = {}
+
 	self:SetDirty( true )
 
 	self.pnlCanvas = vgui.Create( "Panel", self )
@@ -542,7 +544,7 @@ end
 function PANEL:SortByColumn( ColumnID, Desc )
 	
 	table.Copy( self.Sorted, self.Lines )
-	
+
 	table.sort( self.Sorted, function( a, b ) 
 
 		if ( Desc ) then

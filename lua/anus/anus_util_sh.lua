@@ -29,33 +29,6 @@ function anus.FindPlayer( arg, argtype )
 	end
 end
 
-	-- doesn't support tables in the table
-function table.SortIntoIncrement( tbl, member )
-	--[[local tbl2 = table.Copy(tbl)
-	
-	local value
-	local tbl3 = {}
-	for k,v in pairs(tbl2) do
-		--if v[ member ] > 
-		--tbl2[ member ] = { member = k }
-		value = {k}
-		tbl3 = table.Copy(value)
-		print(tbl3)
-		k = member
-		tbl2[ k ][ member ] = "test"
-	end]]
-
-		-- i dont know why this is neccessary im not even overriding the original table but w/e
-	local tbl2 = table.Copy( tbl )
-	local tbl3 = {}
-	for k,v in pairs(tbl2) do
-		tbl3[ v[ member ] ] = v
-		tbl3[ v[ member ] ][ member ] = k
-	end
-	
-	return tbl3
-end
-
 function string.NiceName( input )
 	if not input then return "" end
 	if tonumber(input) then return input end
@@ -65,6 +38,61 @@ function string.NiceName( input )
 	
 	return sub1:upper() .. sub2
 end
+
+	-- E.g 1d = 86400 seconds
+	-- returns in seconds
+function anus.ConvertStringToTime( str )
+	--print( "start converting: " .. str )
+	
+	local output = 0
+	local place = 0
+	local lastFound = 0
+	while true do
+		local startpos, endpos = string.find( str, "%a", place )
+		if not startpos then break end
+		
+		local match = string.sub( str, startpos, endpos )
+		
+		--print( startpos, endpos, match, place )
+		
+		local sub = nil
+		
+		if lastFound == 0 then
+			sub = string.sub( str, 1, endpos - 1 )
+			--lastFound = endpos
+			--print( "last found ... " .. lastFound )
+		else
+			sub = string.sub( str, lastFound + 1, endpos - 1 )
+			--sub = string.sub( str, startpos - place, endpos - (place + 1) )
+		end
+		lastFound = endpos
+		
+		if sub and sub != "" then
+			if match == "s" then
+				output = output + sub
+			elseif match == "m" then
+				output = output + ( sub * 60 )
+			elseif match == "d" then
+				output = output + ( sub * 60 * 60 * 24 )
+			elseif match == "w" then
+				output = output + ( sub * 60 * 60 * 24 * 7 )
+			elseif match == "M" then
+				output = output + ( sub * 60 * 60 * 24 * 31 )
+			elseif match == "y" then
+				output = output + ( sub * 60 * 60 * 24 * 31 * 11.7741935 )
+			end
+		end
+
+		place = endpos + 1
+	end
+		
+	--print( "OUTPUT: " .. output )
+		
+	return output != 0 and math.Round( output ) or nil
+end
+	
+	
+
 
 /*------------------------------------------------------------------------------------------------
     chat.AddText([ Player ply,] Colour colour, string text, Colour colour, string text, ... )
