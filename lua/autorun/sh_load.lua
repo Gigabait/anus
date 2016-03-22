@@ -174,6 +174,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 
 		local target = NULL
 
+			-- not needed?
 		if not a[ 1 ] then
 			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
 					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
@@ -184,6 +185,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		end
 			
 		local hasPlayerTarg = false
+		local hasPlayerTargOptional = false
 		
 		for k,v in next, anus.Plugins[ info.id ].usageargs do
 			if v.type == "player" then
@@ -199,7 +201,11 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					local foundPlayer = false
 					foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
 					
-					if not foundPlayer then
+					if usageargs.optional then
+						hasPlayerTargOptional = true
+					end
+					
+					if not foundPlayer and usageargs.optional != true then
 						p:ChatPrint( info.id .. ": No player found for argument " .. k )
 						break
 					end
@@ -226,14 +232,14 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			return
 		end
 
-			-- havent messed with below yet. but should work.
-			-- oh well gonna push update anyways.
-		
 		if hasPlayerTarg and not IsValid( target )
-		and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" )
-		and not anus.Plugins[ info.id ].notarget then
-			p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
-			return
+		and not anus.FindPlayer( a[ 1 ] ) and not anus.FindPlayer( a[ 1 ], "steam" ) then
+			if hasPlayerTargOptional then
+				target = anus.FindPlayer( p:SteamID(), "steam" )
+			else
+				p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+				return
+			end
 		end
 		
 		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then

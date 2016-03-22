@@ -31,6 +31,11 @@ function CATEGORY:Initialize( parent )
 		menu:AddOption( "Change Permissions" )
 		menu:AddSpacer()
 		menu:AddOption( "Close" )
+		menu.Think = function( pnl2 )
+			if not IsValid( pnl ) then
+				menu:Remove()
+			end
+		end
 		--DisableClipping( false )
 	end
 end
