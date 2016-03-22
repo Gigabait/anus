@@ -13,7 +13,7 @@ end
 function PANEL:UpdateColours( skin )
 
 	if self.IconImage then return self:SetTextStyleColor( Color( 0, 0, 0, 0 ) ) end
-
+	
 	if ( self:GetParent():IsLineSelected() ) then return self:SetTextStyleColor( skin.Colours.Label.Bright ) end
 
 	return self:SetTextStyleColor( skin.Colours.Label.Dark )
@@ -229,6 +229,11 @@ function PANEL:DataLayout( ListView )
 end
 
 function PANEL:Paint( w, h )
+	
+	if self:IsLineSelected() then
+		draw.RoundedBox( 0, 0, 0, w, h, Color( 225, 225, 225, 255 ) )
+		return
+	end
 	
 	if self.altLine then
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 240, 240, 240, 255 ) )

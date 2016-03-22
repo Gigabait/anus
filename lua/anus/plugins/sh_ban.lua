@@ -40,9 +40,9 @@ function PLUGIN:OnRun( pl, arg, target )
 		return
 	end
 
-	anus.NotifyPlugin( pl, PLUGIN.id, "banned ", target, " for ", COLOR_STRINGARGS, time .. " seconds ", "(", COLOR_STRINGARGS, reason, ")" )
+	anus.NotifyPlugin( pl, PLUGIN.id, "banned ", target, " for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
 	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-	target:PrintMessage( HUD_PRINTCONSOLE, "Banned from server by " .. pl:SteamID() .. " for " .. reason .. " for " .. time .. " seconds" )
+	target:PrintMessage( HUD_PRINTCONSOLE, "Banned from server by " .. pl:SteamID() .. " for " .. reason .. " for " .. anus.ConvertTimeToString( time ) )
 	target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
 	timer.Simple(0.1, function()
 		if not IsValid(target) then return end
@@ -95,7 +95,7 @@ function PLUGIN:OnRun( pl, arg, target )
 		return
 	end
 
-	anus.NotifyPlugin( pl, PLUGIN.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, time .. " seconds ", "(", COLOR_STRINGARGS, reason, ")" )
+	anus.NotifyPlugin( pl, PLUGIN.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
 	anus.BanPlayer( pl, arg[1], reason, time )
 end
 anus.RegisterPlugin( PLUGIN )

@@ -39,6 +39,28 @@ function string.NiceName( input )
 	return sub1:upper() .. sub2
 end
 
+function string.NiceNumber( iNum, string )
+	if not iNum or not string then return "" end
+	iNum = tonumber( iNum )
+	if not iNum then return "" end
+	
+	if iNum > 1 then
+		string = string .. "s"
+	end
+
+	return string
+end
+	
+	
+
+ANUS_SECOND = 1
+ANUS_MINUTE = 60
+ANUS_HOUR = 60 * 60
+ANUS_DAY = 60 * 60 * 24
+ANUS_WEEK = 60 * 60 * 24 * 7
+ANUS_MONTH = 60 * 60 * 24 * 31
+ANUS_YEAR = 60 * 60 * 24 * 31 * 11.7741935
+
 	-- E.g 1d = 86400 seconds
 	-- returns in seconds
 function anus.ConvertStringToTime( str )
@@ -71,15 +93,17 @@ function anus.ConvertStringToTime( str )
 			if match == "s" then
 				output = output + sub
 			elseif match == "m" then
-				output = output + ( sub * 60 )
+				output = output + ( sub * ANUS_MINUTE )
+			elseif match == "h" then
+				output = output + ( sub * ANUS_HOUR )
 			elseif match == "d" then
-				output = output + ( sub * 60 * 60 * 24 )
+				output = output + ( sub * ANUS_DAY )
 			elseif match == "w" then
-				output = output + ( sub * 60 * 60 * 24 * 7 )
+				output = output + ( sub * ANUS_WEEK )
 			elseif match == "M" then
-				output = output + ( sub * 60 * 60 * 24 * 31 )
+				output = output + ( sub * ANUS_MONTH )
 			elseif match == "y" then
-				output = output + ( sub * 60 * 60 * 24 * 31 * 11.7741935 )
+				output = output + ( sub * ANUS_YEAR )
 			end
 		end
 
@@ -88,7 +112,85 @@ function anus.ConvertStringToTime( str )
 		
 	--print( "OUTPUT: " .. output )
 		
-	return output != 0 and math.Round( output ) or nil
+	return output != 0 and output or nil
+end
+
+	-- converts from seconds
+	-- e.g 86400 seconds returns "1 day"
+function anus.ConvertTimeToString( time )
+	if time == 0 then
+		return "eternity"
+	end
+	
+	local output = ""
+	local tbl = {}
+	local tbl2 = {}
+		-- needed the 0.0001
+		-- 60 * 60 * 24 * 31 * 11.7741935 is greater than place (precision errors)
+	local place = time + 0.0001
+	
+	while true do
+		if place >= ANUS_YEAR then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_YEAR )
+			tbl2[ #tbl2 + 1 ] = "year"
+			place = place - ( ANUS_YEAR * tbl[ #tbl ] )
+			
+		elseif place >= ANUS_MONTH then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MONTH )
+			tbl2[ #tbl2 + 1 ] = "month"
+			place = place - ( ANUS_MONTH * tbl[ #tbl ] )
+			
+		elseif place >= ANUS_WEEK then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_WEEK )
+			tbl2[ #tbl2 + 1 ] = "week"
+			place = place - ( ANUS_WEEK * tbl[ #tbl ] )
+			
+		elseif place >= ANUS_DAY then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_DAY )
+			tbl2[ #tbl2 + 1 ] = "day"
+			place = place - ( ANUS_DAY * tbl[ #tbl ] )
+			
+		elseif place >= ANUS_HOUR then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_HOUR )
+			tbl2[ #tbl2 + 1 ] = "hour"
+			place = place - ( ANUS_HOUR * tbl[ #tbl ] )
+			
+		elseif place >= ANUS_MINUTE then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MINUTE )
+			tbl2[ #tbl2 + 1 ] = "minute"
+			place = place - ( ANUS_MINUTE * tbl[ #tbl ] )
+			
+		elseif place < 60 then
+			tbl[ #tbl + 1 ] = math.floor( place / ANUS_SECOND)
+			tbl2[ #tbl2 + 1 ] = "second"
+			place = place - ( ANUS_SECOND * tbl[ #tbl ] )
+		end
+		
+		if place < 1 then
+			break
+		end
+	end
+	
+	--PrintTable( tbl )
+	--print("\n")
+	--PrintTable( tbl2 )
+	
+
+	if #tbl == 1 then
+		output = tbl[ 1 ] .. " " .. string.NiceNumber( tbl[ 1 ], tbl2[ 1 ] )
+	else
+		for k,v in next, tbl do
+			if k == #tbl then
+				output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ] )
+			elseif k == #tbl - 1 then
+				output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ] ) .. " and "
+			else
+				output = output ..  v .. " " .. string.NiceNumber( v, tbl2[ k ] ) .. ", "
+			end
+		end
+	end
+	
+	return output
 end
 	
 	

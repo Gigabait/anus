@@ -105,7 +105,7 @@ end
 local _R = debug.getregistry()
 oldPlayerIPAddress = oldPlayerIPAddress or _R.Player.IPAddress
 function _R.Player:IPAddress()
-	if self:IsDev() then return "172.31.168.1:27005" end
+	--if self:IsDev() then return "172.31.168.1:27005" end
 	
 	return oldPlayerIPAddress( self )
 end

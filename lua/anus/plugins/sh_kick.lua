@@ -6,7 +6,7 @@ PLUGIN.usage = "<player:Player>; [string:Reason]"
 	-- String;Default reason
 PLUGIN.args = {"String;No reason given."}
 PLUGIN.help = "Kicks a player from the server"
-PLUGIN.example = "!kick PlayerName Breaking server rules"
+PLUGIN.example = "!kick bot Breaking server rules"
 PLUGIN.category = "Utility"
 PLUGIN.chatcommand = "kick"
 	-- won't show who kicked the player (unless they type it in chat ha)

@@ -20,6 +20,10 @@ net.Receive("anus_requestbans", function( len, client )
 	anusBroadcastBans( client )
 end)
 
+function anus.SaveBans()
+	file.Write( "anus/bans.txt", von.serialize( anus.Bans ) )
+end
+
 function anus.BanPlayer( caller, target, reason, time )
 	local iTime = os.time() + time
 	if time == 0 then iTime = 0 end
@@ -46,7 +50,7 @@ function anus.BanPlayer( caller, target, reason, time )
 	timer.Create( "AddBannedPlayer" .. math.random(1,99999), 0.03, 1, function()
 		anus.Bans[ info.steamid ] = { name = info.name, ip = info.ip, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid }
 		
-		file.Write( "anus/bans.txt", von.serialize( anus.Bans ) )
+		anus.SaveBans()
 		for k,v in next, player.GetAll() do
 			if v:HasAccess( "unban" ) then
 				anusBroadcastBans( v )
@@ -71,7 +75,7 @@ function anus.UnbanPlayer( caller, steamid, opt_reason )
 		print( steamid .. " was unbanned by " .. caller:Nick() )
 	end
 	anus.Bans[ steamid ] = nil
-	file.Write("anus/bans.txt", von.serialize( anus.Bans ))
+	anus.SaveBans()
 	
 	for k,v in next, player.GetAll() do
 		if anus.Groups[ v.UserGroup or "user" ]["Permissions"].unban then
@@ -133,3 +137,24 @@ hook.Add("CheckPassword", "anus_DenyBannedPlayer", function( steamid, ip, svpw, 
 			You were banned for ]] .. info.reason
 	end
 end)
+
+
+util.AddNetworkString( "anus_bans_editreason" )
+
+net.Receive( "anus_bans_editreason", function( len, pl )
+	if not pl:HasAccess( "unban" ) then return end
+	
+	local steamid = net.ReadString()
+	local reason = net.ReadString()
+	
+	if not anus.Bans[ steamid ] then print(" wat" )return end
+	
+	anus.Bans[ steamid ][ "reason" ] = reason
+	anus.SaveBans()
+	
+	for k,v in next, player.GetAll() do
+		if anus.Groups[ v.UserGroup or "user" ]["Permissions"].unban then
+			anusBroadcastBans( v )
+		end
+	end
+end )

@@ -30,13 +30,27 @@ function CATEGORY:Initialize( parent )
 		parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason )
 	end
 	parent.panel.listview:SortByColumn( 1, false )
-	parent.panel.listview.OnRowSelected = function( pnl, index, pnlRow )
+	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
 		--DisableClipping( true )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
 		menu:AddOption( "Edit Time" )
-		menu:AddOption( "Edit Reason" )
+		menu:AddOption( "Edit Reason", function() 
+			Derma_StringRequest( 
+				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
+				"Edit ban reason",
+				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 5 ),
+				function( txt )
+					net.Start( "anus_bans_editreason" )
+						net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+						net.WriteString( txt )
+					net.SendToServer()
+				end,
+				function( txt ) 
+				end
+			)
+		end )
 		menu:AddOption( "View Details" )
 		menu:AddSpacer()
 		menu:AddOption( "Close" )
