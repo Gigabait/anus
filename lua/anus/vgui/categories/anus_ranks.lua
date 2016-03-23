@@ -33,8 +33,8 @@ function CATEGORY:Initialize( parent )
 	for k,v in next, anus.Groups do
 		local line = parent.panel.listview:AddLine( k, v.name, v.Inheritance or "", v.icon or "")
 			-- Registers the column to show this as an icon
-		--parent.panel.listview:SetLineIcon( 4, line, v.icon )
-		line:SetLineIcon( 4 )--, v.icon )
+		line:SetLineIcon( 4 )
+		line:SetLineColor( 2, v.color or Color( 0, 0, 0, 255 ) )
 	end
 
 	for k,v in next, parent.panel.listview.Lines do
@@ -57,7 +57,9 @@ function CATEGORY:Initialize( parent )
 		menu:AddOption( "Change name" )
 		menu:AddOption( "Change inheritance" )
 		menu:AddOption( "Change permissions" )
-		menu:AddOption( "Remove rank" )
+		menu:AddOption( "Change icon" )
+		menu:AddOption( "Change color" )
+		menu:AddOption( "Remove group" )
 		menu:AddSpacer()
 		menu:AddOption( "Close" )
 		menu.Think = function( pnl2 )

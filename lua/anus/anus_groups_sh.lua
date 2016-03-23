@@ -6,6 +6,7 @@ anus.Groups[ "user" ] =
 	name = "Guest",
 	Inheritance = nil,
 	Permissions = {	},
+	color = Color( 0, 161, 255, 255 ),
 	icon = "icon16/user.png",
 }
 
@@ -21,6 +22,7 @@ anus.Groups[ "trusted" ] =
 		["ungag"] = true,
 		["ban60"] = true,
 	},
+	color = Color( 33, 255, 0, 255 ),
 	icon = "icon16/ruby_add.png",
 }
 
@@ -43,6 +45,7 @@ anus.Groups[ "admin" ] =
 		["unfreeze"] = true,
 		["bring"] = true,
 	},
+	color = Color( 95, 63, 127, 255 ),
 	icon = "icon16/shield.png",
 }
 
@@ -61,6 +64,7 @@ anus.Groups[ "superadmin" ] =
 		["unban"] = true,
 		["banid"] = true,
 	},
+	color = Color( 255, 93, 0, 255 ),
 	icon = "icon16/shield_add.png",
 }
 
@@ -97,6 +101,7 @@ anus.Groups[ "owner" ] =
 		["unfreeze"] = true,
 		["adduserid"] = true,
 	},
+	color = Color( 255, 0, 0, 255 ),
 	icon = "icon16/lightning_add.png",
 		-- can't delete or edit in any way
 	hardcoded = true,

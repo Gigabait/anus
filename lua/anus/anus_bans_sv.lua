@@ -143,13 +143,38 @@ util.AddNetworkString( "anus_bans_editreason" )
 
 net.Receive( "anus_bans_editreason", function( len, pl )
 	if not pl:HasAccess( "unban" ) then return end
-	
+
 	local steamid = net.ReadString()
 	local reason = net.ReadString()
 	
 	if not anus.Bans[ steamid ] then print(" wat" )return end
 	
 	anus.Bans[ steamid ][ "reason" ] = reason
+	anus.SaveBans()
+	
+	for k,v in next, player.GetAll() do
+		if anus.Groups[ v.UserGroup or "user" ]["Permissions"].unban then
+			anusBroadcastBans( v )
+		end
+	end
+end )
+
+util.AddNetworkString( "anus_bans_edittime" )
+
+net.Receive( "anus_bans_edittime", function( len, pl )
+	if not pl:HasAccess( "unban" ) then return end
+	
+	local steamid = net.ReadString()
+	local time = net.ReadString()
+	
+	if not anus.Bans[ steamid ] then return end
+	
+	time = tonumber( time ) or anus.ConvertStringToTime( time )
+	if not time then
+		time = "1d"
+	end
+		
+	anus.Bans[ steamid ][ "time" ] = os.time() + time
 	anus.SaveBans()
 	
 	for k,v in next, player.GetAll() do

@@ -66,8 +66,8 @@ function _R.Player:SetUserGroup( group, save, time )
 	
 	if save then
 		if time then
-			anus.Users[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + (time * 60), promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
-			anus.TempUsers[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + (time * 60), promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.Users[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.TempUsers[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		else
 			if group == "user" then
 				for k,v in next, anus.Users do

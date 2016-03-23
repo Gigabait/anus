@@ -1,6 +1,10 @@
 anus.Users = anus.Users or {}
 anus.TempUsers = anus.TempUsers or {}
 
+function anus.SaveGroups()
+	file.Write( "anus/groups.txt", von.serialize( anus.Groups ) )
+end
+
 hook.Add("Initialize", "anus_GrabDataInfo", function()
 	if file.Exists( "anus/users.txt", "DATA" ) then
 		anus.Users = von.deserialize( file.Read( "anus/users.txt", "DATA" ) )
@@ -15,7 +19,7 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 		anus.Groups = von.deserialize( file.Read( "anus/groups.txt", "DATA" ) )
 	else
 		timer.Create( "anus_firstrun", 2, 1, function()
-			file.Write( "anus/groups.txt", von.serialize( anus.Groups ) )
+			anus.SaveGroups()
 		end )
 	end
 	

@@ -1,6 +1,6 @@
 local CATEGORY = {}
 
-CATEGORY.pluginid = "addgroup"
+CATEGORY.pluginid = "adduser"
 CATEGORY.CategoryName = "Player Groups"
 
 function CATEGORY:Initialize( parent )

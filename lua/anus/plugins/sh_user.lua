@@ -141,20 +141,17 @@ local plugin = {}
 plugin.id = "addusertemp"
 plugin.name = "Add Temp User"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>; <string:Group>; <number:Time>"
-	-- Int;Minimum;Maximum;AllowDecimals
-		-- 4th is optional
-plugin.args = {"Groups", "Int;1;300;false"}
-plugin.help = "Adds a user to a group for a time in minutes"
+plugin.usage = "<player:Player>; <string:Group>; <string:Time>"
+plugin.help = "Temporarily adds a user to a group"
 plugin.category = "Utility"
 plugin.defaultAccess = "superadmin"
 
-function plugin:OnRun( pl, args, target )
+function plugin:OnRun( pl, arg, target )
 	if type( target ) == "table" then
 		pl:ChatPrint( "You can only add one person to a group at a time!" )
 		return 
 	end
-	if not args[ 1 ] or not anus.Groups[ args[ 1 ] ] or args[ 1 ] == "user" then
+	if not arg[ 1 ] or not anus.Groups[ arg[ 1 ] ] or arg[ 1 ] == "user" then
 		pl:ChatPrint( "You have to give the right group!" ) 
 		return
 	end
@@ -163,13 +160,19 @@ function plugin:OnRun( pl, args, target )
 		return 
 	end
 	
-	local time = args[ 2 ] and math.Clamp( tonumber( args[ 2 ] ), 1, 300 ) or 10
-	
-	if pl:IsGreaterOrEqualTo( target ) then
-		target:SetUserGroup( args[ 1 ], true, time )
+	local time = arg[ 2 ] 
+	if not tonumber( time ) then
+		time = anus.ConvertStringToTime( time ) or anus.ConvertStringToTime( "1m" )
+		time = math.Clamp( time, 1, ANUS_YEAR )
+	else
+		time = math.Clamp( tonumber( time ), 1, ANUS_YEAR )
 	end
 	
-	anus.NotifyPlugin( pl, plugin.id, "added ", target, " to group ", COLOR_STRINGARGS, args[ 1 ], " for ", COLOR_STRINGARGS, time .. " minutes", "." )
+	if pl:IsGreaterOrEqualTo( target ) then
+		target:SetUserGroup( arg[ 1 ], true, time )
+	end
+	
+	anus.NotifyPlugin( pl, plugin.id, "added ", target, " to group ", COLOR_STRINGARGS, arg[ 1 ], " for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), "." )
 end
 
 

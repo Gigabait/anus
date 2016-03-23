@@ -58,8 +58,8 @@ ANUS_MINUTE = 60
 ANUS_HOUR = 60 * 60
 ANUS_DAY = 60 * 60 * 24
 ANUS_WEEK = 60 * 60 * 24 * 7
-ANUS_MONTH = 60 * 60 * 24 * 31
-ANUS_YEAR = 60 * 60 * 24 * 31 * 11.7741935
+ANUS_MONTH = 60 * 60 * 24 * 30
+ANUS_YEAR = 60 * 60 * 24 * 30 * 12.1666666166668
 
 	-- E.g 1d = 86400 seconds
 	-- returns in seconds
@@ -117,7 +117,10 @@ end
 
 	-- converts from seconds
 	-- e.g 86400 seconds returns "1 day"
-function anus.ConvertTimeToString( time )
+	
+	-- if second argument is true
+	-- 86400 will return "1d"
+function anus.ConvertTimeToString( time, convertable )
 	if time == 0 then
 		return "eternity"
 	end
@@ -132,37 +135,37 @@ function anus.ConvertTimeToString( time )
 	while true do
 		if place >= ANUS_YEAR then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_YEAR )
-			tbl2[ #tbl2 + 1 ] = "year"
+			tbl2[ #tbl2 + 1 ] = { "y", "year" }
 			place = place - ( ANUS_YEAR * tbl[ #tbl ] )
-			
+
 		elseif place >= ANUS_MONTH then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MONTH )
-			tbl2[ #tbl2 + 1 ] = "month"
+			tbl2[ #tbl2 + 1 ] = { "M", "month" }
 			place = place - ( ANUS_MONTH * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_WEEK then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_WEEK )
-			tbl2[ #tbl2 + 1 ] = "week"
+			tbl2[ #tbl2 + 1 ] = { "w", "week" }
 			place = place - ( ANUS_WEEK * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_DAY then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_DAY )
-			tbl2[ #tbl2 + 1 ] = "day"
+			tbl2[ #tbl2 + 1 ] = { "d", "day" }
 			place = place - ( ANUS_DAY * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_HOUR then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_HOUR )
-			tbl2[ #tbl2 + 1 ] = "hour"
+			tbl2[ #tbl2 + 1 ] = { "h", "hour" }
 			place = place - ( ANUS_HOUR * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_MINUTE then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MINUTE )
-			tbl2[ #tbl2 + 1 ] = "minute"
+			tbl2[ #tbl2 + 1 ] = { "m", "minute" }
 			place = place - ( ANUS_MINUTE * tbl[ #tbl ] )
 			
 		elseif place < 60 then
 			tbl[ #tbl + 1 ] = math.floor( place / ANUS_SECOND)
-			tbl2[ #tbl2 + 1 ] = "second"
+			tbl2[ #tbl2 + 1 ] = { "s", "second" }
 			place = place - ( ANUS_SECOND * tbl[ #tbl ] )
 		end
 		
@@ -170,22 +173,23 @@ function anus.ConvertTimeToString( time )
 			break
 		end
 	end
-	
-	--PrintTable( tbl )
-	--print("\n")
-	--PrintTable( tbl2 )
-	
 
-	if #tbl == 1 then
-		output = tbl[ 1 ] .. " " .. string.NiceNumber( tbl[ 1 ], tbl2[ 1 ] )
-	else
+	if convertable then
 		for k,v in next, tbl do
-			if k == #tbl then
-				output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ] )
-			elseif k == #tbl - 1 then
-				output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ] ) .. " and "
-			else
-				output = output ..  v .. " " .. string.NiceNumber( v, tbl2[ k ] ) .. ", "
+			output = output .. v .. tbl2[ k ][ 1 ]
+		end
+	else
+		if #tbl == 1 then
+			output = tbl[ 1 ] .. " " .. string.NiceNumber( tbl[ 1 ], tbl2[ 1 ][ 2 ] )
+		else
+			for k,v in next, tbl do
+				if k == #tbl then
+					output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ][ 2 ] )
+				elseif k == #tbl - 1 then
+					output = output .. v .. " " .. string.NiceNumber( v, tbl2[ k ][ 2 ] ) .. " and "
+				else
+					output = output ..  v .. " " .. string.NiceNumber( v, tbl2[ k ][ 2 ] ) .. ", "
+				end
 			end
 		end
 	end

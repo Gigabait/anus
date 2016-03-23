@@ -22,8 +22,8 @@ end
 function _R.Entity:HasAccess( plugin )
 	if not IsValid( self ) then return true end
 	if not LocalPlayer().PlayerInfo or not LocalPlayer().PlayerInfo[ self ] then return false end
+	if self:GetUserGroup() == "owner" then return true end
 	if LocalPlayer().PlayerInfo[ self ].perms[ plugin ] then return true end
-	if self.UserGroup == "owner" then return true end
 
 	return false
 end

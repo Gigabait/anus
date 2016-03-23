@@ -18,6 +18,7 @@ function panel:Init()
 	--self:SetSize( 
 	--self:DockMargin( 60, 20, 20, 20 )
 	self:DockPadding( 0, 20, 0, 20 )
+	--self:DockMargin( 20, 0, 20, 0 )
 end
 
 function panel:SetTitle( strTitle )

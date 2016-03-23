@@ -16,14 +16,16 @@ function PANEL:UpdateColours( skin )
 	
 	if ( self:GetParent():IsLineSelected() ) then return self:SetTextStyleColor( skin.Colours.Label.Bright ) end
 
+	if self:GetParent().Colors and self:GetParent().Colors[ self.ColumnID ] then
+		return self:SetTextStyleColor( self:GetParent().Colors[ self.ColumnID ] )
+	end
+	
 	return self:SetTextStyleColor( skin.Colours.Label.Dark )
 
 end
 
 function PANEL:Think()
-	if not self:GetParent().Icons[ self.ColumnID ] then return end
-	
-	if not self.IconImage then
+	if self:GetParent().Icons[ self.ColumnID ] and not self.IconImage then
 		self.IconImage = vgui.Create( "DImage", self )
 		if not Material( self:GetText() ) then
 			self:SetText( "icon16/help.png" )
@@ -65,6 +67,7 @@ function PANEL:Init()
 	self.Data = {}
 	
 	self.Icons = {}
+	self.Colors = {}
 
 end
 
@@ -249,6 +252,10 @@ end
 
 function PANEL:SetLineIcon( ColumnID, path )
 	self.Icons[ ColumnID ] = true
+end
+
+function PANEL:SetLineColor( ColumnID, color )
+	self.Colors[ ColumnID ] = color
 end
 	
 derma.DefineControl( "anus_listviewline", "A line from the List View", PANEL, "Panel" )

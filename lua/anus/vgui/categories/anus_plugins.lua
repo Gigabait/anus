@@ -1,5 +1,6 @@
 local CATEGORY = {}
 
+CATEGORY.pluginid = "toggleplugin"
 CATEGORY.CategoryName = "Plugins"
 
 function CATEGORY:Initialize( parent )

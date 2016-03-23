@@ -30,6 +30,8 @@ function PANEL:Init()
 
 	self:SetCursor( "hand" )
 	self:SetFont( "DermaDefault" )
+	
+	self:DockMargin( 0, 0, 15, 0 )
 
 end
 

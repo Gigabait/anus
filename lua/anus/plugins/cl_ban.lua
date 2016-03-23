@@ -35,11 +35,25 @@ function CATEGORY:Initialize( parent )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
-		menu:AddOption( "Edit Time" )
-		menu:AddOption( "Edit Reason", function() 
+		menu:AddOption( "Change Time", function()
+			Derma_StringRequest(
+				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
+				"Change ban time",
+				anus.ConvertTimeToString( anus.Bans[ parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ][ "time" ] - os.time(), true ),
+				function( txt )
+					net.Start( "anus_bans_edittime" )
+						net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+						net.WriteString( txt )
+					net.SendToServer()
+				end,
+				function( txt )
+				end
+			)
+		end )
+		menu:AddOption( "Change Reason", function() 
 			Derma_StringRequest( 
 				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
-				"Edit ban reason",
+				"Change ban reason",
 				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 5 ),
 				function( txt )
 					net.Start( "anus_bans_editreason" )
@@ -74,6 +88,20 @@ function CATEGORY:Initialize( parent )
 	parent.panel.bottomPanel.totalbanned:SizeToContents()
 	parent.panel.bottomPanel.totalbanned:Dock( LEFT )
 	
+	
+	if LocalPlayer():HasAccess( "ban" ) then
+		parent.panel.bottomPanel.buttonAddban = parent.panel.bottomPanel:Add( "anus_button" )
+		parent.panel.bottomPanel.buttonAddban:SetText( "Add ban" )
+		parent.panel.bottomPanel.buttonAddban:SetTextColor( Color( 140, 140, 140, 255 ) )
+		parent.panel.bottomPanel.buttonAddban:SetFont( "anus_SmallText" )
+		parent.panel.bottomPanel.buttonAddban:SizeToContents()
+		parent.panel.bottomPanel.buttonAddban:Dock( RIGHT )
+		parent.panel.bottomPanel.buttonAddban.DoClick = function( pnl )
+			if not parent.panel.listview:GetSelectedLine() then return end
+			LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+		end
+	end
+	
 		-- instead of unban selected
 		-- unban steamid. 
 		-- if a line is highlighted copy that into the new menu that pops up
@@ -84,6 +112,7 @@ function CATEGORY:Initialize( parent )
 	parent.panel.bottomPanel.buttonUnban:SetFont( "anus_SmallText" )
 	parent.panel.bottomPanel.buttonUnban:SizeToContents()
 	parent.panel.bottomPanel.buttonUnban:Dock( RIGHT )
+	--parent.panel.bottomPanel.buttonUnban:DockMargin( 15, 0, 0, 0 )
 	parent.panel.bottomPanel.buttonUnban.DoClick = function( pnl )
 		if not parent.panel.listview:GetSelectedLine() then return end
 		LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
