@@ -169,12 +169,22 @@ net.Receive( "anus_bans_edittime", function( len, pl )
 	
 	if not anus.Bans[ steamid ] then return end
 	
-	time = tonumber( time ) or anus.ConvertStringToTime( time )
+	time = time
+	if not tonumber( time ) then
+		time = anus.ConvertStringToTime( time ) or anus.ConvertStringToTime( "1m" )
+	elseif tonumber( time ) and time == "0" then
+		time = anus.ConvertStringToTime( time )
+	elseif tonumber( time ) then
+		time = anus.ConvertStringToTime( time .. "m" )
+	end
+	
+	
+	--[[time = tonumber( time ) or anus.ConvertStringToTime( time )
 	if not time then
 		time = "1d"
-	end
+	end]]
 		
-	anus.Bans[ steamid ][ "time" ] = os.time() + time
+	anus.Bans[ steamid ][ "time" ] = time == 0 and 0 or os.time() + time
 	anus.SaveBans()
 	
 	for k,v in next, player.GetAll() do

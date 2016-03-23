@@ -15,11 +15,20 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview:AddColumn( "Group" )
 	parent.panel.listview:Dock( FILL )
 	
+	local sortable = {}
 	for k,v in next, anus.Users do
 		for a,b in next, v do
 			local line = parent.panel.listview:AddLine( b.name, a, anus.Groups[ k ].name )
 			line:SetLineColor( 3, anus.Groups[ k ].color )
+			
+			sortable[ line ] = k
 		end
+	end
+	
+	for k,v in next, sortable do
+		k:SetSortValue( 3,
+			table.Count( anus.Groups[ v ].Permissions )
+		)
 	end
 
 	parent.panel.listview:SortByColumn( 1, false )

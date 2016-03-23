@@ -36,13 +36,14 @@ function CATEGORY:Initialize( parent )
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
 		menu:AddOption( "Change Time", function()
+			local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 )
 			Derma_StringRequest(
-				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
+				column2, 
 				"Change ban time",
-				anus.ConvertTimeToString( anus.Bans[ parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ][ "time" ] - os.time(), true ),
+				anus.Bans[ column2 ][ "time" ] == "0" and anus.Bans[ column2 ][ "time" ] or anus.ConvertTimeToString( anus.Bans[ column2 ][ "time" ] - os.time(), true ),
 				function( txt )
 					net.Start( "anus_bans_edittime" )
-						net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+						net.WriteString( column2 )
 						net.WriteString( txt )
 					net.SendToServer()
 				end,
