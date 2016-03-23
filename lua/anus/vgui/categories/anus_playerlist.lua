@@ -18,7 +18,8 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview.Columns[ 1 ]:SetFixedWidth( 45 )
 	
 	for k,v in next, player.GetAll() do
-		local line = parent.panel.listview:AddLine( v:UserID(), v:Nick(), v:SteamID(), v:GetUserGroup() )
+		local line = parent.panel.listview:AddLine( v:UserID(), v:Nick(), v:SteamID(), anus.Groups[ v:GetUserGroup() ].name )
+		line:SetLineColor( 4, anus.Groups[ v:GetUserGroup() ].color )
 	end
 	
 

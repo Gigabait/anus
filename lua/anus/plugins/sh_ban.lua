@@ -17,10 +17,13 @@ function PLUGIN:OnRun( pl, arg, target )
 	local time = 0
 	
 	if #arg > 0 then
-		--time = arg[1] and tonumber(arg[1]) or 60
 		time = arg[ 1 ]
 		if not tonumber( arg[ 1 ] ) then
 			time = anus.ConvertStringToTime( arg[ 1 ] ) or anus.ConvertStringToTime( "1m" )
+		elseif tonumber( arg[ 1 ] ) and arg[ 1 ] == "0" then
+			time = anus.ConvertStringToTime( arg[ 1 ] )
+		elseif tonumber( arg[ 1 ] ) then
+			time = anus.ConvertStringToTime( arg[ 1 ] .. "m" )
 		end
 		
 		if #arg > 1 then
@@ -70,10 +73,13 @@ function PLUGIN:OnRun( pl, arg, target )
 	local newarg = {}
 	
 	if #arg > 1 then
-		--time = arg[2] and tonumber(arg[2]) or 0
 		time = arg[ 2 ]
 		if not tonumber( arg[ 2 ] ) then
 			time = anus.ConvertStringToTime( arg[ 2 ] ) or anus.ConvertStringToTime( "1m" )
+		elseif tonumber( arg[ 2 ] ) and arg[ 2 ] == "0" then
+			time = anus.ConvertStringToTime( arg[ 2 ] )
+		elseif tonumber( arg[ 2 ] ) then
+			time = anus.ConvertStringToTime( arg[ 2 ] .. "m" )
 		end
 		
 		if #arg > 2 then

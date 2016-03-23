@@ -30,9 +30,14 @@ function PANEL:Init()
 
 	self:SetCursor( "hand" )
 	self:SetFont( "DermaDefault" )
-	
-	self:DockMargin( 0, 0, 15, 0 )
 
+end
+
+	-- used on buttons to make neighbors of other buttons
+function PANEL:SetLeftOf( b )
+	
+	self.LeftOf = b
+	
 end
 
 --[[---------------------------------------------------------
@@ -113,6 +118,10 @@ function PANEL:PerformLayout()
 		
 		self:SetTextInset( self.m_Image:GetWide() + 16, 0 )
 	
+	end
+		
+	if self.LeftOf then
+		self:DockMargin( 15, 0, 0, 0 )
 	end
 
 	DLabel.PerformLayout( self )

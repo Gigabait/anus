@@ -64,7 +64,9 @@ ANUS_YEAR = 60 * 60 * 24 * 30 * 12.1666666166668
 	-- E.g 1d = 86400 seconds
 	-- returns in seconds
 function anus.ConvertStringToTime( str )
-	--print( "start converting: " .. str )
+	if str == "0" then
+		return 0
+	end
 	
 	local output = 0
 	local place = 0
@@ -75,17 +77,12 @@ function anus.ConvertStringToTime( str )
 		
 		local match = string.sub( str, startpos, endpos )
 		
-		--print( startpos, endpos, match, place )
-		
 		local sub = nil
 		
 		if lastFound == 0 then
 			sub = string.sub( str, 1, endpos - 1 )
-			--lastFound = endpos
-			--print( "last found ... " .. lastFound )
 		else
 			sub = string.sub( str, lastFound + 1, endpos - 1 )
-			--sub = string.sub( str, startpos - place, endpos - (place + 1) )
 		end
 		lastFound = endpos
 		
@@ -109,8 +106,6 @@ function anus.ConvertStringToTime( str )
 
 		place = endpos + 1
 	end
-		
-	--print( "OUTPUT: " .. output )
 		
 	return output != 0 and output or nil
 end

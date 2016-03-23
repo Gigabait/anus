@@ -12,12 +12,13 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview:SetMultiSelect( false )
 	parent.panel.listview:AddColumn( "Name" )
 	parent.panel.listview:AddColumn( "SteamID" )
-	parent.panel.listview:AddColumn( "Rank" )
+	parent.panel.listview:AddColumn( "Group" )
 	parent.panel.listview:Dock( FILL )
 	
 	for k,v in next, anus.Users do
 		for a,b in next, v do
-			parent.panel.listview:AddLine( b.name, a, anus.Groups[ k ].name )
+			local line = parent.panel.listview:AddLine( b.name, a, anus.Groups[ k ].name )
+			line:SetLineColor( 3, anus.Groups[ k ].color )
 		end
 	end
 
