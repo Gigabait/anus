@@ -20,6 +20,7 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview:Dock( FILL )
 	parent.panel.listview.Columns[ 1 ]:SetFixedWidth( 150 )
 	
+	local sortable = {}
 	for k,v in next, anus.Bans do
 		local time = v.time
 		if time == 0 or time == "0" then
@@ -27,7 +28,12 @@ function CATEGORY:Initialize( parent )
 		else
 			time = os.date( "%X - %d/%m/%Y", time )
 		end
-		parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason )
+		
+		local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason )
+		if time != "Never" then
+			time = v.time
+		end
+		sortable[ line ] = time
 	end
 	parent.panel.listview:SortByColumn( 1, false )
 	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
@@ -77,6 +83,12 @@ function CATEGORY:Initialize( parent )
 		--DisableClipping( false )
 	end
 	
+	for k,v in next, sortable do
+		k:SetSortValue( 3,
+			v
+		)
+	end
+	
 	parent.panel.bottomPanel = parent.panel:Add( "DPanel" )
 	parent.panel.bottomPanel:SetTall( 20 )
 	parent.panel.bottomPanel.Paint = function() end
@@ -97,7 +109,6 @@ function CATEGORY:Initialize( parent )
 		parent.panel.bottomPanel.buttonAddban:SetFont( "anus_SmallText" )
 		parent.panel.bottomPanel.buttonAddban:SizeToContents()
 		parent.panel.bottomPanel.buttonAddban:Dock( RIGHT )
-		--parent.panel.bottomPanel.buttonAddban:DockMargin( 15, 0, 0, 0 )
 		parent.panel.bottomPanel.buttonAddban:SetLeftOf( true )
 		parent.panel.bottomPanel.buttonAddban.DoClick = function( pnl )
 			if not parent.panel.listview:GetSelectedLine() then return end
@@ -116,7 +127,6 @@ function CATEGORY:Initialize( parent )
 	parent.panel.bottomPanel.buttonUnban:SizeToContents()
 	parent.panel.bottomPanel.buttonUnban:Dock( RIGHT )
 	parent.panel.bottomPanel.buttonUnban:SetLeftOf( true )
-	--parent.panel.bottomPanel.buttonUnban:DockMargin( 0, 0, 15, 0 )
 	parent.panel.bottomPanel.buttonUnban.DoClick = function( pnl )
 		if not parent.panel.listview:GetSelectedLine() then return end
 		LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )

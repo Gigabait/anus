@@ -54,4 +54,17 @@ function plugin:OnRun( pl, args, target )
 
 	anus.NotifyPlugin( pl, plugin.id, "teleported to ", target )
 end
+
+	-- pl: Player running command
+	-- parent: The DMenu
+	-- target: The player object of the line selected
+	-- line: The DListViewLine itself
+function plugin:SelectFromMenu( pl, parent, target, line )
+	parent:AddOption( self.name, function()
+		local runtype = target:SteamID()
+		if target:IsBot() then runtype = target:Nick() end
+
+		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+	end )
+end
 anus.RegisterPlugin( plugin )

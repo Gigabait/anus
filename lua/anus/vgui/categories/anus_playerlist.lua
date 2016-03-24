@@ -24,6 +24,32 @@ function CATEGORY:Initialize( parent )
 		
 		sortable[ line ] = v:GetUserGroup()
 	end
+	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+		local posx, posy = gui.MousePos()
+		local height = 0
+		
+		local menu = vgui.Create( "DMenu" )
+		menu:SetPos( posx, posy )
+		for k,v in next, anus.GetPlugins() do
+			if not v.SelectFromMenu then continue end
+			
+			v:SelectFromMenu( LocalPlayer(), menu, Player( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 ) ), parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ) )
+		end
+		menu.Think = function( pnl2 )
+			if not IsValid( pnl ) then
+				menu:Remove()
+			end
+		end
+		
+		for k,v in next, menu:GetCanvas():GetChildren() do
+			height = height + v:GetTall()
+		end
+		
+		if height + posy > ScrH() then
+			menu:SetPos( posx, posy - ( (height + posy) - ScrH() ) )
+		end
+	end
+	
 	
 	for k,v in next, sortable do
 		k:SetSortValue( 4,

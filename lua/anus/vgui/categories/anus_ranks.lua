@@ -30,11 +30,14 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview:AddColumn( "Icon" )
 	parent.panel.listview:Dock( FILL )
 	
+	local sortable = {}
 	for k,v in next, anus.Groups do
 		local line = parent.panel.listview:AddLine( k, v.name, v.Inheritance or "", v.icon or "")
 			-- Registers the column to show this as an icon
 		line:SetLineIcon( 4 )
 		line:SetLineColor( 2, v.color or Color( 0, 0, 0, 255 ) )
+		
+		sortable[ line ] = k
 	end
 
 	for k,v in next, parent.panel.listview.Lines do
@@ -44,6 +47,12 @@ function CATEGORY:Initialize( parent )
 		
 		v:SetSortValue( 3,
 			table.Count( anus.Groups[ v:GetColumnText( 3 ) != "" and v:GetColumnText( 3 ) or "user" ].Permissions )
+		)
+	end
+	
+	for k,v in next, sortable do
+		k:SetSortValue( 2, 
+			table.Count( anus.Groups[ v ].Permissions )
 		)
 	end
 	
