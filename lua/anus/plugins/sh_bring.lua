@@ -66,7 +66,7 @@ function plugin:OnRun( pl, args, target )
 				
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, " to them." )
+		anus.NotifyPlugin( pl, plugin.id, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, " to themself." )
 	
 	else
 		
@@ -91,7 +91,7 @@ function plugin:OnRun( pl, args, target )
 		target:SetPos( pos )
 		target:SetLocalVelocity( Vector( 0, 0, 0 ) )
 		
-		anus.NotifyPlugin( pl, plugin.id, "brought ", target, " to them." )
+		anus.NotifyPlugin( pl, plugin.id, "brought ", target, " to themself." )
 	
 	end
 end

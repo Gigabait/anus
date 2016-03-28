@@ -23,13 +23,19 @@ end )
 anus.Users = anus.Users or {}
 net.Receive( "anus_broadcastusers", function()
 	anus.Users = {}
+	anus.TempUsers = {}
 	
 	local amt = net.ReadUInt( 8 )
 	for i=1,amt do
 		local group = net.ReadString()
-		anus.Users[ group ] = anus.Users[ group ] or {}
 		local steamid = net.ReadString()
-		anus.Users[ group ][ steamid ] = { name = net.ReadString() }
+		local name = net.ReadString()
+		local time = net.ReadString()
+		anus.Users[ group ] = anus.Users[ group ] or {}
+		anus.Users[ group ][ steamid ] = { name = name, time = time }
+		if time != "0" then
+			anus.TempUsers[ steamid ] = { group = group, name = name, time = time }
+		end
 
 		steamworks.RequestPlayerInfo( util.SteamIDTo64( steamid ) ) 
 	end

@@ -4,7 +4,7 @@ plugin.name = "Noclip"
 plugin.author = "Shinycow"
 plugin.usage = "[player:Player]"
 plugin.help = "Toggle users' noclip"
-plugin.category = "Fun"
+plugin.category = "Utility"
 	-- chat command optional
 plugin.chatcommand = "noclip"
 plugin.defaultAccess = "admin"

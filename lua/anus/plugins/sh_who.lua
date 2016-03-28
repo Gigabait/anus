@@ -1,14 +1,14 @@
-local PLUGIN = {}
-PLUGIN.id = "who"
-PLUGIN.name = "Who"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = ""
-PLUGIN.help = "Prints a list of players and their usergroups"
-PLUGIN.category = "Utility"
-PLUGIN.chatcommand = "who"
-PLUGIN.defaultAccess = "user"
+local plugin = {}
+plugin.id = "who"
+plugin.name = "Who"
+plugin.author = "Shinycow"
+plugin.usage = ""
+plugin.help = "Prints a list of players and their usergroups"
+plugin.category = "Utility"
+plugin.chatcommand = "who"
+plugin.defaultAccess = "user"
 
-function PLUGIN:OnRun( pl, arg, t, cmd )
+function plugin:OnRun( pl, arg, t, cmd )
 	local groups = {}
 	for k,v in next, anus.Groups do
 		groups[ k ] = {}
@@ -38,4 +38,4 @@ function PLUGIN:OnRun( pl, arg, t, cmd )
 
 	pl:PrintMessage( HUD_PRINTCONSOLE, "anus who\n\n" .. final_output )
 end
-anus.RegisterPlugin( PLUGIN )
+anus.RegisterPlugin( plugin )

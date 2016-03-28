@@ -1,19 +1,19 @@
-local PLUGIN = {}
-PLUGIN.id = "kick"
-PLUGIN.name = "Kick"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = "<player:Player>; [string:Reason]"
+local plugin = {}
+plugin.id = "kick"
+plugin.name = "Kick"
+plugin.author = "Shinycow"
+plugin.usage = "<player:Player>; [string:Reason]"
 	-- String;Default reason
-PLUGIN.args = {"String;No reason given."}
-PLUGIN.help = "Kicks a player from the server"
-PLUGIN.example = "!kick bot Breaking server rules"
-PLUGIN.category = "Utility"
-PLUGIN.chatcommand = "kick"
+plugin.args = {"String;No reason given."}
+plugin.help = "Kicks a player from the server"
+plugin.example = "!kick bot Breaking server rules"
+plugin.category = "Utility"
+plugin.chatcommand = "kick"
 	-- won't show who kicked the player (unless they type it in chat ha)
-PLUGIN.anonymous = true
-PLUGIN.defaultAccess = "admin"
+plugin.anonymous = true
+plugin.defaultAccess = "admin"
 
-function PLUGIN:OnRun( pl, arg, target )
+function plugin:OnRun( pl, arg, target )
 	local reason = "No reason given."
 	
 	if #arg > 0 then
@@ -43,7 +43,7 @@ function PLUGIN:OnRun( pl, arg, target )
 			end)
 		end
 		
-		anus.NotifyPlugin( pl, PLUGIN.id, "has kicked ", anus.StartPlayerList, target, anus.EndPlayerList,  " (", Color( 180, 180, 255, 255 ), reason, ")" ) 
+		anus.NotifyPlugin( pl, plugin.id, "has kicked ", anus.StartPlayerList, target, anus.EndPlayerList,  " (", Color( 180, 180, 255, 255 ), reason, ")" ) 
 	
 	else
 		
@@ -52,7 +52,7 @@ function PLUGIN:OnRun( pl, arg, target )
 			return
 		end
 
-		anus.NotifyPlugin( pl, PLUGIN.id, "has kicked ", target, " (", Color( 180, 180, 255, 255 ), reason, ")" )
+		anus.NotifyPlugin( pl, plugin.id, "has kicked ", target, " (", Color( 180, 180, 255, 255 ), reason, ")" )
 		
 		target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
 		target:PrintMessage( HUD_PRINTCONSOLE, "Kicked from server by " .. pl:SteamID() .. " for " .. reason )
@@ -64,4 +64,46 @@ function PLUGIN:OnRun( pl, arg, target )
 	
 	end
 end
-anus.RegisterPlugin( PLUGIN )
+
+	-- pl: Player running command
+	-- parent: The DMenu
+	-- target: The player object of the line selected
+	-- line: The DListViewLine itself
+function plugin:SelectFromMenu( pl, parent, target, line )
+	local menu, label = parent:AddSubMenu( self.name )
+	
+	local reasons =
+	{
+	"Disrespectful",
+	"Rule breaker",
+	"Spamming",
+	"No reason given",
+	}
+	
+	for i=1,#reasons do
+		menu:AddOption( reasons[ i ], function()
+			local runtype = target:SteamID()
+			if target:IsBot() then runtype = target:Nick() end
+
+			pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. reasons[ i ] )
+		end )
+	end
+	
+	menu:AddOption( "Custom reason", function()
+		Derma_StringRequest( 
+			target:Nick(), 
+			"Custom kick reason",
+			"No reason given",
+			function( txt )
+				local runtype = target:SteamID()
+				if target:IsBot() then runtype = target:Nick() end
+
+				pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. txt )
+			end,
+			function( txt ) 
+			end
+		)
+	end )
+	
+end
+anus.RegisterPlugin( plugin )

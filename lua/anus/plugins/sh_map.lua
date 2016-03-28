@@ -5,7 +5,7 @@ plugin.author = "Shinycow"
 plugin.usage = "<string:Map>"
 plugin.help = "Changes the map"
 plugin.example = "!map gm_flatgrass"
-plugin.category = "Fun"
+plugin.category = "Utility"
 plugin.chatcommand = "map"
 plugin.defaultAccess = "superadmin"
 

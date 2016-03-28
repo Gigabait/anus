@@ -1,10 +1,10 @@
-local CATEGORY = {}
+local category = {}
 
 	-- Optional: Player must be able to run this command to view this category
-CATEGORY.pluginid = "unban"
-CATEGORY.CategoryName = "Bans"
+category.pluginid = "unban"
+category.CategoryName = "Bans"
 
-function CATEGORY:Initialize( parent )
+function category:Initialize( parent )
 	
 	parent.panel = parent:Add( "anus_contentpanel" )
 	parent.panel:SetTitle( "Manage Bans" )
@@ -135,6 +135,6 @@ function CATEGORY:Initialize( parent )
 end
 
 
-anus.RegisterCategory( CATEGORY )
+anus.RegisterCategory( category )
 
 

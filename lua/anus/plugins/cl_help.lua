@@ -1,10 +1,10 @@
-local CATEGORY = {}
+local category = {}
 
 	-- Optional: Player must be able to run this command to view this category
-CATEGORY.pluginid = "help"
-CATEGORY.CategoryName = "Help"
+category.pluginid = "help"
+category.CategoryName = "Help"
 
-function CATEGORY:Initialize( parent )
+function category:Initialize( parent )
 	
 	parent.panel = parent:Add( "anus_contentpanel" )
 	parent.panel:SetTitle( "Command Help" )
@@ -27,6 +27,6 @@ function CATEGORY:Initialize( parent )
 
 end
 
-anus.RegisterCategory( CATEGORY )
+anus.RegisterCategory( category )
 
 

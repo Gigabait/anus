@@ -28,6 +28,14 @@ function _R.Entity:HasAccess( plugin )
 	return false
 end
 
+function _R.Entity:IsTempUser()
+	return anus.TempUsers[ self:SteamID() ] != nil
+end
+function anus.IsTempUser( steamid )
+	return anus.TempUsers[ steamid ] != nil
+end
+
+
 
 hook.Add("Initialize", "anus_sendauth", function()
 	timer.Simple(0.1, function()

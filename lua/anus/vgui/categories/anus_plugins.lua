@@ -12,13 +12,14 @@ function CATEGORY:Initialize( parent )
 	parent.panel.listview = parent.panel:Add( "anus_listview" )
 	parent.panel.listview:SetMultiSelect( false )
 	parent.panel.listview:AddColumn( "Plugin" )
+	parent.panel.listview:AddColumn( "Type" )
 	parent.panel.listview:AddColumn( "Enabled" )
 	parent.panel.listview:Dock( FILL )
 	
 	for k,v in next, anus.GetPlugins() do
-		local line = parent.panel.listview:AddLine( v.name, "icon16/accept.png" )
+		local line = parent.panel.listview:AddLine( v.name, v.category, "icon16/accept.png" )
 			-- Registers the column to show this as an icon
-		line:SetLineIcon( 2 )--, v.icon )
+		line:SetLineIcon( 3 )
 	end
 	
 

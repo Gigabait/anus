@@ -66,4 +66,47 @@ function plugin:OnRun( pl, args, target )
 
 	end
 end
+
+	-- pl: Player running command
+	-- parent: The DMenu
+	-- target: The player object of the line selected
+	-- line: The DListViewLine itself
+function plugin:SelectFromMenu( pl, parent, target, line )
+	local menu, label = parent:AddSubMenu( self.name )
+	
+	local health =
+	{
+	"100",
+	"75",
+	"50",
+	"25",
+	"1",
+	}
+	
+	for i=1,#health do
+		menu:AddOption( health[ i ], function()
+			local runtype = target:SteamID()
+			if target:IsBot() then runtype = target:Nick() end
+
+			pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. health[ i ] )
+		end )
+	end
+	
+	menu:AddOption( "Custom health", function()
+		Derma_StringRequest( 
+			target:Nick(), 
+			"Custom health",
+			"100",
+			function( txt )
+				local runtype = target:SteamID()
+				if target:IsBot() then runtype = target:Nick() end
+
+				pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. txt )
+			end,
+			function( txt ) 
+			end
+		)
+	end )
+	
+end
 anus.RegisterPlugin( plugin )

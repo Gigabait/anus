@@ -1,15 +1,15 @@
 	-- todo : check for family sharing
-local PLUGIN = {}
-PLUGIN.id = "altcheck"
-PLUGIN.name = "Alt Checker"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = ""
-PLUGIN.help = "Checks player for alts on join"
-PLUGIN.example = ""
-PLUGIN.notRunnable = true
-PLUGIN.defaultAccess = "superadmin"
+local plugin = {}
+plugin.id = "altcheck"
+plugin.name = "Alt Checker"
+plugin.author = "Shinycow"
+plugin.usage = ""
+plugin.help = "Checks player for alts on join"
+plugin.example = ""
+plugin.notRunnable = true
+plugin.defaultAccess = "superadmin"
 
-function PLUGIN:OnRun( pl, arg, t, cmd )
+function plugin:OnRun( pl, arg, t, cmd )
 	net.Start( "anus_requestalt" )
 	net.Send( t )
 	
@@ -62,4 +62,4 @@ else
 	
 end
 
-anus.RegisterPlugin( PLUGIN )
+anus.RegisterPlugin( plugin )

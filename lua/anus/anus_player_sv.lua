@@ -1,16 +1,17 @@
 local _R = debug.getregistry()
 
 local function anusBroadcastUsers( pl )
-	net.Start("anus_broadcastusers")
-		net.WriteUInt( table.Count(anus.Users), 8 )
+	net.Start( "anus_broadcastusers" )
+		net.WriteUInt( table.Count( anus.Users ), 8 )
 		for k,v in next, anus.Users do
-			net.WriteString(v.group)
+			net.WriteString( v.group )
 			net.WriteString( k )
 			if v.name then
 				net.WriteString( v.name )
 			else
 				net.WriteString( k )
 			end
+			net.WriteString( v.time or "0" ) 
 		end
 	net.Send( pl )
 end
@@ -94,15 +95,21 @@ function _R.Player:SetUserGroup( group, save, time )
 end
 
 	-- For players offline
-function anus.SetPlayerGroup( steamid, group )
+function anus.SetPlayerGroup( steamid, group, time )
 	if not anus.Groups[ group ] then return end
 	
 	if group != "user" then
-		anus.Users[ steamid ] = {group = group, name = steamid, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
-	else
-		if anus.Users[ steamid ] then
-			anus.Users[ steamid ] = nil
+		if anus.Users[ steamid ] then		
+			anus.Users[ steamid ] = {group = group, name = anus.Users[ steamid ].name, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+		else
+			anus.Users[ steamid ] = {group = group, name = steamid, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		end
+		
+		if time then
+			anus.TempUsers[ steamid ] = {group = group, name = steamid, time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+		end
+	else
+		anus.Users[ steamid ] = nil
 	end
 	
 	file.Write("anus/users.txt", von.serialize( anus.Users ))
@@ -209,6 +216,9 @@ end
 function _R.Entity:IsTempUser()
 	return anus.TempUsers[ self:SteamID() ] != nil
 end
+function anus.IsTempUser( steamid )
+	return anus.TempUsers[ steamid ] != nil
+end
 
 _R.Player.OldSteamIDP = _R.Player.OldSteamIDP or _R.Player.SteamID
 _R.Entity.OldSteamID = _R.Entity.OldSteamID or _R.Player.SteamID
@@ -228,4 +238,30 @@ function _R.Entity:Nick()
 	else
 		return self:OldNickP()
 	end
+end
+
+function _R.Entity:Team()
+	return 0
+end
+
+	-- Player UniqueIDs
+	-- This is assigned to admins.
+	-- Regenerated each reconnect.
+local function CreateID()
+	local id = string.char( math.random( 97, 122 ) )
+	for i=1,6 do
+		local rand = math.random( 1, 3 )
+		rand = rand != 1 and math.random( 3, 99 ) or string.char( math.random( 97, 122 ) )
+		id = id .. rand
+		if i % 2 == 0 and i != 6 then
+			id = id .. "-"
+		end
+	end
+	id = id .. string.char( math.random( 97, 122 ) )
+
+	return id
+end
+function _R.Player:AssignID()
+	local id = CreateID()
+	self:ChatPrint( "id   " .. id )
 end

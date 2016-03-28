@@ -131,8 +131,12 @@ if CLIENT or SERVER then
 		
 			RunConsoleCommand( "anus_" .. cmd, unpack( a ) )
 		else
+			--print( "test", sargs )
 			sargs = string.gsub( sargs, a[ 1 ], "", 1 )
+			--print( "test2", sargs )
 			sargs = string.TrimLeft( sargs )
+			
+			--print( "test3", sargs )
 			
 			if CLIENT then
 				net.Start( "anus_CCPlugin_" .. lcmd )
@@ -199,7 +203,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			if usageargs then
 				if usageargs.type == "player" then
 					local foundPlayer = false
-					foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
+					if k != 1 and v != " " then
+						foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
+					end
 					
 					if usageargs.optional then
 						hasPlayerTargOptional = true
@@ -245,8 +251,13 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
 			info.OnRun( self, p, a, nil, sargs )
 		else
-			target = IsValid( target ) and target or anus.FindPlayer( a[ 1 ] )
-			if not target then target = anus.FindPlayer( a[ 1 ], "steam" ) end
+			target = IsValid( target ) and target or nil
+			if not target and a[ 1 ] == " " then
+				target = NULL
+			elseif a[ 1 ] != " " then
+				target = IsValid( target ) and target or anus.FindPlayer( a[ 1 ] )
+				if not target then target = anus.FindPlayer( a[ 1 ], "steam" ) end
+			end
 			
 			local args = a
 			table.remove( args, 1 )
@@ -265,7 +276,46 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 
 	_G[ "anus" ][ "RunCommand_" .. info.id ] = function( p, c, a, sargs )
 		local a = {}
-		a = string.Explode( " ", sargs )
+		
+		if not anus.Plugins[ info.id ].notarget then
+				-- set the placemark where a quote is found, 
+				-- will be checked later on to find end of it
+			local placefound = nil
+		
+			local v
+			for i=1,#sargs do
+				v = sargs[ i ]
+				--print( v )
+				if v == "\"" then
+					if placefound then
+						--print( "placefound ", placefound, i )
+						--a2[ #a2 + 1 ] = string.sub( s, placefound + 1, i - 1 )
+						table.insert( a, placefound, string.sub( sargs, placefound + 1, i - 1 ) )
+						placefound = nil
+					else
+						--a2[ #a2 + 1 ] = 
+						placefound = i
+					end
+				elseif v == " " and not placefound then
+					a[ #a + 1 ] = ""
+					--print( "spaces", #a2, i,v  )
+				else
+					if not placefound then
+						--print( a2[ #a2 - 1 ], "test" )
+						if #a - 1 < 0 then
+							a[ #a + 1 ] = v
+							-- dont think this isneeded anymore
+						elseif a[ #a - 1 ] == " " then
+							a[ #a + 1 ] = v
+						else
+							a[ #a ] = a[ #a ] .. v
+						end
+					end
+				end
+			end
+		else
+			a = string.Explode( " ", sargs )
+		end
 		
 		for k,v in next, a do
 			if #v == 0 then
@@ -279,8 +329,49 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	net.Receive( "anus_CCPlugin_" .. info.id, function( l, p )
 		local s = net.ReadString()
+		
 		local a = {}
-		a = string.Explode( " ", s )
+		
+		if not anus.Plugins[ info.id ].notarget then
+				-- set the placemark where a quote is found, 
+				-- will be checked later on to find end of it
+			local placefound = nil
+		
+			local v
+			for i=1,#s do
+				v = s[ i ]
+				--print( v )
+				if v == "\"" then
+					if placefound then
+						--print( "placefound ", placefound, i )
+						--a2[ #a2 + 1 ] = string.sub( s, placefound + 1, i - 1 )
+						table.insert( a, placefound, string.sub( s, placefound + 1, i - 1 ) )
+						placefound = nil
+					else
+						--a2[ #a2 + 1 ] = 
+						placefound = i
+					end
+				elseif v == " " and not placefound then
+					a[ #a + 1 ] = ""
+					--print( "spaces", #a2, i,v  )
+				else
+					if not placefound then
+						--print( a2[ #a2 - 1 ], "test" )
+						if #a - 1 < 0 then
+							a[ #a + 1 ] = v
+							-- dont think this isneeded anymore
+						elseif a[ #a - 1 ] == " " then
+							a[ #a + 1 ] = v
+						else
+							a[ #a ] = a[ #a ] .. v
+						end
+					end
+				end
+			end
+		else
+			a = string.Explode( " ", s )
+		end
+		
 
 		for k,v in next, a do
 			if #v == 0 then

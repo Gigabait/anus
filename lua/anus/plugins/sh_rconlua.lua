@@ -1,16 +1,17 @@
-local PLUGIN = {}
-PLUGIN.id = "rcon"
-PLUGIN.name = "RCon"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = "<string:Command>"
-PLUGIN.help = "Runs a server command, optionally outputs its results"
-PLUGIN.example = "anus rcon sv_allowcslua 1"
-PLUGIN.category = "Utility"
+local plugin = {}
+plugin.id = "rcon"
+plugin.name = "RCon"
+plugin.author = "Shinycow"
+plugin.usage = "<string:Command>"
+plugin.help = "Runs a server command, optionally outputs its results"
+plugin.example = "anus rcon sv_allowcslua 1"
+plugin.category = "Development"
 	-- won't show who kicked the player (unless they type it in chat ha)
-PLUGIN.anonymous = true
-PLUGIN.defaultAccess = "superadmin"
+plugin.anonymous = true
+plugin.notarget = true
+plugin.defaultAccess = "superadmin"
 
-function PLUGIN:OnRun( pl, arg, t, cmd )
+function plugin:OnRun( pl, arg, t, cmd )
 	local output = cmd
 
 	game.ConsoleCommand( output .. "\n" )
@@ -19,21 +20,23 @@ function PLUGIN:OnRun( pl, arg, t, cmd )
 		pl:ChatPrint( "CVar " .. output .. " returns: " .. cvars.String( output ) )
 	end
 end
-anus.RegisterPlugin( PLUGIN )
+anus.RegisterPlugin( plugin )
 
-local PLUGIN = {}
-PLUGIN.id = "lua"
-PLUGIN.name = "Lua"
-PLUGIN.author = "Shinycow"
-PLUGIN.usage = "<string:Lua>"
-PLUGIN.help = "Executes a lua string on the server"
-PLUGIN.example = "anus lua ME:SetHealth( 100 )"
-PLUGIN.category = "Utility"
+local plugin = {}
+plugin.id = "lua"
+plugin.name = "Lua"
+plugin.author = "Shinycow"
+plugin.usage = "<string:Lua>"
+plugin.help = "Executes a lua string on the server"
+plugin.example = "anus lua ME:SetHealth( 100 )"
+plugin.category = "Development"
 	-- won't show who kicked the player (unless they type it in chat ha)
-PLUGIN.anonymous = true
-PLUGIN.defaultAccess = "superadmin"
+plugin.anonymous = true
+	-- needed if you want to do parsing like this plugin
+plugin.notarget = true
+plugin.defaultAccess = "superadmin"
 
-function PLUGIN:OnRun( pl, arg, t, cmd )
+function plugin:OnRun( pl, arg, t, cmd )
 	ME, THIS = pl, IsValid( pl ) and pl:GetEyeTrace().Entity or NULL
 	
 	local res = table.concat( arg, " " )
@@ -58,5 +61,5 @@ function PLUGIN:OnRun( pl, arg, t, cmd )
 
 	ME, THIS = nil, nil
 end
-anus.RegisterPlugin( PLUGIN )
+anus.RegisterPlugin( plugin )
 
