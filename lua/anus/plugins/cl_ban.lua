@@ -74,12 +74,16 @@ function category:Initialize( parent )
 		end )
 		menu:AddOption( "View Details" )
 		menu:AddSpacer()
+		menu:AddOption( "Visit Profile", function()
+			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ) )
+		end )
 		menu:AddOption( "Close" )
 		menu.Think = function( pnl2 )
 			if not IsValid( pnl ) then
 				menu:Remove()
 			end
 		end
+		
 		--DisableClipping( false )
 	end
 	

@@ -20,7 +20,7 @@ anus.Groups[ "trusted" ] =
 		["kick"] = true,
 		["gag"] = true,
 		["ungag"] = true,
-		["ban60"] = true,
+		["ban"] = { [ 2 ] = { min = "1s", max = "60m" } },
 	},
 	color = Color( 33, 255, 0, 255 ),
 	icon = "icon16/ruby_add.png",

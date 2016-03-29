@@ -3,19 +3,19 @@ local _R = debug.getregistry()
 _R.Player.OldAdmin = _R.Player.OldAdmin or _R.Player.IsAdmin
 _R.Player.OldSuperAdmin = _R.Player.OldSuperAdmin or _R.Player.IsSuperAdmin
 function _R.Player:IsAdmin()
-	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ]["admin"] or self:OldAdmin()
+	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "admin" ] or self:OldAdmin()
 end
 function _R.Player:IsSuperAdmin()
-	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ]["superadmin"] or self:OldSuperAdmin()
+	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "superadmin" ] or self:OldSuperAdmin()
 end
 _R.Player.OldIsUserGroup = _R.Player.OldIsUserGroup or _R.Player.IsUserGroup
 function _R.Player:IsUserGroup( group )
 	if not group then return false end
-	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ]["group"] == group or self:OldIsUserGroup()
+	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "group" ] == group or self:OldIsUserGroup()
 end
 _R.Player.OldGetUserGroup = _R.Player.OldGetUserGroup or _R.Player.GetUserGroup
 function _R.Player:GetUserGroup()
-	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ]["group"] or self:OldGetUserGroup()
+	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "group" ] or self:OldGetUserGroup()
 end
 
 	-- check immunity

@@ -38,16 +38,16 @@ local function anus_AutoComplete( cmd, args )
 		local explodeargs = string.Explode( " ", args )
 
 		for k,v in pairs( anus.Plugins ) do
-			if LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ LocalPlayer() ]["perms"][ k ] then
+			if LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ LocalPlayer() ][ "perms" ][ k ] then
 			
 						-- command.
-				if anus.Plugins[ explodeargs[1]:lower() ] then
-					if explodeargs[1]:lower() != k then continue end
+				if anus.Plugins[ explodeargs[ 1 ]:lower() ] then
+					if explodeargs[ 1 ]:lower() != k then continue end
 							
 					if anus.Plugins[ k ].usage then
 						local explodeusage = string.Explode( ";", anus.Plugins[ k ].usage )
 
-						for k,v in pairs(explodeusage) do
+						for k,v in next, explodeusage do
 							local str = v
 							local pattern = "([%a=]+)"
 							local start, endpos, word = string.find( str, pattern )
@@ -55,21 +55,21 @@ local function anus_AutoComplete( cmd, args )
 							explodeusage[ k ] = word
 						end
 
-						if explodeusage[1] == "player" then
+						if explodeusage[ 1 ] == "player" then
 							for a,b in next, player.GetAll() do
 								if explodeargs[ 2 ] and not string.find( string.lower( b:Nick() ), explodeargs[ 2 ], nil, true ) then continue end
 								output[ #output + 1 ] = "anus " .. k .. " \"" .. b:Nick() .. "\""
 									-- if there's more than one usage option, display them.
 								if #explodeusage > 1 then
 									local explodeusageCOPY = string.Explode( ";", anus.Plugins[ k ].usage )
-									table.remove(explodeusageCOPY, 1)
+									table.remove( explodeusageCOPY, 1 )
 									for x,y in pairs( explodeusageCOPY ) do
 										if anus.Plugins[ k ].GetUsageSuggestions then
-											local res = anus.Plugins[ k ]:GetUsageSuggestions( x + 1 )
+											local res = anus.Plugins[ k ]:GetUsageSuggestions( x + 1, LocalPlayer() )
 											if res != "" then
-												local ynew = string.gsub( y, ">", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1 ) .. ")>" )
-												ynew = string.gsub( ynew, "]", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1 ) .. ")]" )
-												output[ #output ] = output[ #output ] .. " " .. ynew --y .. " (" .. anus.Plugins[ k ]:GetUsageSuggestions( 1 + 1 ) .. ")"
+												local ynew = string.gsub( y, ">", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1, LocalPlayer() ) .. ")>" )
+												ynew = string.gsub( ynew, "]", " (" .. anus.Plugins[ k ]:GetUsageSuggestions( x + 1, LocalPlayer() ) .. ")]" )
+												output[ #output ] = output[ #output ] .. " " .. ynew
 											else
 												output[ #output ] = output[ #output ] .. " " .. y 
 											end
@@ -83,14 +83,14 @@ local function anus_AutoComplete( cmd, args )
 							output[ #output + 1 ] = "anus " .. k
 							if #explodeusage >= 1 then
 								local explodeusageCOPY = string.Explode( ";", anus.Plugins[ k ].usage )
-								for x,y in pairs( explodeusageCOPY ) do
+								for x,y in next, explodeusageCOPY do
 									output[ #output ] = output[ #output ] .. " " .. y
 								end
 							end
 						end
 							
 					end			
-				elseif string.find( k, explodeargs[1]:lower() ) then
+				elseif string.find( k, explodeargs[ 1 ]:lower() ) then
 					output[ #output + 1 ] = "anus " .. k
 					if anus.Plugins[ k ].usage then
 						output[ #output ] = output[ #output ] .. " " .. anus.Plugins[ k ].usage
@@ -126,7 +126,7 @@ if CLIENT or SERVER then
 	
 			-- might as well try old way too.
 		if util.NetworkStringToID( "anus_ccplugin_" .. lcmd ) == 0 then
-			local cmd = a[1]
+			local cmd = a[ 1 ]
 			table.remove( a, 1 )
 		
 			RunConsoleCommand( "anus_" .. cmd, unpack( a ) )

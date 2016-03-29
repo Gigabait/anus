@@ -53,6 +53,28 @@ function plugin:OnRun( pl, arg, target )
 	end)
 end
 
+--[[function plugin:GetUsageSuggestions( arg, pl )
+	if arg != 2 then return "" end
+	
+	local output = {}
+	for k,v in next, anus.Groups do
+		output[ #output + 1 ] = k
+	end
+
+	table.SortDesc( output )
+	
+	local str = ""
+	for i=1,#output do
+		if #output == i then
+			str = str .. output[ i ]
+		else
+			str = str .. output[ i ] .. ","
+		end
+	end
+	
+	return str
+end]]
+
 	-- pl: Player running command
 	-- parent: The DMenu
 	-- target: The player object of the line selected
