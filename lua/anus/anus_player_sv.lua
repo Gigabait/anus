@@ -244,6 +244,28 @@ function _R.Entity:Team()
 	return 0
 end
 
+function _R.Player:DisableSpawning()
+	self.bNoSpawning = true
+end
+function _R.Player:EnableSpawning()
+	self.bNoSpawning = false
+end
+function _R.Player:CanSpawn()
+	return not self.bNoSpawning 
+end
+
+hook.Add( "PlayerSpawnObject", "anus_disablespawning", function( pl )
+	if not pl:CanSpawn() then return false end
+end )
+if not oldnumpadActivate and SERVER then
+	oldnumpadActivate = numpad.Activate
+	function numpad.Activate( pl, num, bIsButton )
+		if not pl:CanSpawn() then return end
+		
+		oldnumpadActivate( pl, num, bIsButton )
+	end
+end
+	
 	-- Player UniqueIDs
 	-- This is assigned to admins.
 	-- Regenerated each reconnect.

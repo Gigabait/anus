@@ -22,6 +22,7 @@ function plugin:OnRun( pl, arg, target )
 
 			v:Lock()
 			v.AnusFrozen = true
+			v:DisableSpawning()
 		end
 		
 		anus.NotifyPlugin( pl, plugin.id, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
@@ -37,6 +38,7 @@ function plugin:OnRun( pl, arg, target )
 		
 		target:Lock()
 		target.AnusFrozen = true
+		target:DisableSpawning()
 	
 	end
 end
@@ -44,10 +46,9 @@ local function isFrozen( pl )
 	if pl.AnusFrozen then return false end
 end
 
-anus.RegisterHook( "PlayerSpawnObject", "pluginFreeze", function( pl )
+--[[anus.RegisterHook( "PlayerSpawnObject", "pluginFreeze", function( pl )
 	pl:ChatPrint( "yu span objecT??" )
-end )
-hook.Add( "PlayerSpawnObject", "anus_plugins_freeze", isFrozen )
+end )]]
 hook.Add( "CanPlayerSuicide", "anus_plugins_freeze", isFrozen )
 hook.Add( "PlayerDeathThink", "anus_plugins_freeze", isFrozen )
 hook.Add( "DoPlayerDeath", "anus_plugins_freeze", function( pl )
@@ -64,14 +65,6 @@ hook.Add( "PlayerSpawn", "anus_plugins_freeze", function( pl )
 		end )
 	end
 end )
-if not oldnumpadActivate and SERVER then
-	oldnumpadActivate = numpad.Activate
-	function numpad.Activate( pl, num, bIsButton )
-		if pl.AnusFrozen then return end
-		
-		oldnumpadActivate( pl, num, bIsButton )
-	end
-end
 
 	-- pl: Player running command
 	-- parent: The DMenu
@@ -112,6 +105,7 @@ function plugin:OnRun( pl, arg, target )
 			 
 			v:UnLock()
 			v.AnusFrozen = false
+			v:EnableSpawning()
 				-- Player.UnLock ungods players.
 			timer.Create("anus_plugins_unfreeze_" .. tostring(v), 0.05, 1, function()
 				if IsValid(v) and v.AnusGodded then
@@ -133,6 +127,7 @@ function plugin:OnRun( pl, arg, target )
 
 		target:UnLock()
 		target.AnusFrozen = false
+		target:EnableSpawning()
 			-- Player.UnLock ungods players.
 		timer.Simple(0.1, function()
 			if IsValid(target) and target.AnusGodded then
