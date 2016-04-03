@@ -422,6 +422,7 @@ if CLIENT then
 	include( "anus/anus_vgui_cl.lua" )
 	include( "anus/anus_plugins_sh.lua" )
 	include( "anus/vgui/anus_main.lua" )
+	include( "anus/vgui/anus_votepanel.lua" )
 end
 
 local files, dirs = file.Find( "anus/vgui/categories/*", "LUA" )

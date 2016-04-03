@@ -21,7 +21,7 @@ function plugin:OnRun( pl, args, target )
 
 end
 
-hook.Add( "Initialize", "anus_plugins_map", function()
+hook.Add( "InitPostEntity", "anus_plugins_map", function()
 	anus_maps = {}
 	
 	local maps = file.Find( "maps/*.bsp", "GAME" )

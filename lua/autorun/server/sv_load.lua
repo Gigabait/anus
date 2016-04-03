@@ -68,6 +68,7 @@ if SERVER then
 	include( "anus/anus_plugins_sh.lua" )
 	AddCSLuaFile( "anus/anus_plugins_sh.lua" )
 	AddCSLuaFile( "anus/vgui/anus_main.lua" )
+	AddCSLuaFile( "anus/vgui/anus_votepanel.lua" )
 	
 	net.Receive( "anus_authenticate2", function( len, pl )
 		if not IsValid( pl ) or pl.HasAuthed then return end

@@ -60,31 +60,15 @@ net.Receive("anus_requestusers", function( len, pl )
 	anusBroadcastUsers( pl )
 end)
 
---[[concommand.Add( "test", function( pl )
-	local a = 1
-	timer.Create( "testpos", 0.1, 360, function()
-		local pos = anus.TeleportPlayer2( Entity(2), pl, false, a )
-		if pos then 
-			Entity(2):SetPos( pos ) 
+--hook.Add( "PlayerInitialSpawn", "anus_networktables", function( pl )
+hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
+	timer.CreatePlayer( pl, "networktables", 1, 1, function() 
+		if pl:HasAccess( "unban" ) then
+			anusBroadcastBans( pl )
 		end
-		a = a + 1
+		
+		if pl:HasAccess( "addgroup" ) then
+			anusBroadcastGroups( pl )
+		end
 	end )
 end )
-
-concommand.Add( "test2", function( pl )
-	for k,v in next, player.GetBots() do 
-		local pos = anus.TeleportPlayer2( v, pl, false  )
-		if pos then 
-			v:SetPos( pos )
-		end
-	end
-end )]]
-
-
-function anus.ServerLog( msg, isdebug )
-	ServerLog( "[anus] " .. msg .. "\n" )
-	local date = os.date( "%d_%m_%Y", os.time() )
-	local time = os.date( "%H:%M:%S", os.time() )
-	local path = not isdebug and "logs" or "debuglogs" 
-	file.Append( "anus/" .. path .. "/" .. date .. ".txt", time .. " - " .. msg .. "\n" )
-end

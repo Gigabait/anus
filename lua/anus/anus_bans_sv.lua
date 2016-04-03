@@ -1,9 +1,9 @@
 util.AddNetworkString("anus_requestbans")
 util.AddNetworkString("anus_broadcastbans")
 
-local function anusBroadcastBans( pl )
+function anusBroadcastBans( pl )
 	net.Start("anus_broadcastbans")
-		net.WriteUInt( table.Count(anus.Bans), 32 )
+		net.WriteUInt( table.Count(anus.Bans), 16 )
 		for k,v in next, anus.Bans do
 			net.WriteString( k )
 			net.WriteString( v.name )
@@ -14,10 +14,10 @@ local function anusBroadcastBans( pl )
 		end
 	net.Send( pl )
 end
-net.Receive("anus_requestbans", function( len, client )
-	if not client:HasAccess( "unban" ) then return end
+net.Receive("anus_requestbans", function( len, pl )
+	if not pl:HasAccess( "unban" ) then return end
 	
-	anusBroadcastBans( client )
+	anusBroadcastBans( pl )
 end)
 
 function anus.SaveBans()

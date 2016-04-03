@@ -96,15 +96,6 @@ hook.Add( "ChatText", "anus_RemoveKickBan", function( index, name, text, type )
 	end
 end )
 
-hook.Add( "Initialize", "anus_RequestBans", function()
-	timer.Simple( 3, function()
-		if not LocalPlayer():HasAccess( "unban" ) then return end
-		
-		net.Start( "anus_requestbans" )
-		net.SendToServer()
-	end )
-end )
-
 hook.Add( "OnPlayerGroupsChanged", "anus_RequestBans", function()
 	net.Start( "anus_requestbans" )
 	net.SendToServer()

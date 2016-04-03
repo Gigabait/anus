@@ -1,111 +1,115 @@
-anus.Groups = anus.Groups or {}
+if SERVER then
+	anus.Groups = anus.Groups or {}
+elseif CLIENT and not anus.Groups then
+	anus.Groups = {}
 
-anus.Groups[ "user" ] =
-{
-	--id = 1,
-	name = "Guest",
-	Inheritance = nil,
-	Permissions = {	},
-	color = Color( 0, 161, 255, 255 ),
-	icon = "icon16/user.png",
-}
-
-anus.Groups[ "trusted" ] =
-{
-	--id = 2,
-	name = "Trusted Player",
-	Inheritance = "user",
-	Permissions =
+	anus.Groups[ "user" ] =
 	{
-		["kick"] = true,
-		["gag"] = true,
-		["ungag"] = true,
-		["ban"] = { [ 2 ] = { min = "1s", max = "60m" } },
-	},
-	color = Color( 33, 255, 0, 255 ),
-	icon = "icon16/ruby_add.png",
-}
+		--id = 1,
+		name = "Guest",
+		Inheritance = nil,
+		Permissions = {	},
+		color = Color( 0, 161, 255, 255 ),
+		icon = "icon16/user.png",
+	}
 
-anus.Groups[ "admin" ] =
-{
-	--id = 3,
-	name = "Admin",
-	Inheritance = "trusted",
-	isadmin = true,
-	Permissions = 
+	anus.Groups[ "trusted" ] =
 	{
-		["ban"] = true,
-		["mute"] = true,
-		["unmute"] = true,
-		["slay"] = true,
-		["strip"] = true,
-		["arm"] = true,
-		["respawn"] = true,
-		["freeze"] = true,
-		["unfreeze"] = true,
-		["bring"] = true,
-	},
-	color = Color( 95, 63, 127, 255 ),
-	icon = "icon16/shield.png",
-}
+		--id = 2,
+		name = "Trusted Player",
+		Inheritance = "user",
+		Permissions =
+		{
+			["kick"] = true,
+			["gag"] = true,
+			["ungag"] = true,
+			["ban"] = { [ 2 ] = { min = "1s", max = "60m" } },
+		},
+		color = Color( 33, 255, 0, 255 ),
+		icon = "icon16/ruby_add.png",
+	}
 
-anus.Groups[ "superadmin" ] =
-{
-	--id = 4,
-	name = "SuperAdmin",
-	Inheritance = "admin",
-	isadmin = true,
-	issuperadmin = true,
-	Permissions =
+	anus.Groups[ "admin" ] =
 	{
-		["noclip"] = true,
-		["god"] = true,
-		["ungod"] = true,
-		["unban"] = true,
-		["banid"] = true,
-	},
-	color = Color( 255, 93, 0, 255 ),
-	icon = "icon16/shield_add.png",
-}
+		--id = 3,
+		name = "Admin",
+		Inheritance = "trusted",
+		isadmin = true,
+		Permissions = 
+		{
+			["ban"] = true,
+			["mute"] = true,
+			["unmute"] = true,
+			["slay"] = true,
+			["strip"] = true,
+			["arm"] = true,
+			["respawn"] = true,
+			["freeze"] = true,
+			["unfreeze"] = true,
+			["bring"] = true,
+		},
+		color = Color( 95, 63, 127, 255 ),
+		icon = "icon16/shield.png",
+	}
 
-anus.Groups[ "owner" ] =
-{
-	--id = 5,
-	name = "Owner",
-	Inheritance = "superadmin",
-	isadmin = true,
-	issuperadmin = true,
-	Permissions =
+	anus.Groups[ "superadmin" ] =
 	{
-			-- no need to add anything in here anymore, owner has everything.
-		["ban"] = true,
-		["kick"] = true,
-		["gag"] = true,
-		["ungag"] = true,
-		["mute"] = true,
-		["unmute"] = true,
-		["slay"] = true,
-		["noclip"] = true,
-		["spray"] = true,
-		["adduser"] = true,
-		["addusertemp"] = true,
-		["god"] = true,
-		["ungod"] = true,
-		["unban"] = true,
-		["configuregroups"] = true,
-		["strip"] = true,
-		["arm"] = true,
-		["banid"] = true,
-		["respawn"] = true,
-		["freeze"] = true,
-		["unfreeze"] = true,
-		["adduserid"] = true,
-	},
-	color = Color( 255, 0, 0, 255 ),
-	icon = "icon16/lightning_add.png",
-		-- can't delete or edit in any way
-	hardcoded = true,
-}
+		--id = 4,
+		name = "SuperAdmin",
+		Inheritance = "admin",
+		isadmin = true,
+		issuperadmin = true,
+		Permissions =
+		{
+			["noclip"] = true,
+			["god"] = true,
+			["ungod"] = true,
+			["unban"] = true,
+			["banid"] = true,
+		},
+		color = Color( 255, 93, 0, 255 ),
+		icon = "icon16/shield_add.png",
+	}
+
+	anus.Groups[ "owner" ] =
+	{
+		--id = 5,
+		name = "Owner",
+		Inheritance = "superadmin",
+		isadmin = true,
+		issuperadmin = true,
+		Permissions =
+		{
+				-- no need to add anything in here anymore, owner has everything.
+			["ban"] = true,
+			["kick"] = true,
+			["gag"] = true,
+			["ungag"] = true,
+			["mute"] = true,
+			["unmute"] = true,
+			["slay"] = true,
+			["noclip"] = true,
+			["spray"] = true,
+			["adduser"] = true,
+			["addusertemp"] = true,
+			["god"] = true,
+			["ungod"] = true,
+			["unban"] = true,
+			["configuregroups"] = true,
+			["strip"] = true,
+			["arm"] = true,
+			["banid"] = true,
+			["respawn"] = true,
+			["freeze"] = true,
+			["unfreeze"] = true,
+			["adduserid"] = true,
+		},
+		color = Color( 255, 0, 0, 255 ),
+		icon = "icon16/lightning_add.png",
+			-- can't delete or edit in any way
+		hardcoded = true,
+	}
+end
 
 function anus.CountGroupsAccess( plugin )
 	local count = 0
@@ -219,4 +223,11 @@ function anus.RemoveGroup( id )
 	anus.Groups[ id:lower() ] = nil
 	
 	anus_GroupsInherit()
+end
+
+if CLIENT then
+	net.Receive( "anus_broadcastgroups", function()
+		print( "TEST" )
+		anus.Groups = net.ReadTable()
+	end )
 end

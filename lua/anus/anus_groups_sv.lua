@@ -1,6 +1,37 @@
 anus.Users = anus.Users or {}
 anus.TempUsers = anus.TempUsers or {}
 
+util.AddNetworkString( "anus_requestgroups" )
+util.AddNetworkString( "anus_broadcastgroups" )
+util.AddNetworkString( "anus_groups_editname" )
+
+function anusBroadcastGroups( pl )
+	--[[net.Start("anus_broadcastgroups")
+		net.WriteUInt( table.Count(anus.Groups), 8 )
+		for k,v in next, anus.Groups do
+			net.WriteString( k )
+			net.WriteString( v.name )
+			net.WriteUInt( table.Count( v.Permissions ), 8 )
+			for a,b in next, v.Permissions do
+				net.WriteString( a )
+				net.WriteString
+			net.WriteString( v.time )
+			net.WriteString( v.admin )
+			net.WriteString( v.admin_steamid )
+		end
+	net.Send( pl )]]
+	
+	net.Start( "anus_broadcastgroups" )
+		net.WriteTable( anus.Groups )
+	net.Send( pl )
+end
+net.Receive( "anus_requestgroups" , function( len, pl )
+	if not pl:HasAccess( "addgroup" ) then return end
+	
+	anusBroadcastGroups( pl )
+end)
+
+
 function anus.SaveGroups()
 	file.Write( "anus/groups.txt", von.serialize( anus.Groups ) )
 end
@@ -26,6 +57,28 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	ANUSGROUPSLOADED = true
 	hook.Call( "anus_SVGroupsLoaded", nil )
 end)
+
+net.Receive( "anus_groups_editname", function( len, pl )
+	if not pl:HasAccess( "addgroup" ) then print( ":(" )return end
+	
+	local groupid = net.ReadString()
+	local name = net.ReadString()
+	
+	if not anus.Groups[ groupid ] then print(" wat" )return end
+	
+	print( groupid, name )
+	
+	anus.Groups[ groupid ][ "name" ] = name
+	anus.SaveGroups()
+	
+	for k,v in next, player.GetAll() do
+		--if anus.Groups[ v.UserGroup or "user" ][ "Permissions" ].addgroup then
+		if v:HasAccess( "addgroup" ) then
+			print( v:Nick() )
+			anusBroadcastGroups( v )
+		end
+	end
+end )
 
 if not timer.Exists("anus_refreshtemps") then
 	timer.Create("anus_refreshtemps", 2, 0, function()

@@ -40,7 +40,12 @@ function CATEGORY:Initialize( parent )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
-		menu:AddOption( "Change group" )
+		local groupchange = menu:AddSubMenu( "Change Group" )
+		for k,v in next, anus.Groups do
+			groupchange:AddOption( v.name, function()
+				LocalPlayer():ConCommand( "anus adduserid " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) .. " " .. k )
+			end )
+		end
 		menu:AddOption( "Change Permissions" )
 		menu:AddSpacer()
 		menu:AddOption( "Visit Profile", function()

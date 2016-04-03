@@ -38,3 +38,30 @@ function anus.TeleportPlayer( from, to, bForce, testenum )
 	
 	return pos[ tried ]
 end
+
+function anus.ServerLog( msg, isdebug )
+	ServerLog( "[anus] " .. msg .. "\n" )
+	local date = os.date( "%d_%m_%Y", os.time() )
+	local time = os.date( "%H:%M:%S", os.time() )
+	local path = not isdebug and "logs" or "debuglogs" 
+	file.Append( "anus/" .. path .. "/" .. date .. ".txt", time .. " - " .. msg .. "\n" )
+end
+
+function timer.CreatePlayer( pl, identifier, delay, reps, callback )
+	timer.Create( identifier .. "_" .. pl:UserID(), delay, reps, function()
+			-- add to global table and remove them on disconnect instead.
+		if not IsValid( pl ) then return end
+		
+		callback()
+	end )
+	pl.RemoveTimerDC = pl.RemoveTimerDC or {}
+	pl.RemoveTimerDC[ identifier .. "_" .. pl:UserID() ] = true
+end
+
+gameevent.Listen( "player_disconnect" )
+hook.Add( "player_disconnect", "props_DestroyPlayerTimers", function( data )
+	for k,v in next, Player( data.userid ).RemoveTimerDC or {} do
+		timer.Destroy( k )
+	end
+end )
+	

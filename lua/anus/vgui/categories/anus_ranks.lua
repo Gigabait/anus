@@ -63,7 +63,22 @@ function CATEGORY:Initialize( parent )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
-		menu:AddOption( "Change name" )
+		menu:AddOption( "Change name", function()
+			local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 )
+			Derma_StringRequest(
+				column2, 
+				"Change group name",
+				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ),
+				function( txt )
+					net.Start( "anus_groups_editname" )
+						net.WriteString( column2 )
+						net.WriteString( txt )
+					net.SendToServer()
+				end,
+				function( txt )
+				end
+			)
+		end )
 		menu:AddOption( "Change inheritance" )
 		menu:AddOption( "Change permissions" )
 		menu:AddOption( "Change icon" )
