@@ -12,7 +12,7 @@ plugin.defaultAccess = "superadmin"
 function plugin:OnRun( pl, args, target )
 
 	if not anus_maps[ args[ 1 ] ] then
-		pl:ChatPrint( "No map found." )
+		pl:ChatPrint( "Map \"" .. args[ 1 ] .. "\" was not found." )
 		return
 	end
 	

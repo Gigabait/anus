@@ -368,7 +368,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					a[ #a + 1 ] = ""
 					--print( "spaces", #a2, i,v  )
 				else
-					if not placefound then
+					if not placefound and s[ i - 1 ] != "\"" then
 						--print( a2[ #a2 - 1 ], "test" )
 						if #a - 1 < 0 then
 							a[ #a + 1 ] = v

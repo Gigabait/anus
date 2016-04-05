@@ -195,6 +195,12 @@ function _R.Player:GetUserGroup()
 	return self.UserGroup or self:OldGetUserGroup()
 end
 
+	-- Checks if a player is in this group
+	-- or inherits from this group
+function _R.Player:CheckGroup( group )
+	return anus.GroupHasInheritanceFrom( self.UserGroup, group, true )
+end
+
 _R.Player.OldChatPrintP = _R.Player.OldChatPrintP or _R.Player.ChatPrint
 _R.Entity.OldChatPrint = _R.Entity.OldChatPrint or _R.Player.ChatPrint
 function _R.Entity:ChatPrint( str )

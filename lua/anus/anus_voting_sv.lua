@@ -3,8 +3,8 @@ util.AddNetworkString( "anus_BroadcastVote" )
 function anus.StartVote( title, tblArgs, optTime, callback )
 	anus.Votes = anus.Votes or {}
 	
-	if #anus.Votes > 0 then return end
-	if #tblArgs == 0 then return end
+	if #anus.Votes > 0 then return false end
+	if #tblArgs == 0 then return false end
 	
 	local time = type( optTime ) != "function" and optTime or 15
 	local callback2 = callback or optTime
@@ -27,6 +27,8 @@ function anus.StartVote( title, tblArgs, optTime, callback )
 		end
 		net.WriteUInt( time, 10 )
 	net.Broadcast()
+	
+	return true 
 end
 
 function anus.FinishVote()

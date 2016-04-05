@@ -18,6 +18,12 @@ function _R.Player:GetUserGroup()
 	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "group" ] or self:OldGetUserGroup()
 end
 
+	-- Checks if a player is in this group
+	-- or inherits from this group
+function _R.Player:CheckGroup( group )
+	return anus.GroupHasInheritanceFrom( self:GetUserGroup(), group, true )
+end
+
 	-- check immunity
 function _R.Entity:HasAccess( plugin )
 	if not IsValid( self ) then return true end
