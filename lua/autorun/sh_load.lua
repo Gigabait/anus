@@ -198,6 +198,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			end
 		end
 		
+		local missedArgs = {}
 		for k,v in next, a do
 			local usageargs = anus.Plugins[ info.id ].usageargs[ k ]
 			if usageargs then
@@ -220,6 +221,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 				elseif usageargs.type == "number" then
 					if not tonumber( v ) then
 						p:ChatPrint( info.id .. ": No number found for argument " .. k )
+						missedArgs[ #missedArgs + 1 ] = k
 						break
 					end
 				elseif usageargs.type == "boolean" then
@@ -237,6 +239,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		
 		if #a < required then
 			p:ChatPrint( info.id .. ": Missing required argument (\"" .. anus.Plugins[ info.id ].usageargs[ #a + 1 ].type .. "\"?)" )
+			return
+		elseif #missedArgs >= 1 then
+			p:ChatPrint( info.id .. ": Missing required argument (Argument \"" .. missedArgs[ 1 ] .. "\")" )
 			return
 		end
 
@@ -315,6 +320,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					end
 				end
 			end
+			
+			---print( "debugigng" )
+			--PrintTable( a )
 		else
 			a = string.Explode( " ", sargs )
 		end
@@ -347,13 +355,16 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					if placefound then
 						--print( "placefound ", placefound, i )
 						--a2[ #a2 + 1 ] = string.sub( s, placefound + 1, i - 1 )
-						table.insert( a, placefound, string.sub( s, placefound + 1, i - 1 ) )
+						--table.insert( a, placefound, string.sub( s, placefound + 1, i - 1 ) )
+						table.insert( a, #a + 1, string.sub( s, placefound + 1, i - 1) )
+						
 						placefound = nil
 					else
 						--a2[ #a2 + 1 ] = 
 						placefound = i
 					end
-				elseif v == " " and not placefound then
+				elseif v == " " and not placefound and s[ i + 1 ] != "\"" then
+					--print( "ya found", i, v, string.len(v) )
 					a[ #a + 1 ] = ""
 					--print( "spaces", #a2, i,v  )
 				else
@@ -370,6 +381,11 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					end
 				end
 			end
+			
+			--[[print( "debugign" )
+			PrintTable (a )
+			print( "\n" )]]
+			
 		else
 			a = string.Explode( " ", s )
 		end

@@ -8,5 +8,19 @@ net.Receive( "anus_BroadcastVote", function()
 	end
 	local time = net.ReadUInt( 10 )
 	
-	createVote( title, args, time )
+		-- shamelessly copied callback info from ulx
+		-- didnt know what to do  .. .
+	local function callback( id )
+		if id == 0 then id = 10 end
+		if not args[ id ] then return end
+		
+		RunConsoleCommand( "anus_castvote", id )
+		endVote()
+		
+		return true
+	end
+	
+	LocalPlayer():AddPlayerOption( title, time, callback, createVote( title, args, time ) )
+	
+	--createVote( title, args, time )
 end )

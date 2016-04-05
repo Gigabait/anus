@@ -58,8 +58,9 @@ function anus.HandleVoting( pl, cmd, arg )
 		return
 	end
 
+	anus.Votes[ 1 ][ "votes" ] = anus.Votes[ 1 ][ "votes" ] + 1
 	anus.Votes[ 1 ][ "answers" ][ answer ] = (anus.Votes[ 1 ][ "answers" ][ answer ] or 0) + 1
 	
 	pl.AnusVoted = true
 end
-concommand.Add( "anus_vote", anus.HandleVoting )
+concommand.Add( "anus_castvote", anus.HandleVoting )
