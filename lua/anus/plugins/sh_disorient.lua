@@ -32,6 +32,18 @@ if CLIENT then
 		
 		LocalPlayer().AnusDisoriented = bDisoriented
 	end )
+	
+	gameevent.Listen( "player_spawn" )
+	hook.Add( "player_spawn", "anus_plugins_disorient", function( data )
+		if Player( data.userid ) == LocalPlayer() then
+			timer.Create( "Reinitialize_disorient", 0.1, 1, function()
+				if LocalPlayer().AnusDisoriented then
+					local eyes = LocalPlayer():EyeAngles()
+					LocalPlayer():SetEyeAngles( Angle( eyes.p, eyes.y, 180 ) )
+				end
+			end )
+		end
+	end )
 end
 
 local mvInverse =
