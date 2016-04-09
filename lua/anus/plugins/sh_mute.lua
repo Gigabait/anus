@@ -110,6 +110,6 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 end
 anus.RegisterPlugin( plugin )
 
-hook.Add("PlayerSay", "anus_plugins_mute", function( pl, txt, bTeamChat )
+anus.RegisterHook( "PlayerSay", "mute", function( pl, txt, bTeamChat )
 	if pl.AnusChatMuted then return "" end
-end)
+end, plugin.id )

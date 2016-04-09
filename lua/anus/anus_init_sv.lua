@@ -39,7 +39,7 @@ net.Receive("anus_requestdc", function( len, pl )
 	net.Send( pl )
 end)
 
-local function anusBroadcastUsers( pl )
+function anusBroadcastUsers( pl )
 	net.Start("anus_broadcastusers")
 		net.WriteUInt( table.Count(anus.Users), 8 )
 		for k,v in next, anus.Users do
@@ -50,6 +50,7 @@ local function anusBroadcastUsers( pl )
 			else
 				net.WriteString( k )
 			end
+			net.WriteString( v.time or "0" ) 
 		end
 	net.Send( pl )
 end
@@ -70,5 +71,10 @@ hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
 		if pl:HasAccess( "addgroup" ) then
 			anusBroadcastGroups( pl )
 		end
+		
+		if pl:HasAccess( "pluginload" ) or pl:HasAccess( "pluginunload" ) then
+			anusBroadcastPlugins( pl )
+		end
+			
 	end )
 end )

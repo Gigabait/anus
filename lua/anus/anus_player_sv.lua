@@ -1,6 +1,6 @@
 local _R = debug.getregistry()
 
-local function anusBroadcastUsers( pl )
+--[[local function anusBroadcastUsers( pl )
 	net.Start( "anus_broadcastusers" )
 		net.WriteUInt( table.Count( anus.Users ), 8 )
 		for k,v in next, anus.Users do
@@ -14,6 +14,35 @@ local function anusBroadcastUsers( pl )
 			net.WriteString( v.time or "0" ) 
 		end
 	net.Send( pl )
+end]]
+
+function anusSendPlayerPerms( ent )
+	local send = {}
+	for k,v in next, player.GetAll() do
+		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
+			send[ #send + 1 ] = v
+		end
+	end
+
+	local send_pp = send
+	send_pp[ #send_pp + 1 ] = ent
+	for _,v in next, send do
+		net.Start( "anus_playerperms" )
+			net.WriteEntity( v )
+			net.WriteString( v.UserGroup )
+			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
+			net.WriteBit( anus.Groups[ v.UserGroup ].isadmin or false )
+			net.WriteBit( anus.Groups[ v.UserGroup ].issuperadmin or false )
+			
+			net.WriteUInt( table.Count( v.Perms ), 8 )
+			for a,b in next, v.Perms do
+				net.WriteString( a )
+				net.WriteString( tostring( b ) )
+			end
+		net.Send( send_pp )
+	end
+	
+	return send
 end
 
 	-- let's not broadcast our group, hm? c:
@@ -33,6 +62,9 @@ function _R.Player:SetUserGroup( group, save, time )
 		for k,v in next, anus.Plugins do
 			self.Perms[ k ] = true
 		end
+		for k,v in next, anus.UnloadedPlugins or {} do
+			self.Perms[ k ] = true
+		end
 	else
 		for k,v in next, anus.Groups[ group ].Permissions do
 			self.Perms[ k ] = v
@@ -40,14 +72,14 @@ function _R.Player:SetUserGroup( group, save, time )
 	end
 	self.UserGroup = group
 	
-	local send = {}
+	--[[local send = {}
 	for k,v in next, player.GetAll() do
 		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
 			send[ #send + 1 ] = v
 		end
-	end
+	end]]
 
-	local send_pp = send
+	--[[local send_pp = send
 	send_pp[ #send_pp + 1 ] = self
 	for _,v in next, send do
 		net.Start( "anus_playerperms" )
@@ -63,7 +95,8 @@ function _R.Player:SetUserGroup( group, save, time )
 				net.WriteString( tostring( b ) )
 			end
 		net.Send( send_pp )
-	end
+	end]]
+	local send = anusSendPlayerPerms( self )
 	
 	if save then
 		if time then

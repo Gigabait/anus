@@ -43,14 +43,14 @@ end
 
 
 
-hook.Add("Initialize", "anus_sendauth", function()
-	timer.Simple(0.1, function()
-		net.Start("anus_authenticate2")
+hook.Add( "Initialize", "anus_sendauth", function()
+	timer.Simple( 0.1, function()
+		net.Start( "anus_authenticate2" )
 		net.SendToServer()
-	end)
-end)
+	end )
+end )
 
-net.Receive("anus_playerperms", function()
+net.Receive( "anus_playerperms", function()
 	local pl = net.ReadEntity()
 	local group = net.ReadString()
 	local time = net.ReadUInt( 18 )
@@ -58,25 +58,25 @@ net.Receive("anus_playerperms", function()
 	local sadmin = net.ReadBit()
 	
 	LocalPlayer().PlayerInfo = LocalPlayer().PlayerInfo or {}
-	LocalPlayer().PlayerInfo[ pl ] = { ["group"] = group, ["time"] = time, ["admin"] = admin, ["superadmin"] = sadmin, ["perms"] = {} }
+	LocalPlayer().PlayerInfo[ pl ] = { group = group, time = time, admin = admin, superadmin = sadmin, perms = {} }
 	
 	local amt = net.ReadUInt( 8 )
 	for i=1,amt do
 		--print(i)
-		LocalPlayer().PlayerInfo[ pl ][ "perms" ][ net.ReadString() ] = net.ReadString()
+		LocalPlayer().PlayerInfo[ pl ].perms[ net.ReadString() ] = net.ReadString()
 	end
 	
 	if pl == LocalPlayer() and time != 0 then
 		timer.Create("anus_refreshtemp", 60, time, function()
-			LocalPlayer().PlayerInfo[ pl ]["time"] = LocalPlayer().PlayerInfo[ pl ]["time"] - 1
+			LocalPlayer().PlayerInfo[ pl ][ "time" ] = LocalPlayer().PlayerInfo[ pl ][ "time" ] - 1
 		end)
 	end
 	
 	if pl == LocalPlayer() then
-		for k,v in pairs(LocalPlayer().PlayerInfo[ LocalPlayer() ]["perms"]) do
+		for k,v in next, LocalPlayer().PlayerInfo[ LocalPlayer() ].perms or {} do
 			if not anus.Plugins[ k ] then continue end
 			
 			anus.AddCommand( anus.Plugins[ k ] )
 		end
 	end
-end)
+end )

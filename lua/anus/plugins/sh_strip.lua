@@ -51,9 +51,6 @@ function plugin:OnRun( pl, arg, target )
 	
 	end
 end
-hook.Add("PlayerDeath", "anus_plugins_strip", function( pl )
-	pl.OldWeapons = nil
-end)
 
 	-- pl: Player running command
 	-- parent: The DMenu
@@ -68,3 +65,6 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	end )
 end
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "PlayerDeath", "strip", function( pl )
+	pl.OldWeapons = nil
+end, plugin.id )

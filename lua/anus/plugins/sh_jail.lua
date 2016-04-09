@@ -49,44 +49,6 @@ function jailPlayer( pl, bJail )
 	end
 end
 
-hook.Add( "PlayerSpawn", "anus_plugins_jail", function( pl )
-	if pl.AnusJailed and pl.cellpos then
-		pl:SetPos( pl.cellpos )
-	end
-end )
-hook.Add( "Think", "anus_plugins_jail", function()
-	for v,_ in next, anus_jailedplayers do
-		--print( v:GetPos():Distance( v.cellpos ) )
-		if v.LastJailCheck and v.LastJailCheck <= CurTime() then
-			if v:GetPos():DistToSqr( v.cellpos ) >= 95^2 then
-				jailPlayer( v, true )
-			end
-			
-			v.LastJailCheck = CurTime() + 0.25
-		else
-			if not v.LastJailCheck then
-				if v:GetPos():DistToSqr( v.cellpos ) >= 95^2 then
-					jailPlayer( v, true )
-				end
-			
-				v.LastJailCheck = CurTime() + 0.25
-			end
-		end
-	end
-end )
-hook.Add( "CanTool", "anus_plugins_jail", function( pl, tr, tool )
-	if IsValid( tr.Entity ) and tr.Entity.IsJailCell then return false end
-	if pl.AnusJailed then return false end
-end )
-hook.Add( "CanProperty", "anus_plugins_jail", function( pl, property, ent )
-	if ent.IsJailCell then return false end
-	if pl.AnusJailed then return false end
-end )
-hook.Add( "PhysgunPickup", "anus_plugins_jail", function( pl, ent )
-	if ent.IsJailCell then return false end
-	if pl.AnusJailed then return false end
-end )
-
 local plugin = {}
 plugin.id = "jail"
 plugin.name = "Jail"
@@ -131,6 +93,12 @@ function plugin:OnRun( pl, args, target )
 	end
 end
 
+function plugin:OnUnload()
+	for k,v in next, player.GetAll() do
+		jailPlayer( v, false )
+	end
+end
+
 	-- pl: Player running command
 	-- parent: The DMenu
 	-- target: The player object of the line selected
@@ -144,6 +112,47 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	end )
 end
 anus.RegisterPlugin( plugin )
+
+anus.RegisterHook( "PlayerSpawn", "jaill", function( pl )
+	if pl.AnusJailed and pl.cellpos then
+		pl:SetPos( pl.cellpos )
+	end
+end, plugin.id )
+anus.RegisterHook( "Think", "jail", function()
+	for v,_ in next, anus_jailedplayers do
+		--print( v:GetPos():Distance( v.cellpos ) )
+		if v.LastJailCheck and v.LastJailCheck <= CurTime() then
+			if v:GetPos():DistToSqr( v.cellpos ) >= 95^2 then
+				jailPlayer( v, true )
+			end
+			
+			v.LastJailCheck = CurTime() + 0.25
+		else
+			if not v.LastJailCheck then
+				if v:GetPos():DistToSqr( v.cellpos ) >= 95^2 then
+					jailPlayer( v, true )
+				end
+			
+				v.LastJailCheck = CurTime() + 0.25
+			end
+		end
+	end
+end, plugin.id )
+anus.RegisterHook( "CanTool", "jail", function( pl, tr, tool )
+	if IsValid( tr.Entity ) and tr.Entity.IsJailCell then return false end
+	if pl.AnusJailed then return false end
+end, plugin.id )
+anus.RegisterHook( "CanProperty", "jail", function( pl, property, ent )
+	if ent.IsJailCell then return false end
+	if pl.AnusJailed then return false end
+end, plugin.id )
+anus.RegisterHook( "PhysgunPickup", "jail", function( pl, ent )
+	if ent.IsJailCell then return false end
+	if pl.AnusJailed then return false end
+end, plugin.id )
+
+
+
 
 local plugin = {}
 plugin.id = "unjail"

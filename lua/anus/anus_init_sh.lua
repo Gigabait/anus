@@ -29,8 +29,10 @@ concommand.Add( "anus_reload", function( pl )
 	pl:ChatPrint( "Successfully reloaded anus." )
 end)
 
+
 include( "anus_util_sh.lua" )
 include( "anus_groups_sh.lua" )
+include( "anus_hooks_sh.lua" )
 include( "anus_plugins_sh.lua" )
 if SERVER then
 	include( "anus_voting_sv.lua" )
@@ -41,6 +43,7 @@ end
 if SERVER then
 	AddCSLuaFile( "anus_util_sh.lua" )
 	AddCSLuaFile( "anus_groups_sh.lua" )
+	AddCSLuaFile( "anus_hooks_sh.lua" )
 	AddCSLuaFile( "anus_plugins_sh.lua" )
 	AddCSLuaFile( "anus_voting_cl.lua" )
 end

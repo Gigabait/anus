@@ -55,9 +55,6 @@ function plugin:OnRun( pl, args, target )
 	
 	end
 end
-hook.Add( "PlayerNoClip", "anus_plugins_noclip", function( pl )
-	if pl:HasAccess( "noclip" ) then return true end
-end )
 
 	-- pl: Player running command
 	-- parent: The DMenu
@@ -72,3 +69,6 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	end )
 end
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "PlayerNoClip", "anus_plugins_noclip", function( pl )
+	if pl:HasAccess( "noclip" ) then return true end
+end, plugin.id )

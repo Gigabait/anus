@@ -51,12 +51,12 @@ function panel:Init()
 	for k,v in next, anus.MenuCategories do
 		if v.pluginid and not LocalPlayer():HasAccess( v.pluginid ) then continue end
 		
-		self.CategoryList.k = self.Categories:Add( "DButton" )
-		self.CategoryList.k:SetText( k or "Unknown" )
-		self.CategoryList.k:SetFont( "anus_SmallTitle" )
-		self.CategoryList.k:SetSize( self.Categories:GetWide(), self.Categories:GetWide() - 9 )
-		self.CategoryList.k:Dock( TOP )
-		self.CategoryList.k.Paint = function( pnl, w, h )
+		self.CategoryList[ k ] = self.Categories:Add( "DButton" )
+		self.CategoryList[ k ]:SetText( k or "Unknown" )
+		self.CategoryList[ k ]:SetFont( "anus_SmallTitle" )
+		self.CategoryList[ k ]:SetSize( self.Categories:GetWide(), self.Categories:GetWide() - 9 )
+		self.CategoryList[ k ]:Dock( TOP )
+		self.CategoryList[ k ].Paint = function( pnl, w, h )
 				-- Perimeter of button
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
 			
@@ -68,7 +68,7 @@ function panel:Init()
 				-- interior of button
 			draw.RoundedBox( 0, 0, 0, w - 1, height, pnl.Pressed and Color( 225, 225, 225, 255 ) or color_white )
 		end
-		self.CategoryList.k.DoClick = function( pnl )
+		self.CategoryList[ k ].DoClick = function( pnl )
 			if self.CategoryLastClicked then
 				self.Content:Remove()
 				self.CategoryLastClicked.Pressed = false
@@ -87,7 +87,7 @@ function panel:Init()
 			v:Initialize( self.Content )
 			
 		end
-		self.Categories:AddItem( self.CategoryList.k )
+		self.Categories:AddItem( self.CategoryList[ k ] )
 	end
 	
 	self.resizeNum = 0

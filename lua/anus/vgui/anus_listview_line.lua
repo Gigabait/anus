@@ -33,6 +33,9 @@ function PANEL:Think()
 		self.IconImage:SetImage( self:GetText(), "materials/icon16/help.png" )
 		self.IconImage:SetSize( 16, 16 )
 		self.IconImage:SetPos( 2, self.IconImage:GetTall() / 2 )
+		self.IconImage.DoClick = function()
+			print( "test" )
+		end
 	end
 end
 	
@@ -251,7 +254,13 @@ function PANEL:SetAltLine( bdark )
 end
 
 function PANEL:SetLineIcon( ColumnID, path )
-	self.Icons[ ColumnID ] = true
+	self.Icons[ ColumnID ] = "icon"
+end
+
+function PANEL:SetLineIconButton( ColumnID, callback )
+	self.Icons[ ColumnID ] = "button"
+	self.LineClick = "button"
+	self.LineClickFunction = callback
 end
 
 function PANEL:SetLineColor( ColumnID, color )

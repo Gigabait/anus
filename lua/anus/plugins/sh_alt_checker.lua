@@ -45,10 +45,6 @@ if SERVER then
 		
 		anus.ServerLog( pl:Nick() .. " reported back an alt of " .. res, true )
 	end )
-	
-	hook.Add( "anus_PlayerAuthenticated", "anus_plugins_altcheck", function( pl )
-		anus.GetPlugins()[ "altcheck" ].OnRun( self, NULL, nil, pl, nil )
-	end )
 
 else
 
@@ -63,3 +59,8 @@ else
 end
 
 anus.RegisterPlugin( plugin )
+if SERVER then
+	anus.RegisterHook( "anus_PlayerAuthenticated", "altcheck", function( pl )
+		anus.GetPlugins()[ "altcheck" ].OnRun( self, NULL, nil, pl, nil )
+	end, plugin.id )
+end

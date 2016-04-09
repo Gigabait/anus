@@ -46,26 +46,6 @@ local function isFrozen( pl )
 	if pl.AnusFrozen then return false end
 end
 
---[[anus.RegisterHook( "PlayerSpawnObject", "pluginFreeze", function( pl )
-	pl:ChatPrint( "yu span objecT??" )
-end )]]
-hook.Add( "CanPlayerSuicide", "anus_plugins_freeze", isFrozen )
-hook.Add( "PlayerDeathThink", "anus_plugins_freeze", isFrozen )
-hook.Add( "DoPlayerDeath", "anus_plugins_freeze", function( pl )
-	if pl:IsFrozen() then 
-		pl.FreezeOldSpawn = pl:GetPos() 
-		pl:UnLock()
-	end
-end )
-hook.Add( "PlayerSpawn", "anus_plugins_freeze", function( pl )
-	if pl.AnusFrozen and pl.FreezeOldSpawn then
-		timer.CreatePlayer( pl, "FreezeRespawn", 0.1, 1, function()
-			pl:Lock()
-			pl:SetPos( pl.FreezeOldSpawn )
-		end )
-	end
-end )
-
 	-- pl: Player running command
 	-- parent: The DMenu
 	-- target: The player object of the line selected
@@ -80,6 +60,23 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 end
 
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "CanPlayerSuicide", "freeze", isFrozen, plugin.id )
+anus.RegisterHook( "PlayerDeathThink", "freeze", isFrozen, plugin.id )
+anus.RegisterHook( "DoPlayerDeath", "freeze", function( pl )
+	if pl:IsFrozen() then
+		pl.FreezeOldSpawn = pl:GetPos()
+		pl:UnLock()
+	end
+end, plugin.id )
+anus.RegisterHook( "PlayerSpawn", "spawnfreeze", function( pl )
+	if pl.AnusFrozen and pl.FreezeOldSpawn then
+		timer.CreatePlayer( pl, "FreezeRespawn", 0.1, 1, function()
+			pl:Lock()
+			pl:SetPos( pl.FreezeOldSpawn )
+		end )
+	end
+end, plugin.id )
+
 
 local plugin = {}
 plugin.id = "unfreeze"

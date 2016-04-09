@@ -17,17 +17,27 @@ function plugin:OnRun( pl, args, target )
 	end
 	
 	anus.NotifyPlugin( pl, plugin.id, "changed the map to ", COLOR_STRINGARGS, args[ 1 ],  color_white, "." )
-	RunConsoleCommand( "changelevel", args[ 1 ] )
+		-- Give it time to notify players.
+	timer.Create( "anusChangeMap", 1, 1, function()
+		RunConsoleCommand( "changelevel", args[ 1 ] )
+	end )
 
 end
 
-hook.Add( "InitPostEntity", "anus_plugins_map", function()
+local function gathermaps()
 	anus_maps = {}
 	
 	local maps = file.Find( "maps/*.bsp", "GAME" )
 	for k,v in next, maps do
 		anus_maps[ string.StripExtension( v ) ] = k
 	end
-end )
+end
+
+function plugin:OnLoad()
+	gathermaps()
+end
 
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "InitPostEntity", "map", function()
+	gathermaps()
+end, plugin.id )

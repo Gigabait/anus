@@ -65,8 +65,10 @@ if SERVER then
 	AddCSLuaFile( "anus/vgui/anus_listview_column.lua" )
 	AddCSLuaFile( "anus/vgui/anus_listview.lua" )
 	AddCSLuaFile( "anus/anus_vgui_cl.lua" )
+	--[[include( "anus/anus_hooks_sh.lua" )
+	AddCSLuaFile( "anus/anus_hooks_sh.lua" )
 	include( "anus/anus_plugins_sh.lua" )
-	AddCSLuaFile( "anus/anus_plugins_sh.lua" )
+	AddCSLuaFile( "anus/anus_plugins_sh.lua" )]]
 	AddCSLuaFile( "anus/vgui/anus_main.lua" )
 	AddCSLuaFile( "anus/vgui/anus_votepanel.lua" )
 	

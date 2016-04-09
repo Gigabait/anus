@@ -48,14 +48,7 @@ end
 
 anus.RegisterPlugin( plugin )
 
-hook.Add( "InitPostEntity", "anus_plugins_votemap", function()
-	anus_votemaps = {}
-	
-	local maps = file.Find( "maps/*.bsp", "GAME" )
-	for k,v in next, maps do
-		anus_votemaps[ string.StripExtension( v ) ] = k
-	end
-end )
+
 
 local plugin = {}
 plugin.id = "votemap"
@@ -118,3 +111,11 @@ function plugin:OnRun( pl, args )
 end
 
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "InitPostEntity", "votemap", function()
+	anus_votemaps = {}
+	
+	local maps = file.Find( "maps/*.bsp", "GAME" )
+	for k,v in next, maps do
+		anus_votemaps[ string.StripExtension( v ) ] = k
+	end
+end, plugin.id )

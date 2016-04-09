@@ -18,7 +18,8 @@ local function anus_AutoComplete( cmd, args )
 	args = string.Trim( args ):lower()
 		
 	if args == "" then
-		for k,v in pairs( anus.Plugins ) do
+		for k,v in next, anus.Plugins or {} do
+			if v.disabled then continue end
 			if LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ LocalPlayer() ]["perms"][ k ] then
 				output[ #output + 1 ] = "anus " .. k
 				if anus.Plugins[ k ].usage then					
@@ -37,7 +38,8 @@ local function anus_AutoComplete( cmd, args )
 			-- 2 	= unfreeze sh .. etc etc
 		local explodeargs = string.Explode( " ", args )
 
-		for k,v in pairs( anus.Plugins ) do
+		for k,v in next, anus.Plugins or {} do
+			if v.disabled then continue end
 			if LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ LocalPlayer() ][ "perms" ][ k ] then
 			
 						-- command.
@@ -143,6 +145,7 @@ if CLIENT or SERVER then
 					net.WriteString( sargs )
 				net.SendToServer()
 			else
+				if not _G[ "anus" ][ "RunCommand_" .. lcmd ] then return end
 				_G[ "anus" ][ "RunCommand_" .. lcmd ]( p, c, a, sargs )
 			end
 		end
@@ -275,6 +278,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	
 	concommand.Add( "anus_" .. info.id, function( p, c, a, sargs )
+		if not info.id then return end
+		if info.disabled then return end
+	
 		run( p, c, a, sargs )
 	end )
 	
@@ -282,6 +288,8 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	util.AddNetworkString( "anus_CCPlugin_" .. info.id )
 
 	_G[ "anus" ][ "RunCommand_" .. info.id ] = function( p, c, a, sargs )
+		if info.disabled then return end
+
 		local a = {}
 		
 		if not anus.Plugins[ info.id ].notarget then
@@ -338,6 +346,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	
 	net.Receive( "anus_CCPlugin_" .. info.id, function( l, p )
+		if not info.id then return end
+		if info.disabled then return end
+		
 		local s = net.ReadString()
 		
 		local a = {}
@@ -403,17 +414,19 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	if info.chatcommand then
 		chatcommand.Add( info.chatcommand, function( p, c, a, sargs )
+			if not info.chatcommand then return end
+			if info.disabled then return end
 			run( p, c, a, sargs )
 		end )
 	end
 end
 function anus.RemoveCommand( name )
 	if SERVER then
-		if type( name ) == "table" then
-			concommand.Remove( "anus_" .. name.id )
-		else
-			concommand.Remove( "anus_" .. name )
-		end
+		name = type( name ) == "string" and name or name.id
+		concommand.Remove( "anus_" .. name )
+		chatcommand.Remove( name )
+		_G[ "anus" ][ "RunCommand_" .. name ] = nil
+		net.Receivers[ "anus_ccplugin_" .. name ] = nil
 	end
 end
 anus.DeleteCommand = anus.RemoveCommand
@@ -436,7 +449,8 @@ if CLIENT then
 	include( "anus/vgui/anus_listview_column.lua" )
 	include( "anus/vgui/anus_listview.lua" )
 	include( "anus/anus_vgui_cl.lua" )
-	include( "anus/anus_plugins_sh.lua" )
+	--[[include( "anus/anus_hooks_sh.lua" )
+	include( "anus/anus_plugins_sh.lua" )]]
 	include( "anus/vgui/anus_main.lua" )
 	include( "anus/vgui/anus_votepanel.lua" )
 end

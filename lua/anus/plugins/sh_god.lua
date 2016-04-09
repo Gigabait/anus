@@ -51,14 +51,15 @@ function plugin:OnRun( pl, arg, target )
 	
 	end
 end
-hook.Add("PlayerDeath", "anus_plugins_god", function( pl )
-	pl.AnusGodded = false
-end)
-hook.Add("PlayerSpawn", "anus_plugins_god", function( pl )
-	if pl.AnusGodded then
-		pl:GodEnable()
+
+function plugin:OnUnload()
+	for k,v in next, player.GetAll() do
+		if v.AnusGodded then
+			v.AnusGodded = false
+			v:GodDisable()
+		end
 	end
-end )
+end
 
 	-- pl: Player running command
 	-- parent: The DMenu
@@ -73,6 +74,15 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	end )
 end
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "PlayerDeath", "god", function( pl )
+	pl.AnusGodded = false
+end, plugin.id )
+anus.RegisterHook( "PlayerSpawn", "god", function( pl )
+	if pl.AnusGodded then
+		pl:GodEnable()
+	end
+end, plugin.id )
+
 
 
 local plugin = {}

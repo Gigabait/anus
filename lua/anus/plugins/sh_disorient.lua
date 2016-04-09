@@ -34,16 +34,6 @@ if CLIENT then
 	end )
 	
 	gameevent.Listen( "player_spawn" )
-	hook.Add( "player_spawn", "anus_plugins_disorient", function( data )
-		if Player( data.userid ) == LocalPlayer() then
-			timer.Create( "Reinitialize_disorient", 0.1, 1, function()
-				if LocalPlayer().AnusDisoriented then
-					local eyes = LocalPlayer():EyeAngles()
-					LocalPlayer():SetEyeAngles( Angle( eyes.p, eyes.y, 180 ) )
-				end
-			end )
-		end
-	end )
 end
 
 local mvInverse =
@@ -60,27 +50,6 @@ local cmdInverse =
 [ IN_MOVELEFT ] = { FindMetaTable( "CUserCmd" ).SetSideMove, 999 },
 [ IN_MOVERIGHT ] = { FindMetaTable( "CUserCmd" ).SetSideMove, -999 },
 }
-hook.Add( "StartCommand", "anus_plugins_disorient", function( pl, cmd )
-	if CLIENT and pl.AnusDisoriented then
-		for k,v in next, cmdInverse do
-			if cmd:KeyDown( k ) then
-				local action = cmdInverse[ k ][ 1 ]
-				action( cmd, cmdInverse[ k ][ 2 ] )
-			end
-		end
-	end
-end )
-
-hook.Add( "SetupMove", "anus_plugins_disorient", function( pl, mv, cmd )
-	if pl.AnusDisoriented then
-		for k,v in next, mvInverse do
-			if mv:KeyDown( k ) then
-				local action = mvInverse[ k ][ 1 ]
-				action( mv, mvInverse[ k ][ 2 ] )
-			end
-		end
-	end
-end )
 
 local plugin = {}
 plugin.id = "disorient"
@@ -128,6 +97,15 @@ function plugin:OnRun( pl, args, target )
 
 end
 
+function plugin:OnUnload()
+	
+	for k,v in next, player.GetAll() do
+		disorientPlayer( v, true )
+	end
+	
+end
+	
+
 	-- pl: Player running command
 	-- parent: The DMenu
 	-- target: The player object of the line selected
@@ -142,6 +120,40 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 end
 
 anus.RegisterPlugin( plugin )
+anus.RegisterHook( "StartCommand", "disorient", function( pl, cmd )
+	if CLIENT and pl.AnusDisoriented then
+		for k,v in next, cmdInverse do
+			if cmd:KeyDown( k ) then
+				local action = cmdInverse[ k ][ 1 ]
+				action( cmd, cmdInverse[ k ][ 2 ] )
+			end
+		end
+	end
+end, plugin.id )
+anus.RegisterHook( "SetupMove", "disorient", function( pl, mv, cmd )
+	if pl.AnusDisoriented then
+		for k,v in next, mvInverse do
+			if mv:KeyDown( k ) then
+				local action = mvInverse[ k ][ 1 ]
+				action( mv, mvInverse[ k ][ 2 ] )
+			end
+		end
+	end
+end, plugin.id )
+if CLIENT then
+	anus.RegisterHook( "player_spawn", "disorient", function( data )
+		if Player( data.userid ) == LocalPlayer() then
+			timer.Create( "Reinitialize_disorient", 0.1, 1, function()
+				if LocalPlayer().AnusDisoriented then
+					local eyes = LocalPlayer():EyeAngles()
+					LocalPlayer():SetEyeAngles( Angle( eyes.p, eyes.y, 180 ) )
+				end
+			end )
+		end
+	end, plugin.id )
+end
+
+
 
 local plugin = {}
 plugin.id = "reorient"
