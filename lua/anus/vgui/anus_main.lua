@@ -23,7 +23,7 @@ surface.CreateFont( "anus_BigTitle",
 	size = 26,
 } )
 
-local psizew,psizeh = 960, 640
+local psizew,psizeh = /*960, 640*/ ( 960 / 1440 ) * ScrW(), ( 640 / 900 ) * ScrH()
 local bgColor = Color( 231, 230, 237, 255 )
 
 function panel:Init()
