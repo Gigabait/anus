@@ -23,16 +23,15 @@ function CATEGORY:Initialize( parent )
 		line:SetLineIconButton( 3, function( lineid, line )
 			if anus.UnloadedPlugins[ line.pluginid ] then
 				LocalPlayer():ConCommand( "anus pluginload " .. line.pluginid )
+				line:SetColumnText( 3, "icon16/accept.png" )
 			else
 				LocalPlayer():ConCommand( "anus pluginunload " .. line.pluginid )
+				line:SetColumnText( 3, "icon16/cross.png" )
 			end
-			local mpaneltxt = parent:GetParent().CategoryLastClicked:GetText()
-			--PrintTable( parent:GetParent().CategoryList )
+			--[[local mpaneltxt = parent:GetParent().CategoryLastClicked:GetText()
 			timer.Create( "anus_pluginpanel_refresh", 0.2, 1, function()
 				parent:GetParent().CategoryList[ mpaneltxt ]:DoClick()
-			end )
-			
-			--print( "test:", parent:GetParent().CategoryLastClicked:GetText() )
+			end )]]
 		end )
 	end
 	

@@ -30,7 +30,7 @@ function anus.UnregisterHook( hookname, unique, pluginid, bNoOverride )
 	hook.Remove( hookname, unique )
 
 	if anus.Hooks[ hookname ][ unique ][ "pluginid" ] then
-		anus.Hooks[ hookname ][ unique ] = nil
+		anus.Hooks[ hookname ][ unique ][ "active" ] = false
 	end
 	
 	if anus.GetPlugins()[ pluginid ] then

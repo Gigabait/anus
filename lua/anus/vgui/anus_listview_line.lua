@@ -25,8 +25,8 @@ function PANEL:UpdateColours( skin )
 end
 
 function PANEL:Think()
-	if self:GetParent().Icons[ self.ColumnID ] and not self.IconImage then
-		self.IconImage = vgui.Create( "DImage", self )
+	if self:GetParent().Icons[ self.ColumnID ] and not self.IconImage or ( self.TextSet and self:GetText() != self.TextSet) then
+		self.IconImage = self.IconImage or vgui.Create( "DImage", self )
 		if not Material( self:GetText() ) then
 			self:SetText( "icon16/help.png" )
 		end
@@ -36,6 +36,8 @@ function PANEL:Think()
 		self.IconImage.DoClick = function()
 			print( "test" )
 		end
+		
+		self.TextSet = self:GetText()
 	end
 end
 	
@@ -255,12 +257,14 @@ end
 
 function PANEL:SetLineIcon( ColumnID, path )
 	self.Icons[ ColumnID ] = "icon"
+	self.TextSet = self:GetText()
 end
 
 function PANEL:SetLineIconButton( ColumnID, callback )
 	self.Icons[ ColumnID ] = "button"
 	self.LineClick = "button"
 	self.LineClickFunction = callback
+	self.TextSet = self:GetText()
 end
 
 function PANEL:SetLineColor( ColumnID, color )

@@ -480,6 +480,7 @@ hook.Add( "Initialize", "anus_LoadThings", function()
 			file.CreateDir( "anus/users" )
 			file.CreateDir( "anus/logs" )
 			file.CreateDir( "anus/debuglogs" )
+			file.CreateDir( "anus/plugins" )
 		end )
 	end
 	

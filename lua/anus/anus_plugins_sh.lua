@@ -40,6 +40,10 @@ function anus.RegisterPlugin( tbl )
 		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = {type=word, optional=optional}
 	end
 	
+	if tbl.hasDataFolder then
+		file.CreateDir( "anus/plugins/" .. tbl.id )
+	end
+	
 	if anus.UnloadedPlugins[ tbl.id ] then
 		print( "Unloaded plugin: " .. tbl.id )
 		anus.Plugins[ tbl.id ].disabled = true
