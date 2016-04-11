@@ -133,12 +133,8 @@ if CLIENT or SERVER then
 		
 			RunConsoleCommand( "anus_" .. cmd, unpack( a ) )
 		else
-			--print( "test", sargs )
 			sargs = string.gsub( sargs, a[ 1 ], "", 1 )
-			--print( "test2", sargs )
 			sargs = string.TrimLeft( sargs )
-			
-			--print( "test3", sargs )
 			
 			if CLIENT then
 				net.Start( "anus_CCPlugin_" .. lcmd )
@@ -170,10 +166,11 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		end
 		
 		if not info.usage then
-			if not a[ 1 ] then
+				-- not needed?
+			--[[if not a[ 1 ] then
 				p:ChatPrint( info.id .. ": " .. info.help )
 				return
-			end
+			end]]
 
 			info.OnRun( self, p, a, nil )
 			return
@@ -182,6 +179,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		local target = NULL
 
 			-- not needed?
+			-- i take that back this is "needed"
 		if not a[ 1 ] then
 			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
 					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
