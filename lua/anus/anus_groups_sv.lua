@@ -47,7 +47,9 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	end
 
 	if file.Exists( "anus/groups.txt", "DATA" ) then
+		local copy = table.Copy( anus.Groups )
 		anus.Groups = von.deserialize( file.Read( "anus/groups.txt", "DATA" ) )
+		table.Add( anus.Groups, copy )
 	else
 		timer.Create( "anus_firstrun", 2, 1, function()
 			anus.SaveGroups()
