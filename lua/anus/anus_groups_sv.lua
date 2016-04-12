@@ -53,6 +53,10 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 		for k,v in next, anus.GroupPluginCache do
 			local group = k
 			if not anus.Groups[ group ] then group = "user" end
+			if not anus.Groups[ group ] then
+				Error( "User group has been deleted! Remove data/anus/groups.txt and start over.\n" )
+				return
+			end
 			
 			for key, value in next, v do
 				if not anus.Groups[ group ].Permissions[ key ] then

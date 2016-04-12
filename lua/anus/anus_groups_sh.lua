@@ -1,6 +1,12 @@
+local serverDefault = false
 if SERVER then
 	anus.Groups = anus.Groups or {}
-elseif CLIENT and not anus.Groups then
+	if not file.Exists( "anus/groups.txt", "DATA" ) then
+		serverDefault = true
+	end
+end
+
+if (CLIENT and not anus.Groups) or (SERVER and serverDefault) then
 	anus.Groups = {}
 
 	anus.Groups[ "user" ] =
@@ -171,7 +177,9 @@ local function anus_GroupsInherit()
 		
 		local function loopThrough( group, inheritance, permissions )
 			for a,b in next, permissions do
-				anus.Groups[ group ].Permissions[ a ] = b
+				if not anus.Groups[ group ].Permissions[ a ] then
+					anus.Groups[ group ].Permissions[ a ] = b
+				end
 			end
 			
 			if not anus.Groups[ inheritance ].Inheritance then return end
@@ -227,13 +235,16 @@ end
 
 if CLIENT then
 	net.Receive( "anus_broadcastgroups", function()
-		print( "TEST" )
 		anus.Groups = net.ReadTable()
 	end )
 end
 
 anus.GroupPluginCache = {}
 function anus.CreateGroupPluginCache( group, plugin )
+	if not group then
+		Error( "anus.CreateGroupPluginCache: No group supplied.\nThis means something somewhere messed up..\n" )
+		return
+	end
 	anus.GroupPluginCache[ group ] = anus.GroupPluginCache[ group ] or {}
 	--anus.GroupPluginCache[ group ].Permissions = anus.GroupPluginCache[ group ].Permissions or {}
 	
