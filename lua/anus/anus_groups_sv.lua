@@ -47,9 +47,19 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	end
 
 	if file.Exists( "anus/groups.txt", "DATA" ) then
-		local copy = table.Copy( anus.Groups )
+		--local copy = table.Copy( anus.Groups )
 		anus.Groups = von.deserialize( file.Read( "anus/groups.txt", "DATA" ) )
-		table.Add( anus.Groups, copy )
+		--table.Add( anus.Groups, copy )
+		for k,v in next, anus.GroupPluginCache do
+			local group = k
+			if not anus.Groups[ group ] then group = "user" end
+			
+			for key, value in next, v do
+				if not anus.Groups[ group ].Permissions[ key ] then
+					anus.Groups[ group ].Permissions[ key ] = true
+				end
+			end
+		end
 	else
 		timer.Create( "anus_firstrun", 2, 1, function()
 			anus.SaveGroups()

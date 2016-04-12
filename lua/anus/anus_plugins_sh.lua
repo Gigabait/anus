@@ -11,16 +11,18 @@ function anus.RegisterPlugin( tbl )
 	
 	if anus.CountGroupsAccess( tbl.id ) == 0 then
 		local group = tbl.defaultAccess
-		--[[if not anus.Groups[ group ] then group = "user" end
-
-		print( anus.Groups, group )
-		print( anus.Groups[ group ], anus.Groups[ "user" ] )
-		print( tostring(anus.Groups[ group ].Permissions) )]]
-		
-		if not anus.Groups[ group ] then anus.Groups[ group ] = {} end
+		--[[if not anus.Groups[ group ] then group = "user" end]]
+		--[[if not anus.Groups[ group ] then anus.Groups[ group ] = {} end
 		
 		anus.Groups[ group ].Permissions = anus.Groups[ group ].Permissions or {}
-		anus.Groups[ group ].Permissions[ tbl.id ] = true
+		anus.Groups[ group ].Permissions[ tbl.id ] = true]]
+		
+		if not anus.Groups[ group ] then
+			anus.CreateGroupPluginCache( group, tbl.id )
+		else
+			anus.Groups[ group ].Permissions = anus.Groups[ group ].Permissions or {}
+			anus.Groups[ group ].Permissions[ tbl.id ] = true
+		end
 	end
 	
 	--[[if anus.UnloadedPlugins[ tbl.id ] then
