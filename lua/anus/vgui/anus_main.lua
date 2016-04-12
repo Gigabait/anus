@@ -48,7 +48,18 @@ function panel:Init()
 	self.CategoryList = {}
 	self.CategoryLastClicked = nil
 	
-	for k,v in next, anus.MenuCategories do
+	local menucategories = table.GetKeys( anus.MenuCategories )
+	table.sort( menucategories, function( a, b )
+		return tostring( a ) < tostring( b )
+	end )
+	
+	--for k,v in next, anus.MenuCategories do
+	local k
+	local v
+	for i=1,#menucategories do
+		k = menucategories[ i ]
+		v = anus.MenuCategories[ k ]
+		
 		if v.pluginid and not LocalPlayer():HasAccess( v.pluginid ) then continue end
 		
 		self.CategoryList[ k ] = self.Categories:Add( "DButton" )
