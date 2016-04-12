@@ -1,10 +1,10 @@
 CreateClientConVar( "anus_smallified", "0", true, true, "Show a miniaturized menu" )
 local cvarsmall = GetConVar( "anus_smallified" )
 function anus.UniversalWidth( number )
-	return ( number / (cvarsmall:GetString() != "0" and 1440 or 1200 ) ) * ScrW()
+	return ( number / (cvarsmall:GetString() == "0" and 1440 or 1668 ) ) * ScrW()
 end
 function anus.UniversalHeight( number )
-	return ( number / (cvarsmall:GetString() != "0" and 900 or 592 ) ) * ScrH()
+	return ( number / (cvarsmall:GetString() == "0" and 900 or 1319 ) ) * ScrH()
 end
 
 anus.MenuCategories = {}
