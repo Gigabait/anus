@@ -220,7 +220,7 @@ function anus.RemoveGroup( id )
 		error( "ID not found!" )
 	end
 	
-	anus.Groups[ id:lower() ] = nil
+	anus.Groups[ tostring( id ):lower() ] = nil
 	
 	anus_GroupsInherit()
 end
@@ -230,4 +230,12 @@ if CLIENT then
 		print( "TEST" )
 		anus.Groups = net.ReadTable()
 	end )
+end
+
+anus.GroupPluginCache = {}
+function anus.CreateGroupPluginCache( group, plugin )
+	anus.GroupPluginCache[ group ] = anus.GroupPluginCache[ group ] or {}
+	--anus.GroupPluginCache[ group ].Permissions = anus.GroupPluginCache[ group ].Permissions or {}
+	
+	anus.GroupPluginCache[ group ][ plugin ] = true
 end
