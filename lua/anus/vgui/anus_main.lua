@@ -54,11 +54,9 @@ function panel:Init()
 	end )
 	
 	--for k,v in next, anus.MenuCategories do
-	local k
-	local v
 	for i=1,#menucategories do
-		k = menucategories[ i ]
-		v = anus.MenuCategories[ k ]
+		local k = menucategories[ i ]
+		local v = anus.MenuCategories[ k ]
 		
 		if v.pluginid and not LocalPlayer():HasAccess( v.pluginid ) then continue end
 		
