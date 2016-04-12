@@ -23,10 +23,12 @@ surface.CreateFont( "anus_BigTitle",
 	size = 26,
 } )
 
-local psizew,psizeh = /*960, 640*/ ( 960 / 1440 ) * ScrW(), ( 640 / 900 ) * ScrH()
+local psizew,psizeh = nil, nil--= anus.UniversalWidth( 960 ), anus.UniversalHeight( 640 )
 local bgColor = Color( 231, 230, 237, 255 )
 
 function panel:Init()
+	psizew,psizeh = anus.UniversalWidth( 960 ), anus.UniversalHeight( 640 )
+
 	self:SetSize( psizew, psizeh )
 	self:Center()
 	self:SetKeyBoardInputEnabled( true )
