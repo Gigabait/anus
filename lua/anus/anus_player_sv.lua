@@ -34,11 +34,17 @@ function anusSendPlayerPerms( ent )
 			net.WriteBit( anus.Groups[ v.UserGroup ].isadmin or false )
 			net.WriteBit( anus.Groups[ v.UserGroup ].issuperadmin or false )
 			
-			net.WriteUInt( table.Count( v.Perms ), 8 )
+			--[[net.WriteUInt( table.Count( v.Perms ), 8 )
 			for a,b in next, v.Perms do
 				net.WriteString( a )
+				local btype = type( b )
+				net.WriteBit( tobool( btype == "table" ) )
+				if btype == "table" then
+					for key, value in next, b do
+						
 				net.WriteString( tostring( b ) )
-			end
+			end]]
+			net.WriteTable( v.Perms )
 		net.Send( send_pp )
 	end
 	
@@ -67,35 +73,29 @@ function _R.Player:SetUserGroup( group, save, time )
 		end
 	else
 		for k,v in next, anus.Groups[ group ].Permissions do
-			self.Perms[ k ] = v
+			if self.Perms[ k ] != false then
+				if type( v ) == "table" then
+					for a,b in next, v do
+						for key,value in next, b do
+						
+							if key == "max" or key == "min" then
+								local time = anus.ConvertStringToTime( value )
+								if not time then time = value end
+								
+								v[ a ][ key ] = time
+							end
+							
+						end
+					end
+					self.Perms[ k ] = v
+				else
+					self.Perms[ k ] = v
+				end
+			end
 		end
 	end
 	self.UserGroup = group
-	
-	--[[local send = {}
-	for k,v in next, player.GetAll() do
-		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
-			send[ #send + 1 ] = v
-		end
-	end]]
 
-	--[[local send_pp = send
-	send_pp[ #send_pp + 1 ] = self
-	for _,v in next, send do
-		net.Start( "anus_playerperms" )
-			net.WriteEntity( v )
-			net.WriteString( v.UserGroup )
-			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
-			net.WriteBit( anus.Groups[ v.UserGroup ].isadmin or false )
-			net.WriteBit( anus.Groups[ v.UserGroup ].issuperadmin or false )
-			
-			net.WriteUInt( table.Count( v.Perms ), 8 )
-			for a,b in next, v.Perms do
-				net.WriteString( a )
-				net.WriteString( tostring( b ) )
-			end
-		net.Send( send_pp )
-	end]]
 	local send = anusSendPlayerPerms( self )
 	
 	if save then
@@ -206,6 +206,15 @@ function _R.Entity:HasAccess( plugin )
 	return false
 end
 
+function _R.Player:GrantPermission( plugin, restrictions )
+	self.Perms = self.Perms or {}
+end
+function _R.Player:DenyPermission( plugin )
+	self.Perms = self.Perms or {}
+	self.Perms[ plugin ] = false
+end
+	
+
 _R.Player.OldAdmin = _R.Player.OldAdmin or _R.Player.IsAdmin
 _R.Player.OldSuperAdmin = _R.Player.OldSuperAdmin or _R.Player.IsSuperAdmin
 function _R.Entity:IsAdmin() if not IsValid(self) then return true end return false end
@@ -309,20 +318,44 @@ end
 	-- This is assigned to admins.
 	-- Regenerated each reconnect.
 local function CreateID()
-	local id = string.char( math.random( 97, 122 ) )
-	for i=1,6 do
+	local id = ""
+	--[[for i=1,6 do
 		local rand = math.random( 1, 3 )
 		rand = rand != 1 and math.random( 3, 99 ) or string.char( math.random( 97, 122 ) )
 		id = id .. rand
 		if i % 2 == 0 and i != 6 then
 			id = id .. "-"
 		end
+	end]]
+	local reps = 8
+	for i=1,reps do
+		local rand = string.char( math.random( 97, 122 ) )
+		id = id .. rand
+		if i % 4 == 0 and i != reps then
+			id = id .. "-"
+		end
 	end
-	id = id .. string.char( math.random( 97, 122 ) )
+	id = id .. "-" .. (math.random( 1, 3 ) == 1 and string.char( math.random( 65, 90 ) ) or string.char( math.random( 97, 122 ) ))
+	id = id .. math.random( 100, 999 )--string.char( math.random( 97, 122 ) )
 
 	return id
 end
+
 function _R.Player:AssignID()
 	local id = CreateID()
-	self:ChatPrint( "id   " .. id )
+	self:ChatPrint( "id   " .. id .. "   " .. string.len( id ) )
 end
+
+--[[local tbl = {}
+	
+for i=1,(7*10^5) do
+   local id = CreateID()
+
+   if tbl[ id ] then
+      print( i, id )
+      break
+   end
+   tbl[ id ] = true
+end
+
+print( "finished" )]]

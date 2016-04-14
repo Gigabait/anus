@@ -2,7 +2,7 @@ local plugin = {}
 plugin.id = "ban"
 plugin.name = "Ban"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>; [string:Time]; [string:Reason]"
+plugin.usage = "<player:Player>; [number:Time]; [string:Reason]"
 	-- String;Default reason
 plugin.args = {"Int;0;1461", "String;No reason given."}
 plugin.help = "Bans a player from the server"
@@ -18,13 +18,6 @@ function plugin:OnRun( pl, arg, target )
 	
 	if #arg > 0 then
 		time = arg[ 1 ]
-		if not tonumber( arg[ 1 ] ) then
-			time = anus.ConvertStringToTime( arg[ 1 ] ) or anus.ConvertStringToTime( "1m" )
-		elseif tonumber( arg[ 1 ] ) and arg[ 1 ] == "0" then
-			time = anus.ConvertStringToTime( arg[ 1 ] )
-		elseif tonumber( arg[ 1 ] ) then
-			time = anus.ConvertStringToTime( arg[ 1 ] .. "m" )
-		end
 		
 		if #arg > 1 then
 			for i=2,#arg do
@@ -53,27 +46,25 @@ function plugin:OnRun( pl, arg, target )
 	end)
 end
 
---[[function plugin:GetUsageSuggestions( arg, pl )
-	if arg != 2 then return "" end
-	
-	local output = {}
-	for k,v in next, anus.Groups do
-		output[ #output + 1 ] = k
-	end
+function plugin:GetUsageSuggestions( arg, pl )
+	local playerinfo = pl.PlayerInfo[ pl ][ "perms" ]
+	if not playerinfo[ "ban" ] or type( playerinfo[ "ban" ] ) != "table" then return "" end
+	if arg == 2 and playerinfo[ "ban" ][ 2 ] then
 
-	table.SortDesc( output )
+		playerinfo = playerinfo[ "ban" ][ 2 ]
+		
+		local str = ""
+		str = playerinfo[ "min" ] and "min " .. playerinfo[ "min" ] .. " "
+		str = playerinfo[ "max" ] and str .. "max " .. playerinfo[ "max" ] or str
+		
+		return str
 	
-	local str = ""
-	for i=1,#output do
-		if #output == i then
-			str = str .. output[ i ]
-		else
-			str = str .. output[ i ] .. ","
-		end
+	else
+		
+		return ""
+	
 	end
-	
-	return str
-end]]
+end
 
 	-- pl: Player running command
 	-- parent: The DMenu
@@ -148,7 +139,7 @@ local plugin = {}
 plugin.id = "banid"
 plugin.name = "BanID"
 plugin.author = "Shinycow"
-plugin.usage = "<string:SteamID>; [string:Time]; [string:Reason]"
+plugin.usage = "<string:SteamID>; [number:Time]; [string:Reason]"
 	-- String;Default reason
 plugin.args = {"String;STEAM_0:", "Int;0;1461;", "String;No reason given."}
 plugin.help = "Bans a player using their steamid"
@@ -164,13 +155,6 @@ function plugin:OnRun( pl, arg, target )
 	
 	if #arg > 1 then
 		time = arg[ 2 ]
-		if not tonumber( arg[ 2 ] ) then
-			time = anus.ConvertStringToTime( arg[ 2 ] ) or anus.ConvertStringToTime( "1m" )
-		elseif tonumber( arg[ 2 ] ) and arg[ 2 ] == "0" then
-			time = anus.ConvertStringToTime( arg[ 2 ] )
-		elseif tonumber( arg[ 2 ] ) then
-			time = anus.ConvertStringToTime( arg[ 2 ] .. "m" )
-		end
 		
 		if #arg > 2 then
 			for i=3,#arg do
@@ -194,6 +178,27 @@ function plugin:OnRun( pl, arg, target )
 	anus.NotifyPlugin( pl, plugin.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
 	anus.BanPlayer( pl, arg[1], reason, time )
 end
+
+function plugin:GetUsageSuggestions( arg, pl )
+	local playerinfo = pl.PlayerInfo[ pl ][ "perms" ]
+	if not playerinfo[ "banid" ] or type( playerinfo[ "banid" ] ) != "table" then return "" end
+	if arg == 3 and playerinfo[ "banid" ][ 3 ] then
+
+		playerinfo = playerinfo[ "banid" ][ 3 ]
+		
+		local str = ""
+		str = playerinfo[ "min" ] and "min " .. playerinfo[ "min" ] .. " "
+		str = playerinfo[ "max" ] and str .. "max " .. playerinfo[ "max" ] or str
+		
+		return str
+	
+	else
+		
+		return ""
+	
+	end
+end
+
 anus.RegisterPlugin( plugin )
 
 local plugin = {}

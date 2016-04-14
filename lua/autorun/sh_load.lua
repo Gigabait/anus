@@ -220,10 +220,14 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 						break
 					end
 				elseif usageargs.type == "number" then
-					if not tonumber( v ) then
+					local time = anus.ConvertStringToTime( v )
+					time = time != nil and time or tonumber( v )
+					if not time then
 						p:ChatPrint( info.id .. ": No number found for argument " .. k )
 						missedArgs[ #missedArgs + 1 ] = k
 						break
+					else
+						a[ k ] = time
 					end
 				elseif usageargs.type == "boolean" then
 					v = tobool( v )
@@ -253,6 +257,33 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			else
 				p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
 				return
+			end
+		end
+		
+			-- checking permissions
+			-- checks for min, max
+		if p.Perms and type( p.Perms[ info.id ] ) == "table" then
+			for k,v in next, p.Perms[ info.id ] do
+				for key, value in next, v do
+					if key == "min" and a[ k ] then
+						local time = anus.ConvertStringToTime( a[ k ] )
+						time = time != nil and time or tonumber( a[ k ] )
+						if time < value then
+							p:ChatPrint( info.id .. ": Argument \"" .. k .. "\" is too low!" )
+							return
+						end
+					elseif key == "min" and not a[ k ] then
+						a[ k ] = value
+					elseif key == "max" and a[ k ] then
+						local time = anus.ConvertStringToTime( a[ k ] )
+						time = time != nil and time or tonumber( a[ k ] )
+						print( time )
+						if time > value then
+							p:ChatPrint( info.id .. ": Argument \"" .. k .. "\" is too high!" )
+							return
+						end
+					end
+				end
 			end
 		end
 		

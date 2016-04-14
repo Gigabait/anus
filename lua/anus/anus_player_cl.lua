@@ -60,11 +60,12 @@ net.Receive( "anus_playerperms", function()
 	LocalPlayer().PlayerInfo = LocalPlayer().PlayerInfo or {}
 	LocalPlayer().PlayerInfo[ pl ] = { group = group, time = time, admin = admin, superadmin = sadmin, perms = {} }
 	
-	local amt = net.ReadUInt( 8 )
+	--[[local amt = net.ReadUInt( 8 )
 	for i=1,amt do
 		--print(i)
 		LocalPlayer().PlayerInfo[ pl ].perms[ net.ReadString() ] = net.ReadString()
-	end
+	end]]
+	LocalPlayer().PlayerInfo[ pl ].perms = net.ReadTable()
 	
 	if pl == LocalPlayer() and time != 0 then
 		timer.Create("anus_refreshtemp", 60, time, function()
