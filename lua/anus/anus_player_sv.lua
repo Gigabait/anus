@@ -93,6 +93,35 @@ function _R.Player:SetUserGroup( group, save, time )
 				end
 			end
 		end
+		
+			-- player perms override group perms.
+		local f = anus.SafeSteamID( self:SteamID() )
+		if file.Exists( "anus/users/" .. f .. ".txt", "DATA" ) then
+			local perms = von.deserialize( file.Read( "anus/users/" .. f .. ".txt", "DATA" ) )
+			self.CustomPerms = self.CustomPerms or {}
+			
+			for k,v in next, perms do
+				if type( v ) == "table" then
+					for a,b in next, v do
+						for key,value in next, b do
+						
+							if key == "max" or key == "min" then
+								local time = anus.ConvertStringToTime( value )
+								if not time then time = value end
+								
+								v[ a ][ key ] = time
+							end
+							
+						end
+					end
+					self.Perms[ k ] = v
+					self.CustomPerms[ k ] = v
+				else
+					self.Perms[ k ] = v
+					self.CustomPerms[ k ] = v
+				end
+			end
+		end
 	end
 	self.UserGroup = group
 
@@ -206,12 +235,92 @@ function _R.Entity:HasAccess( plugin )
 	return false
 end
 
+-- example restrictions
+-- anus userallow shinycow "anus ban" "2:min 1s 2:max 10m"
 function _R.Player:GrantPermission( plugin, restrictions )
 	self.Perms = self.Perms or {}
+	self.CustomPerms = self.CustomPerms or {}
+	
+	if not restrictions then
+		self.Perms[ plugin ] = true
+		self.CustomPerms[ plugin ] = true
+		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	end
+	
+	anusSendPlayerPerms( self )
 end
+function anus.GrantPermission( steamid, plugin, restrictions )
+	local perms = {}
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	end
+	
+	perms[ plugin ] = true
+	local target = anus.FindPlayer( steamid, "steam" )
+	if target and IsValid( target ) then
+		target.Perms[ plugin ] = true
+		target.CustomPerms[ plugin ] = true
+		
+		anusSendPlayerPerms( target )
+	end
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
+end
+
+function _R.Player:RevokePermission( plugin )
+	self.Perms = self.Perms or {}
+	self.CustomPerms = self.CustomPerms or {}
+	
+	self.Perms[ plugin ] = nil
+	self.CustomPerms[ plugin ] = nil
+	
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	
+	anusSendPlayerPerms( self )
+end
+function anus.RevokePermission( steamid, plugin )
+	local perms = {}
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	end
+	
+	perms[ plugin ] = nil
+	local target = anus.FindPlayer( steamid, "steam" )
+	if target and IsValid( target ) then
+		target.Perms[ plugin ] = nil
+		target.CustomPerms[ plugin ] = nil
+		
+		anusSendPlayerPerms( target )
+	end
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
+end
+
 function _R.Player:DenyPermission( plugin )
 	self.Perms = self.Perms or {}
-	self.Perms[ plugin ] = false
+	self.CustomPerms = self.CustomPerms or {}
+	
+	if not restrictions then
+		self.Perms[ plugin ] = false
+		self.CustomPerms[ plugin ] = false
+		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	end
+	
+	anusSendPlayerPerms( self )
+end
+function anus.DenyPermission( steamid, plugin )
+	local perms = {}
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	end
+	
+	perms[ plugin ] = false
+	local target = anus.FindPlayer( steamid, "steam" )
+	if target and IsValid( target ) then
+		target.Perms[ plugin ] = false
+		target.CustomPerms[ plugin ] = false
+		
+		anusSendPlayerPerms( target )
+	end
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
 end
 	
 
@@ -317,6 +426,17 @@ end
 	-- Player UniqueIDs
 	-- This is assigned to admins.
 	-- Regenerated each reconnect.
+	
+	local tblz = {}
+	for i=48,57 do
+		tblz[ i ] = string.char( i )
+	end
+	for i=65,90 do
+		tblz[ i - 7 ] = string.char( i )
+	end
+	for i=97,122 do
+		tblz[ i - (6 + 7) ] = string.char( i )
+	end
 local function CreateID()
 	local id = ""
 	--[[for i=1,6 do
@@ -327,7 +447,7 @@ local function CreateID()
 			id = id .. "-"
 		end
 	end]]
-	local reps = 8
+	--[[local reps = 8
 	for i=1,reps do
 		local rand = string.char( math.random( 97, 122 ) )
 		id = id .. rand
@@ -336,7 +456,19 @@ local function CreateID()
 		end
 	end
 	id = id .. "-" .. (math.random( 1, 3 ) == 1 and string.char( math.random( 65, 90 ) ) or string.char( math.random( 97, 122 ) ))
-	id = id .. math.random( 100, 999 )--string.char( math.random( 97, 122 ) )
+	id = id .. math.random( 100, 999 )--string.char( math.random( 97, 122 ) )]]
+	
+	--PrintTable( tblz )
+	
+	local reps = 6
+	for i=1,reps do
+		local rand = tblz[ math.random( 48, 109 ) ]
+		--print( rand )
+		id = id .. rand
+		if i % 3 == 0 and i != reps then
+			id = id .. "-"
+		end
+	end
 
 	return id
 end
@@ -346,16 +478,22 @@ function _R.Player:AssignID()
 	self:ChatPrint( "id   " .. id .. "   " .. string.len( id ) )
 end
 
---[[local tbl = {}
-	
-for i=1,(7*10^5) do
-   local id = CreateID()
 
-   if tbl[ id ] then
-      print( i, id )
-      break
-   end
+--[[local tbl = {}
+local function createidloop( i, b_tried )
+	local id = CreateID()
+
+	if tbl[ id ] and b_tried then
+		print( i, id )
+		return
+	elseif tbl[ id ] then
+		createidloop( i, true )
+	end
    tbl[ id ] = true
+end
+	
+for i=1,(6*10^5) do
+  createidloop( i )
 end
 
 print( "finished" )]]

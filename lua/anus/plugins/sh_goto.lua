@@ -15,11 +15,13 @@ function plugin:OnRun( pl, args, target )
 		return
 	end
 
-	if type(target) == "table" then
+	if #target > 1 then
 		pl:ChatPrint("You can't teleport to more than one person at once!")
 		return
 	end
 
+	target = target[ 1 ]
+	
 	if not pl:IsGreaterOrEqualTo( target ) then
 		pl:ChatPrint("Sorry, you can't target " .. target:Nick())
 		return

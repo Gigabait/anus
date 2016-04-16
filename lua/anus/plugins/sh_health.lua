@@ -11,59 +11,32 @@ plugin.defaultAccess = "admin"
 
 	-- add support for subtracting a % of their current health
 function plugin:OnRun( pl, args, target )
-	local subtract = args[2] and tobool(args[2]) or false
-	local amt = math.Round(tonumber(args[1]))
-	
-	if type(target) == "table" then
+	local subtract = args[ 2 ] and tobool( args[ 2 ] ) or false
+	local amt = math.Round( tonumber( args[ 1 ] ) )
 
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
-
-			if not v:Alive() then
-				target[ k ] = nil
-				continue
-			end
-
-			v:SetHealth( (subtract and v:Health() - amt or amt) )
-			if v:Health() <= 0 then
-				v:Kill()
-			end
-
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
 		end
 
-		if subtract then
-			anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " from their current to ", COLOR_STRINGARGS, amt )
-		else
-			anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " to ", COLOR_STRINGARGS, amt )
+		if not v:Alive() then
+			target[ k ] = nil
+			continue
 		end
 
+		v:SetHealth( (subtract and v:Health() - amt or amt) )
+		if v:Health() <= 0 then
+			v:Kill()
+		end
+
+	end
+
+	if subtract then
+		anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " from their current to ", COLOR_STRINGARGS, amt )
 	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-
-		if not target:Alive() then
-			pl:ChatPrint( target:Nick() .. " is dead!" )
-			return
-		end
-
-		target:SetHealth( (subtract and target:Health() - amt or amt) )
-		if target:Health() <= 0 then
-			target:Kill()
-		end
-
-		if subtract then
-			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " from ", COLOR_STRINGARGS, target:Health() + amt, " to ", COLOR_STRINGARGS, target:Health() )
-		else
-			anus.NotifyPlugin( pl, plugin.id, "set the health of ", target, " to ", COLOR_STRINGARGS, amt )
-		end
-
+		anus.NotifyPlugin( pl, plugin.id, "set the health of ", anus.StartPlayerList, target, anus.EndPlayerList, " to ", COLOR_STRINGARGS, amt )
 	end
 end
 

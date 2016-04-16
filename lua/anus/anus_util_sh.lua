@@ -50,8 +50,13 @@ function string.NiceNumber( iNum, string )
 
 	return string
 end
+
+function string.IsSteamID( str )
+	local res = string.match( steamid, "STEAM_0:[0-1]:[0-9]+" )
+	if not res then return false end
 	
-	
+	return res
+end
 
 ANUS_SECOND = 1
 ANUS_MINUTE = 60

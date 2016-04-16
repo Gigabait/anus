@@ -172,7 +172,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 				return
 			end]]
 
-			info.OnRun( self, p, a, nil )
+			info.OnRun( self, p, a, {p} )
 			return
 		end
 
@@ -277,7 +277,6 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					elseif key == "max" and a[ k ] then
 						local time = anus.ConvertStringToTime( a[ k ] )
 						time = time != nil and time or tonumber( a[ k ] )
-						print( time )
 						if time > value then
 							p:ChatPrint( info.id .. ": Argument \"" .. k .. "\" is too high!" )
 							return
@@ -288,7 +287,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		end
 		
 		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
-			info.OnRun( self, p, a, nil, sargs )
+			info.OnRun( self, p, a, {p}, sargs )
 		else
 			target = IsValid( target ) and target or nil
 			if not target and a[ 1 ] == " " then
@@ -301,7 +300,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			local args = a
 			table.remove( args, 1 )
 			
-			info.OnRun( self, p, args, target, sargs )
+			info.OnRun( self, p, args, type( target ) == "table" and target or {target}, sargs )
 		end
 	end
 	

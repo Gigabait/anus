@@ -10,35 +10,17 @@ plugin.chatcommand = "respawn"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-	
-	if type( target ) == "table" then 
-		
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
-
-			v:Spawn()
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", anus.StartPlayerList, target, anus.EndPlayerList )
-		
-	else
-	
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "has respawned ", target )
-		target:Spawn()
-	
+		v:Spawn()
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "has respawned ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

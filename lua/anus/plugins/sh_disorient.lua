@@ -63,46 +63,23 @@ plugin.chatcommand = "disorient"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-		
-	if type( target ) == "table" then
-	
-		for k,v in next, target do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
-				target[ k ] = nil
-				continue
-			end
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
+		end
 			
-			disorientPlayer( v )
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "disoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint( "Sorry, you can't target " .. target:Nick() )
-			return
-		end
-		
-		disorientPlayer( target )
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "disoriented ", target )
-	
+		disorientPlayer( v )
 	end
-
+		
+	anus.NotifyPlugin( pl, plugin.id, "disoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 function plugin:OnUnload()
-	
 	for k,v in next, player.GetAll() do
 		disorientPlayer( v, true )
 	end
-	
 end
 	
 
@@ -167,38 +144,17 @@ plugin.chatcommand = "reorient"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
+		end
 
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-		
-	if type( target ) == "table" then
-	
-		for k,v in next, target do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
-				target[ k ] = nil
-				continue
-			end
-			
-			disorientPlayer( v, true )
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "reoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint( "Sorry, you can't target " .. target:Nick() )
-			return
-		end
-		
-		disorientPlayer( target, true )
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "reoriented ", target )
-	
+		disorientPlayer( v, true )
 	end
 
+	anus.NotifyPlugin( pl, plugin.id, "reoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

@@ -61,36 +61,20 @@ plugin.chatcommand = "jail"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	local force = args[1] and tobool(args[1]) or false
+	local force = args[ 1 ] and tobool( args[ 1 ] ) or false
 	
-	if type(target) == "table" then
-	
-		local jailed = target
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				jailed[ k ] = nil
-				continue
-			end
+	local jailed = target
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			jailed[ k ] = nil
+			continue
+		end
 			
-			jailPlayer( v, true )
-				
-		end
-
-		anus.NotifyPlugin( pl, plugin.id, "jailed ", anus.StartPlayerList, jailed, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		jailPlayer( target, true )
-		
-		anus.NotifyPlugin( pl, plugin.id, "jailed ", target )
-	
+		jailPlayer( v, true )
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "jailed ", anus.StartPlayerList, jailed, anus.EndPlayerList )
 end
 
 function plugin:OnUnload()
@@ -166,36 +150,20 @@ plugin.chatcommand = "unjail"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	local force = args[1] and tobool(args[1]) or false
+	local force = args[ 1 ] and tobool( args[ 1 ] ) or false
 	
-	if type(target) == "table" then
-	
-		local jailed = target
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				jailed[ k ] = nil
-				continue
-			end
+	local jailed = target
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			jailed[ k ] = nil
+			continue
+		end
 			
-			jailPlayer( v, false )
-				
-		end
-
-		anus.NotifyPlugin( pl, plugin.id, "unjailed ", anus.StartPlayerList, jailed, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		jailPlayer( target, false )
-		
-		anus.NotifyPlugin( pl, plugin.id, "unjailed ", target )
-	
+		jailPlayer( v, false )
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "unjailed ", anus.StartPlayerList, jailed, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

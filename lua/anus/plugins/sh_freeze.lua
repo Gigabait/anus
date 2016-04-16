@@ -10,37 +10,19 @@ plugin.chatcommand = "freeze"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
+	for k,v in pairs(target) do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			target[ k ] = nil
+			continue
+		end
 
-			v:Lock()
-			v.AnusFrozen = true
-			v:DisableSpawning()
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "has frozen ", target )
-		
-		target:Lock()
-		target.AnusFrozen = true
-		target:DisableSpawning()
-	
+		v:Lock()
+		v.AnusFrozen = true
+		v:DisableSpawning()
 	end
+		
+	anus.NotifyPlugin( pl, plugin.id, "has frozen ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 local function isFrozen( pl )
 	if pl.AnusFrozen then return false end
@@ -90,49 +72,25 @@ plugin.chatcommand = "unfreeze"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
+	for k,v in pairs(target) do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			target[ k ] = nil
+			continue
+		end
 			 
-			v:UnLock()
-			v.AnusFrozen = false
-			v:EnableSpawning()
-				-- Player.UnLock ungods players.
-			timer.Create("anus_plugins_unfreeze_" .. tostring(v), 0.05, 1, function()
-				if IsValid(v) and v.AnusGodded then
-					v:GodEnable()
-				end
-			end)
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", target )
-
-		target:UnLock()
-		target.AnusFrozen = false
-		target:EnableSpawning()
+		v:UnLock()
+		v.AnusFrozen = false
+		v:EnableSpawning()
 			-- Player.UnLock ungods players.
-		timer.Simple(0.1, function()
-			if IsValid(target) and target.AnusGodded then
-				target:GodEnable()
+		timer.Create("anus_plugins_unfreeze_" .. tostring(v), 0.05, 1, function()
+			if IsValid(v) and v.AnusGodded then
+				v:GodEnable()
 			end
 		end)
-	
 	end
+		
+	anus.NotifyPlugin( pl, plugin.id, "has unfrozen ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

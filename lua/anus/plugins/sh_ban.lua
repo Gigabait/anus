@@ -12,6 +12,13 @@ plugin.chatcommand = "ban"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
+	if #target > 1 then
+		pl:ChatPrint( "You can only ban one player at a time." )
+		return
+	end
+	
+	target = target[ 1 ]
+
 	local reason = "No reason given."
 	local newarg = {}
 	local time = 0
@@ -28,9 +35,7 @@ function plugin:OnRun( pl, arg, target )
 			reason = table.concat( newarg, " " )
 		end
 	end
-	
-	if type(target) == "table" then pl:ChatPrint("Sorry, you can only target one player at a time.") return end
-		
+
 	if not pl:IsGreaterOrEqualTo( target ) then
 		pl:ChatPrint("Sorry, you can't target " .. target:Nick())
 		return
@@ -170,13 +175,13 @@ function plugin:OnRun( pl, arg, target )
 		return
 	end
 	
-	if not string.match( arg[1], "STEAM_0:[0-1]:[0-9]+" ) then
+	if not string.match( arg[ 1 ], "STEAM_0:[0-1]:[0-9]+" ) then
 		pl:ChatPrint("This isn't a valid steamid.")
 		return
 	end
 
 	anus.NotifyPlugin( pl, plugin.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
-	anus.BanPlayer( pl, arg[1], reason, time )
+	anus.BanPlayer( pl, arg[ 1 ], reason, time )
 end
 
 function plugin:GetUsageSuggestions( arg, pl )
@@ -216,20 +221,20 @@ plugin.chatcommand = "unban"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-	if not string.match( arg[1], "STEAM_0:[0-1]:[0-9]+" ) then
+	if not string.match( arg[ 1 ], "STEAM_0:[0-1]:[0-9]+" ) then
 		pl:ChatPrint("This isn't a valid steamid.")
 		return
 	end
 
 	if #arg > 1 then
 		for i=1,#arg do
-			local v = arg[i]
-			timer.Simple(0.08 * i, function()
+			local v = arg[ i ]
+			timer.Simple( 0.08 * i, function()
 				anus.UnbanPlayer( pl, v )
-			end)
+			end )
 		end
 	else		
-		anus.UnbanPlayer( pl, arg[1] )
+		anus.UnbanPlayer( pl, arg[ 1 ] )
 	end
 end
 anus.RegisterPlugin( plugin )

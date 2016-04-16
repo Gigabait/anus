@@ -47,9 +47,7 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	end
 
 	if file.Exists( "anus/groups.txt", "DATA" ) then
-		--local copy = table.Copy( anus.Groups )
 		anus.Groups = von.deserialize( file.Read( "anus/groups.txt", "DATA" ) )
-		--table.Add( anus.Groups, copy )
 		for k,v in next, anus.GroupPluginCache do
 			local group = k
 			if not anus.Groups[ group ] then group = "user" end
@@ -75,14 +73,14 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 end)
 
 net.Receive( "anus_groups_editname", function( len, pl )
-	if not pl:HasAccess( "addgroup" ) then print( ":(" )return end
+	if not pl:HasAccess( "addgroup" ) then return end
 	
 	local groupid = net.ReadString()
 	local name = net.ReadString()
 	
-	if not anus.Groups[ groupid ] then print(" wat" )return end
+	if not anus.Groups[ groupid ] then return end
 	
-	print( groupid, name )
+	--print( groupid, name )
 	
 	anus.Groups[ groupid ][ "name" ] = name
 	anus.SaveGroups()
@@ -90,7 +88,7 @@ net.Receive( "anus_groups_editname", function( len, pl )
 	for k,v in next, player.GetAll() do
 		--if anus.Groups[ v.UserGroup or "user" ][ "Permissions" ].addgroup then
 		if v:HasAccess( "addgroup" ) then
-			print( v:Nick() )
+			--print( v:Nick() )
 			anusBroadcastGroups( v )
 		end
 	end

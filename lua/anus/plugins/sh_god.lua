@@ -9,47 +9,24 @@ plugin.chatcommand = "god"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-	if not target and IsValid( pl ) then
-		target = pl
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
+		end
+			
+		if not v:Alive() then
+			target[ k ] = nil
+			continue
+		end
+			
+		v.AnusGodded = true
+			 
+		v:GodEnable()
 	end
 		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
-			
-			if not v:Alive() then
-				target[ k ] = nil
-				continue
-			end
-			
-			v.AnusGodded = true
-			 
-			v:GodEnable()
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		if not target:Alive() then pl:ChatPrint("You can't god " .. target:Nick() .. " while they're dead!") return end
-		
-		target.AnusGodded = true
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", target )
-			 
-		target:GodEnable()
-	
-	end
+	anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 function plugin:OnUnload()
@@ -95,41 +72,19 @@ plugin.category = "Fun"
 plugin.chatcommand = "ungod"
 
 function plugin:OnRun( pl, arg, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				continue
-			end
-			
-			if not v:Alive() then continue end
-			
-			v.AnusGodded = false		 
-			v:GodDisable()
+	for k,v in pairs(target) do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			continue
 		end
+			
+		if not v:Alive() then continue end
+			
+		v.AnusGodded = false		 
+		v:GodDisable()
+	end
 
-		anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		if not target:Alive() then pl:ChatPrint("You can't god " .. target:Nick() .. " while they're dead!") return end
-		
-		target.AnusGodded = false
-		anus.NotifyPlugin( pl, plugin.id, color_white, "disabled godmode on ", target )
-			 
-		target:GodDisable()
-	
-	end
+	anus.NotifyPlugin( pl, plugin.id, "disabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

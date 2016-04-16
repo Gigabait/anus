@@ -17,12 +17,12 @@ function plugin:OnRun( pl, args, target )
 	end
 	local force = args[1] and tobool(args[1]) or false
 	
-	if type(target) == "table" then
+	if #target > 1 then
 	
 		local target_tele = {}
-		for k,v in pairs(target) do
+		for k,v in next, target do
 			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+				pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
 				target[ k ] = nil
 				continue
 			end
@@ -69,14 +69,16 @@ function plugin:OnRun( pl, args, target )
 		anus.NotifyPlugin( pl, plugin.id, "brought ", anus.StartPlayerList, target_tele, anus.EndPlayerList, " to themself." )
 	
 	else
-		
+
+		target = target[ 1 ]
+
 		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
+			pl:ChatPrint( "Sorry, you can't target " .. target:Nick() )
 			return
 		end
 		
 		if pl == target then
-			pl:ChatPrint("Inception is a no-no.")
+			pl:ChatPrint( "Inception is a no-no." )
 			return
 		end
 		

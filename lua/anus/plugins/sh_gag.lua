@@ -21,41 +21,19 @@ elseif CLIENT then
 end
 
 function plugin:OnRun( pl, args, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-
-	if type(target) == "table" then
-
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				continue
-			end
-
-			net.Start("anus_gag")
-				net.WriteEntity( v )
-				net.WriteBit( true )
-			net.SendOmit( v )
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			continue
 		end
-
-		anus.NotifyPlugin( pl, plugin.id, color_white, "gagged ", anus.StartPlayerList, target, anus.EndPlayerList )
-
-	else
-
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-
-		anus.NotifyPlugin( pl, plugin.id, color_white, "gagged ", target )
 
 		net.Start("anus_gag")
-			net.WriteEntity( target )
+			net.WriteEntity( v )
 			net.WriteBit( true )
-		net.SendOmit( target )
-
+		net.SendOmit( v )
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "gagged ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command
@@ -84,41 +62,19 @@ plugin.chatcommand = "ungag"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-
-	if type(target) == "table" then
-
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				continue
-			end
-
-			net.Start("anus_gag")
-				net.WriteEntity( v )
-				net.WriteBit( false )
-			net.SendOmit( v )
+	for k,v in pairs(target) do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			continue
 		end
-
-		anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", anus.StartPlayerList, target, anus.EndPlayerList )
-
-	else
-
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-
-		anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", target )
 
 		net.Start("anus_gag")
-			net.WriteEntity( target )
+			net.WriteEntity( v )
 			net.WriteBit( false )
-		net.SendOmit( target )
-
+		net.SendOmit( v )
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, color_white, "ungagged ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

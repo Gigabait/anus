@@ -18,7 +18,7 @@ function plugin:OnRun( pl, args, target )
 	
 	anus.NotifyPlugin( pl, plugin.id, "changed the map to ", COLOR_STRINGARGS, args[ 1 ],  color_white, "." )
 		-- Give it time to notify players.
-	timer.Create( "anusChangeMap", 1, 1, function()
+	timer.Create( "anusChangeMap", 0.5, 1, function()
 		RunConsoleCommand( "changelevel", args[ 1 ] )
 	end )
 

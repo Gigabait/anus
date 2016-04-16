@@ -47,6 +47,10 @@ function anus.ServerLog( msg, isdebug )
 	file.Append( "anus/" .. path .. "/" .. date .. ".txt", time .. " - " .. msg .. "\n" )
 end
 
+function anus.SafeSteamID( steam )
+	return string.gsub( steam, ":", "_" )
+end
+
 function timer.CreatePlayer( pl, identifier, delay, reps, callback )
 	timer.Create( identifier .. "_" .. pl:UserID(), delay, reps, function()
 			-- add to global table and remove them on disconnect instead.

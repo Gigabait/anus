@@ -10,44 +10,21 @@ plugin.chatcommand = "slay"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
-			
-			if not v:Alive() then
-				target[ k ] = nil
-				continue 
-			end
-			
-			--anus.NotifyPlugin( pl, plugin.id, color_white, "slayed ", team.GetColor( v:Team() ), v:Nick() )
-			 
-			v:Kill()
-		end		
-			-- new system baby
-		anus.NotifyPlugin( pl, plugin.id, color_white, "slayed ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			target[ k ] = nil
+			continue
 		end
 
-		if not target:Alive() then
-			pl:ChatPrint("You can't slay " .. target:Nick() .. " while they're dead!")
-			return
+		if not v:Alive() then
+			target[ k ] = nil
+			continue 
 		end
-		
-		anus.NotifyPlugin( pl, plugin.id, color_white, "slayed ", target )
-			 
-		target:Kill()
-	
-	end
+
+		v:Kill()
+	end	
+	anus.NotifyPlugin( pl, plugin.id, "slayed ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command

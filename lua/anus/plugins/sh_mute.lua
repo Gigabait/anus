@@ -10,34 +10,16 @@ plugin.chatcommand = "mute"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				continue
-			end
-			
-			v.AnusChatMuted = true
+	for k,v in pairs(target) do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+			continue
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, "muted ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "muted ", target )
-		target.AnusChatMuted = true
-	
+		v.AnusChatMuted = true
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "muted ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command
@@ -66,34 +48,16 @@ plugin.chatcommand = "unmute"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args, target )
-	if not target and IsValid( pl ) then
-		target = pl
-	end
-		
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				continue
-			end
-
-			v.AnusChatMuted = false
+	for k,v in next, target do
+		if not pl:IsGreaterOrEqualTo( v ) then
+			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+			continue
 		end
 
-		anus.NotifyPlugin( pl, plugin.id, "unmuted ", anus.StartPlayerList, target, anus.EndPlayerList )
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "unmuted ", target )
-		target.AnusChatMuted = false
-	
+		v.AnusChatMuted = false
 	end
+
+	anus.NotifyPlugin( pl, plugin.id, "unmuted ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
 	-- pl: Player running command
