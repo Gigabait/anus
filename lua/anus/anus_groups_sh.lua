@@ -17,6 +17,7 @@ if (CLIENT and not anus.Groups) or (SERVER and serverDefault) then
 		Permissions = {	},
 		color = Color( 0, 161, 255, 255 ),
 		icon = "icon16/user.png",
+		hardcoded = true,
 	}
 
 	anus.Groups[ "trusted" ] =
