@@ -3,7 +3,6 @@ anus.TempUsers = anus.TempUsers or {}
 
 util.AddNetworkString( "anus_requestgroups" )
 util.AddNetworkString( "anus_broadcastgroups" )
-util.AddNetworkString( "anus_groups_editname" )
 util.AddNetworkString( "anus_groups_editid" )
 
 function anusBroadcastGroups( pl )
@@ -78,28 +77,6 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	hook.Call( "anus_SVGroupsLoaded", nil )
 end)
 
---[[net.Receive( "anus_groups_editname", function( len, pl )
-	if not pl:HasAccess( "addgroup" ) then return end
-	
-	local groupid = net.ReadString()
-	local name = net.ReadString()
-	
-	if not anus.Groups[ groupid ] then return end
-	
-	--print( groupid, name )
-	
-	anus.Groups[ groupid ][ "name" ] = name
-	anus.SaveGroups()
-	
-	for k,v in next, player.GetAll() do
-		--if anus.Groups[ v.UserGroup or "user" ][ "Permissions" ].addgroup then
-		if v:HasAccess( "addgroup" ) then
-			--print( v:Nick() )
-			anusBroadcastGroups( v )
-		end
-	end
-end )]]
-
 net.Receive( "anus_groups_editid", function( len, pl )
 	if not pl:HasAccess( "addgroup" ) then return end
 	
@@ -107,6 +84,7 @@ net.Receive( "anus_groups_editid", function( len, pl )
 	local id = net.ReadString()
 	
 	if not anus.Groups[ groupid ] then return end
+	anus.Groups[ groupid ].hardcoded then return end
 	if anus.Groups[ id ] then return end
 	
 	local tbl = anus.GetGroupDirectInheritance( groupid )
