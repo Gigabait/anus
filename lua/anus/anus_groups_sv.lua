@@ -84,7 +84,7 @@ net.Receive( "anus_groups_editid", function( len, pl )
 	local id = net.ReadString()
 	
 	if not anus.Groups[ groupid ] then return end
-	anus.Groups[ groupid ].hardcoded then return end
+	if anus.Groups[ groupid ].hardcoded then return end
 	if anus.Groups[ id ] then return end
 	
 	local tbl = anus.GetGroupDirectInheritance( groupid )
