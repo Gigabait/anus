@@ -4,6 +4,7 @@ anus.TempUsers = anus.TempUsers or {}
 util.AddNetworkString( "anus_requestgroups" )
 util.AddNetworkString( "anus_broadcastgroups" )
 util.AddNetworkString( "anus_groups_editname" )
+util.AddNetworkString( "anus_groups_editid" )
 
 function anusBroadcastGroups( pl )
 	--[[net.Start("anus_broadcastgroups")
@@ -32,8 +33,13 @@ net.Receive( "anus_requestgroups" , function( len, pl )
 end)
 
 
-function anus.SaveGroups()
+function anus.SaveGroups( bBroadcast )
 	file.Write( "anus/groups.txt", von.serialize( anus.Groups ) )
+	if bBroadcast then
+		for k,v in next, player.GetAll() do
+			anusBroadcastGroups( v )
+		end
+	end
 end
 
 hook.Add("Initialize", "anus_GrabDataInfo", function()
@@ -72,7 +78,7 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	hook.Call( "anus_SVGroupsLoaded", nil )
 end)
 
-net.Receive( "anus_groups_editname", function( len, pl )
+--[[net.Receive( "anus_groups_editname", function( len, pl )
 	if not pl:HasAccess( "addgroup" ) then return end
 	
 	local groupid = net.ReadString()
@@ -89,6 +95,31 @@ net.Receive( "anus_groups_editname", function( len, pl )
 		--if anus.Groups[ v.UserGroup or "user" ][ "Permissions" ].addgroup then
 		if v:HasAccess( "addgroup" ) then
 			--print( v:Nick() )
+			anusBroadcastGroups( v )
+		end
+	end
+end )]]
+
+net.Receive( "anus_groups_editid", function( len, pl )
+	if not pl:HasAccess( "addgroup" ) then return end
+	
+	local groupid = net.ReadString()
+	local id = net.ReadString()
+	
+	if not anus.Groups[ groupid ] then return end
+	if anus.Groups[ id ] then return end
+	
+	local tbl = anus.GetGroupDirectInheritance( groupid )
+	anus.Groups[ id ] = table.Copy( anus.Groups[ groupid ] )
+	anus.Groups[ groupid ] = nil
+	
+	for k,v in next, tbl do
+		anus.Groups[ v ].Inheritance = id
+	end
+	anus.SaveGroups()
+	
+	for k,v in next, player.GetAll() do
+		if v:HasAccess( "addgroup" ) then
 			anusBroadcastGroups( v )
 		end
 	end

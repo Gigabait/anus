@@ -156,6 +156,24 @@ function anus.GetGroupInheritanceTree( group )
 	return output
 end
 
+function anus.GetGroupDirectInheritance( group )
+	if not group then return nil end
+	if not anus.Groups[ group ].Inheritance then return { group } end
+	
+	local output = {}
+	output = {}
+	
+	for k,v in next, anus.Groups do
+		if k == group then continue end
+		
+		if v.Inheritance == group then
+			output[ #output + 1 ] = k
+		end
+	end
+	
+	return output
+end
+
 function anus.GroupHasInheritanceFrom( group1, group2, samegroup )
 	if not group1 or not group2 then return nil end
 	if group1 == group2 and not samegroup then return false end

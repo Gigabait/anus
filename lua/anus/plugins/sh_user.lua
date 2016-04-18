@@ -14,6 +14,7 @@ function plugin:OnRun( pl, args, target )
 		pl:ChatPrint( "You can only add one person to a group at a time!" )
 		return
 	end
+	target = target[ 1 ]
 	if not anus.Groups[ args[ 1 ] ] then
 		pl:ChatPrint( "You have to give the right group!" )
 		return
@@ -74,10 +75,6 @@ plugin.category = "Utility"
 plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, args, target )
-	if #target > 1 then
-		pl:ChatPrint( "You can only add one person to a group at a time!" )
-		return
-	end
 	if not anus.Groups[ args[ 2 ] ] then
 		pl:ChatPrint( "You have to give the right group!" )
 		return
@@ -151,6 +148,7 @@ function plugin:OnRun( pl, arg, target )
 		pl:ChatPrint( "You can only add one person to a group at a time!" )
 		return 
 	end
+	target = target[ 1 ]
 	if not anus.Groups[ arg[ 1 ] ] or arg[ 1 ] == "user" then
 		pl:ChatPrint( "Invalid group supplied" ) 
 		return
@@ -289,8 +287,8 @@ function plugin:OnRun( pl, arg, target )
 	
 	target = target[ 1 ]
 	
-	target:GrantPermission( arg[ 2 ] )
-	anus.NotifyPlugin( pl, plugin.id, "granted permission ", COLOR_STRINGARGS, arg[ 2 ], " to ", target, "." )
+	target:GrantPermission( arg[ 1 ] )
+	anus.NotifyPlugin( pl, plugin.id, "granted permission ", COLOR_STRINGARGS, arg[ 1 ], " to ", target, "." )
 end
 anus.RegisterPlugin( plugin )
 
@@ -338,9 +336,9 @@ function plugin:OnRun( pl, arg, target )
 	end
 	
 	target = target[ 1 ]
-	
-	target:RevokePermission( arg[ 2 ] )
-	anus.NotifyPlugin( pl, plugin.id, "revoked permission ", COLOR_STRINGARGS, arg[ 2 ], " to ", target, "." )
+
+	target:RevokePermission( arg[ 1 ] )
+	anus.NotifyPlugin( pl, plugin.id, "revoked permission ", COLOR_STRINGARGS, arg[ 1 ], " to ", target, "." )
 end
 anus.RegisterPlugin( plugin )
 
@@ -389,8 +387,8 @@ function plugin:OnRun( pl, arg, target )
 	
 	target = target[ 1 ]
 	
-	target:DenyPermission( arg[ 2 ] )
-	anus.NotifyPlugin( pl, plugin.id, "denied permission ", COLOR_STRINGARGS, arg[ 2 ], " to ", target, "." )
+	target:DenyPermission( arg[ 1 ] )
+	anus.NotifyPlugin( pl, plugin.id, "denied permission ", COLOR_STRINGARGS, arg[ 1 ], " to ", target, "." )
 end
 anus.RegisterPlugin( plugin )
 

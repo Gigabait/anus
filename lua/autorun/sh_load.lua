@@ -315,10 +315,74 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	util.AddNetworkString( "anus_CCPlugin_" .. info.id )
 
+	local function runCommand( p, strargs )
+		local a = {}
+		
+		if not anus.Plugins[ info.id ].notarget then
+				-- set the placemark where a quote is found, 
+				-- will be checked later on to find end of it
+			local placefound = nil
+		
+			local v
+			for i=1,#strargs do
+				v = strargs[ i ]
+				--print( v )
+				if v == "\"" then
+					if placefound then
+						--print( "placefound ", placefound, i )
+						--a2[ #a2 + 1 ] = string.sub( s, placefound + 1, i - 1 )
+						--table.insert( a, placefound, string.sub( s, placefound + 1, i - 1 ) )
+						table.insert( a, #a + 1, string.sub( strargs, placefound + 1, i - 1) )
+						--print( "test", string.sub( s, placefound + 1, i - 1), #string.sub( s, placefound + 1, i - 1)  )
+						
+						placefound = nil
+					else
+						--a2[ #a2 + 1 ] = 
+						placefound = i
+					end
+				elseif v == " " and not placefound and strargs[ i + 1 ] != "\"" then
+					--print( "ya found", i, v, string.len(v) )
+					a[ #a + 1 ] = ""
+					--print( "spaces", #a2, i,v  )
+				else
+					if not placefound and strargs[ i - 1 ] != "\"" then
+						--print( a2[ #a2 - 1 ], "test" )
+						if #a - 1 < 0 then
+							a[ #a + 1 ] = v
+							-- dont think this isneeded anymore
+						elseif a[ #a - 1 ] == " " then
+							a[ #a + 1 ] = v
+						else
+							if v != " " and not placefound then
+								a[ #a ] = a[ #a ] .. v
+							end
+						end
+					end
+				end
+			end
+			
+			--[[print( "debugign" )
+			PrintTable (a )
+			print( "\n" )]]
+			
+		else
+			a = string.Explode( " ", strargs )
+		end
+		
+
+		for k,v in next, a do
+			if #v == 0 then
+				a[ k ] = " "
+			end
+		end
+		
+		run( p, "anus_" .. info.id, a, strargs )
+	end
+	
 	_G[ "anus" ][ "RunCommand_" .. info.id ] = function( p, c, a, sargs )
 		if info.disabled then return end
 
-		local a = {}
+		--[[local a = {}
 		
 		if not anus.Plugins[ info.id ].notarget then
 				-- set the placemark where a quote is found, 
@@ -341,10 +405,10 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 					end
 				elseif v == " " and not placefound then
 					a[ #a + 1 ] = ""
-					--print( "spaces", #a2, i,v  )
+					--print( "spaces", #a, i,v  )
 				else
 					if not placefound then
-						--print( a2[ #a2 - 1 ], "test" )
+						--print( a[ #a - 1 ], "test" )
 						if #a - 1 < 0 then
 							a[ #a + 1 ] = v
 							-- dont think this isneeded anymore
@@ -369,7 +433,8 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			end
 		end
 		
-		run( p, "anus_" .. info.id, a, sargs )
+		run( p, "anus_" .. info.id, a, sargs )]]
+		runCommand( p, sargs )
 	end
 	
 	
@@ -379,7 +444,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		
 		local s = net.ReadString()
 		
-		local a = {}
+		/*local a = {}
 		
 		if not anus.Plugins[ info.id ].notarget then
 				-- set the placemark where a quote is found, 
@@ -396,6 +461,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 						--a2[ #a2 + 1 ] = string.sub( s, placefound + 1, i - 1 )
 						--table.insert( a, placefound, string.sub( s, placefound + 1, i - 1 ) )
 						table.insert( a, #a + 1, string.sub( s, placefound + 1, i - 1) )
+						--print( "test", string.sub( s, placefound + 1, i - 1), #string.sub( s, placefound + 1, i - 1)  )
 						
 						placefound = nil
 					else
@@ -415,7 +481,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 						elseif a[ #a - 1 ] == " " then
 							a[ #a + 1 ] = v
 						else
-							a[ #a ] = a[ #a ] .. v
+							if v != " " and not placefound then
+								a[ #a ] = a[ #a ] .. v
+							end
 						end
 					end
 				end
@@ -436,7 +504,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			end
 		end
 		
-		run( p, "anus_" .. info.id, a, s )
+		run( p, "anus_" .. info.id, a, s )*/
+		
+		runCommand( p, s )
 	end )
 	
 	

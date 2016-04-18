@@ -27,6 +27,8 @@ function anusSendPlayerPerms( ent )
 	local send_pp = send
 	send_pp[ #send_pp + 1 ] = ent
 	for _,v in next, send do
+		if v.IsBot and v:IsBot() then continue end
+
 		net.Start( "anus_playerperms" )
 			net.WriteEntity( v )
 			net.WriteString( v.UserGroup )

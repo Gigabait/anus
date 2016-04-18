@@ -63,17 +63,30 @@ function CATEGORY:Initialize( parent )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
-		menu:AddOption( "Change name", function()
+		menu:AddOption( "Change ID", function()
 			local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 )
 			Derma_StringRequest(
 				column2, 
-				"Change group name",
-				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ),
+				"Change group id",
+				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 ),
 				function( txt )
-					net.Start( "anus_groups_editname" )
+					net.Start( "anus_groups_editid" )
 						net.WriteString( column2 )
 						net.WriteString( txt )
 					net.SendToServer()
+				end,
+				function( txt )
+				end
+			)
+		end )
+		menu:AddOption( "Change name", function()
+			local column = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() )
+			Derma_StringRequest(
+				column:GetColumnText( 1 ), 
+				"Change group name",
+				column:GetColumnText( 2 ),
+				function( txt )
+					LocalPlayer():ConCommand( "anus renamegroup " .. column:GetColumnText( 1 ) .. " " .. txt )
 				end,
 				function( txt )
 				end
