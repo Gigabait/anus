@@ -96,10 +96,19 @@ net.Receive( "anus_groups_editid", function( len, pl )
 	end
 	anus.SaveGroups()
 	
+	for k,v in next, anus.Users do
+		if v.group == groupid then
+			v.group = id
+		end
+	end
+	file.Write( "anus/users.txt", von.serialize( anus.Users ) )
+	
 	for k,v in next, player.GetAll() do
 		if v:HasAccess( "addgroup" ) then
 			anusBroadcastGroups( v )
 		end
+		
+		anusBroadcastUsers( v )
 	end
 end )
 

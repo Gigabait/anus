@@ -20,7 +20,8 @@ local function CreateBlockedModels()
 	anus_blockedmodels = {}
 	
 	if file.Exists( "anus/plugins/" .. plugin.id .. "/blockedmodels.txt", "DATA" ) then
-		anus_blockedmodels = von.deserialize( anus_blockedmodels )
+		local data = file.Read( "anus/plugins/" .. plugin.id .. "/blockedmodels.txt", "DATA" )
+		anus_blockedmodels = von.deserialize( data )
 	end
 end
 
