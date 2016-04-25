@@ -93,7 +93,7 @@ if SERVER then
 	
 	hook.Add( "PlayerInitialSpawn", "anus_authenticate", function( pl )
 		if pl:IsBot() then return end
-		timer.Create( "anus_authenticate_" .. pl:UserID(), 8.5, 1, function()
+		timer.Create( "anus_authenticate_" .. pl:UserID(), 12.5, 1, function()
 			if not IsValid(pl) then return end
 			if not pl.HasAuthed and not pl:IsDev() then 
 				game.ConsoleCommand( "kickid " .. pl:UserID() .. " Failed to auth. Try to reconnect.\n" ) 

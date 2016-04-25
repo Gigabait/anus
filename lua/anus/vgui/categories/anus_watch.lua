@@ -27,7 +27,7 @@ function CATEGORY:Initialize( parent )
 	parent.panel.bottomPanel.totalbanned:Dock( LEFT )
 	
 	
-	if LocalPlayer():HasAccess( "ban" ) then
+	--[[if LocalPlayer():HasAccess( "ban" ) then
 		parent.panel.bottomPanel.buttonAddban = parent.panel.bottomPanel:Add( "anus_button" )
 		parent.panel.bottomPanel.buttonAddban:SetText( "Add ban" )
 		parent.panel.bottomPanel.buttonAddban:SetTextColor( Color( 140, 140, 140, 255 ) )
@@ -39,7 +39,7 @@ function CATEGORY:Initialize( parent )
 			if not parent.panel.listview:GetSelectedLine() then return end
 			LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
 		end
-	end
+	end]]
 	
 		-- instead of unban selected
 		-- unban steamid. 

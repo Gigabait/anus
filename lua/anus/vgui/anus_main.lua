@@ -86,6 +86,7 @@ function panel:Init()
 			end
 			self.CategoryLastClicked = pnl
 			pnl.Pressed = true
+			LocalPlayer().CategoryLastClickedName = k
 		
 			local categoryposx, categoryposy = self.Categories:GetPos()
 
@@ -105,6 +106,26 @@ function panel:Init()
 	for k,v in next, self.Categories.pnlCanvas:GetChildren() do
 		self.resizeNum = self.resizeNum + v:GetTall()
 	end
+
+	timer.Simple( 0, function()
+		if LocalPlayer().CategoryLastClickedName and self.CategoryList[ LocalPlayer().CategoryLastClickedName ] then
+	
+			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].DoClick( self )
+			self.CategoryLastClicked = self.CategoryList[ LocalPlayer().CategoryLastClickedName ]
+			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].Pressed = true
+			
+			--[[local num = 0
+			for k,v in next, menucategories do
+				if v == LocalPlayer().CategoryLastClickedName then
+					num = k
+				end
+			end
+			print( "location: " .. num )]]
+			
+			self.Categories:ScrollToChild( self.CategoryList[ LocalPlayer().CategoryLastClickedName ] )
+			
+		end
+	end )
 end
 
 function panel:Paint()

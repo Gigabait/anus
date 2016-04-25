@@ -132,6 +132,8 @@ function PANEL:ScrollToChild( panel )
 	local x, y = self.pnlCanvas:GetChildPosition( panel )
 	local w, h = panel:GetSize()
 	
+	--self.VBar:SetScroll( 150 )
+	
 	y = y + h * 0.5;
 	y = y - self:GetTall() * 0.5;
 

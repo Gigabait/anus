@@ -43,7 +43,7 @@ function anusBroadcastUsers( pl )
 	net.Start("anus_broadcastusers")
 		net.WriteUInt( table.Count(anus.Users), 8 )
 		for k,v in next, anus.Users do
-			net.WriteString(v.group)
+			net.WriteString( v.group )
 			net.WriteString( k )
 			if v.name then
 				net.WriteString( v.name )

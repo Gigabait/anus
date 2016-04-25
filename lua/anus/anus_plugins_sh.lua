@@ -38,6 +38,8 @@ function anus.RegisterPlugin( tbl )
 	
 	local explodeusage = string.Explode( ";", anus.Plugins[ tbl.id ].usage and anus.Plugins[ tbl.id ].usage or "" )
 	for k,v in next, ( explodeusage or {} ) do 
+		if #v ==0 then continue end
+
 		local str = v 
 		local pattern = "([%a=]+)"
 		local start, endpos, word = string.find( str, pattern )
@@ -45,7 +47,7 @@ function anus.RegisterPlugin( tbl )
 		local optional = string.sub( str, 1, 1 ) != " " and string.sub( str, 1, 1 ) or string.sub( str, 2, 2 )
 		optional = optional == "[" or false
 
-		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = {type=word, optional=optional}
+		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = { type=word, optional=optional }
 	end
 	
 	if tbl.hasDataFolder then
