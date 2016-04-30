@@ -44,6 +44,8 @@ function plugin:OnRun( pl, arg, t, cmd )
 		else
 			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of " .. util.SteamIDFrom64( alt ) )
 		end
+	else
+		print( "i think we checked " .. pl:Nick() )
 	end
 	
 	for k,v in next, anus.Bans do

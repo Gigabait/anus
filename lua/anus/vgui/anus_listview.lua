@@ -60,6 +60,27 @@ function PANEL:Init()
 
 	self.VBar = vgui.Create( "DVScrollBar", self )
 	self.VBar:SetZPos( 20 )
+	
+	/*print( "test" )
+	local size = 0
+	timer.Simple( 0.02, function()
+		PrintTable( self.Columns )
+		for k,v in next, self.Columns do
+			size = v:GetWide() + size
+		end
+	
+		print( size, "actual size: ", self:GetWide() )
+		print( "enabled: ", self.VBar.Enabled )
+	
+		--[[if self.VBar and not self.VBar.Enabled then
+			self.Columns[ #self.Columns ]:SetWide( self.Columns[ #self.Columns ]:GetWide() + (self:GetWide() - size) )
+		end]]
+		
+		--print( "wide", self.Columns[ 5 ]:GetWide() )
+		--[[self.Columns[ 5 ]:SetWide( 100 )
+		self.Columns[ 5 ]:SetWide( 113` )]]
+		--self.Columns[ 5 ]:SetWide( self.Columns[ 5 ]:GetWide() - 2 )
+	end )*/
 
 end
 
@@ -168,6 +189,7 @@ end
 --[[---------------------------------------------------------
    Name: FixColumnsLayout
 -----------------------------------------------------------]]
+Remain = 0
 function PANEL:FixColumnsLayout()
 
 	local NumColumns = #self.Columns
@@ -189,10 +211,12 @@ function PANEL:FixColumnsLayout()
 	
 	end
 	
+	--print( "testzzz" )
+	local remain = {}
 	-- If there's a remainder, try to palm it off on the other panels, equally
 	while ( Remainder != 0 ) do
-
-		local PerPanel = math.floor( Remainder / NumColumns )
+		
+		local PerPanel = math.floor( Remainder / NumColumns ) + 1
 		
 		for k, Column in pairs( self.Columns ) do
 	
@@ -204,10 +228,12 @@ function PANEL:FixColumnsLayout()
 			if ( Remainder == 0 ) then break end
 		
 		end
+		--print( "a",  Remainder )
 		
 		Remainder = math.Approach( Remainder, 0, 1 )
 	
 	end
+	--print( "remaine " , Remainder )
 
 	-- Set the positions of the resized columns
 	local x = 0
@@ -252,6 +278,11 @@ function PANEL:PerformLayout()
 	self.pnlCanvas:SetSize( Wide, self.pnlCanvas:GetTall() )
 
 	self:FixColumnsLayout()
+	--[[timer.Simple( 0.1, function()
+		print( "remain..\n" .. Remain )
+		--PrintTable( self.Columns )
+		self.Columns[ #self.Columns ]:SetWide( self.Columns[ #self.Columns ]:GetWide() + Remain )
+	end )]]
 
 	--
 	-- If the data is dirty, re-layout
@@ -663,6 +694,17 @@ function PANEL:SizeToContents( )
 
 	self:SetHeight( self.pnlCanvas:GetTall() + self:GetHeaderHeight() )
 
+end
+
+function PANEL:Paint( w, h )
+		-- left
+	draw.RoundedBox( 0, 0, 0, 1, h, Color( 120, 120, 120, 255 ) )
+	DisableClipping( true )
+			-- bottom
+		draw.RoundedBox( 0, 0, h, w, 1, Color( 120, 120, 120, 255 ) )
+				-- right
+		draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 120, 120, 120, 255 ) )
+	DisableClipping( false )
 end
 
 --[[---------------------------------------------------------

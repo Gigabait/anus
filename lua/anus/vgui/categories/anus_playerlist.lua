@@ -120,6 +120,7 @@ function CATEGORY:Initialize( parent )
 		for k,v in next, anus.GetPlugins() do
 			if not v.SelectFromMenu then continue end
 			if not LocalPlayer():HasAccess( k ) then continue end
+			if v.disabled then continue end
 			
 			v:SelectFromMenu( LocalPlayer(), menu, Player( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 ) ), parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ) )
 		end

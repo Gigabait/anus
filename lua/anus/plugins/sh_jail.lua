@@ -77,9 +77,11 @@ function plugin:OnRun( pl, args, target )
 	anus.NotifyPlugin( pl, plugin.id, "jailed ", anus.StartPlayerList, jailed, anus.EndPlayerList )
 end
 
-function plugin:OnUnload()
-	for k,v in next, player.GetAll() do
-		jailPlayer( v, false )
+if SERVER then
+	function plugin:OnUnload()
+		for k,v in next, player.GetAll() do
+			jailPlayer( v, false )
+		end
 	end
 end
 

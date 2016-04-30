@@ -92,6 +92,18 @@ function PANEL:Init()
 	self.Header = vgui.Create( "anus_button", self )
 	self.Header.DoClick = function() self:DoClick() end
 	self.Header.DoRightClick = function() self:DoRightClick() end
+	--[[self.Header.Paint = function( self, w, h )
+			-- top
+		draw.RoundedBox( 0, 0, 0, w, 1, Color( 120, 120, 120, 255 ) )
+			-- left
+		draw.RoundedBox( 0, 0, 0, 1, h, Color( 120, 120, 120, 255 ) )
+		DisableClipping( true )
+				-- bottom
+			draw.RoundedBox( 0, 0, h, w, 1, Color( 120, 120, 120, 255 ) )
+				-- right
+			draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 120, 120, 120, 255 ) )
+		DisableClipping( false )
+	end]]
 	
 	self.DraggerBar = vgui.Create( "anus_listview_draggerbar", self )
 	
@@ -182,7 +194,7 @@ function PANEL:PerformLayout()
 	end
 		
 	self.Header:SetPos( 0, 0 )
-	self.Header:SetSize( self:GetWide(), self:GetParent():GetHeaderHeight() )
+	self.Header:SetSize( self:GetWide() , self:GetParent():GetHeaderHeight() )
 	
 	self.DraggerBar:SetWide( 4 )
 	self.DraggerBar:StretchToParent( nil, 0, nil, 0 )

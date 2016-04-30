@@ -11,7 +11,7 @@ plugin.defaultAccess = "owner"
 
 function plugin:OnRun( pl, arg )
 	local PLUGIN = arg[ 1 ]
-	if not anus.UnloadedPlugins or not anus.UnloadedPlugins[ PLUGIN ] then
+	if not anus.UnloadedPlugins or not anus.UnloadedPlugins[ PLUGIN ] or PLUGIN == plugin.id then
 		pl:ChatPrint( "Plugin \"" .. PLUGIN .. "\" was not found" )
 		return
 	end
@@ -34,7 +34,7 @@ plugin.defaultAccess = "owner"
 
 function plugin:OnRun( pl, arg )
 	local PLUGIN = arg[ 1 ]
-	if not anus.GetPlugins()[ PLUGIN ] then
+	if not anus.GetPlugins()[ PLUGIN ] or PLUGIN == plugin.id or PLUGIN == "pluginload" then
 		pl:ChatPrint( "Plugin \"" .. PLUGIN .. "\" was not found" )
 		return
 	end

@@ -127,12 +127,13 @@ if CLIENT or SERVER then
 		local lcmd = string.lower( a[ 1 ] )
 	
 			-- might as well try old way too.
-		if util.NetworkStringToID( "anus_ccplugin_" .. lcmd ) == 0 then
+		if util.NetworkStringToID( "anus_ccplugin_" .. lcmd ) == 0 or not sargs then
 			local cmd = a[ 1 ]
 			table.remove( a, 1 )
 		
 			RunConsoleCommand( "anus_" .. cmd, unpack( a ) )
 		else
+			-- sargs doesn't exist due to scripts like Falco's Small Scripts
 			sargs = string.gsub( sargs, a[ 1 ], "", 1 )
 			sargs = string.TrimLeft( sargs )
 			
@@ -180,9 +181,9 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 
 			-- not needed?
 			-- i take that back this is "needed"
-		if not a[ 1 ] then
-			if string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
-					p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
+		if not a[ 1 ] then	
+			if string.sub( info.usage, 1, 1 ) != "" and string.sub( info.usage, 1, 1 ) != "[" or not IsValid( p ) then
+				p:ChatPrint( info.id .. ": " .. info.help .. " - " .. info.usage )
 				return
 			end
 				

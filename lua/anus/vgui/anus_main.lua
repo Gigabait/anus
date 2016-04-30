@@ -107,7 +107,7 @@ function panel:Init()
 		self.resizeNum = self.resizeNum + v:GetTall()
 	end
 
-	timer.Simple( 0, function()
+	timer.Simple( 5*10^-3, function()
 		if LocalPlayer().CategoryLastClickedName and self.CategoryList[ LocalPlayer().CategoryLastClickedName ] then
 	
 			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].DoClick( self )

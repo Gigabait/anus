@@ -43,12 +43,12 @@ function category:Initialize( parent )
 	parent.panel.bottomPanel.Paint = function() end
 	parent.panel.bottomPanel:Dock( BOTTOM )
 	
-	parent.panel.bottomPanel.totalbanned = parent.panel.bottomPanel:Add( "DLabel" )
-	parent.panel.bottomPanel.totalbanned:SetText( "Total banned: " .. #parent.panel.listview:GetLines() )
-	parent.panel.bottomPanel.totalbanned:SetTextColor( Color( 140, 140, 140, 255) )
-	parent.panel.bottomPanel.totalbanned:SetFont( "anus_SmallText" )
-	parent.panel.bottomPanel.totalbanned:SizeToContents()
-	parent.panel.bottomPanel.totalbanned:Dock( LEFT )
+	parent.panel.bottomPanel.totalalts = parent.panel.bottomPanel:Add( "DLabel" )
+	parent.panel.bottomPanel.totalalts:SetText( "Total alts: " .. #parent.panel.listview:GetLines() )
+	parent.panel.bottomPanel.totalalts:SetTextColor( Color( 140, 140, 140, 255) )
+	parent.panel.bottomPanel.totalalts:SetFont( "anus_SmallText" )
+	parent.panel.bottomPanel.totalalts:SizeToContents()
+	parent.panel.bottomPanel.totalalts:Dock( LEFT )
 	
 end
 
