@@ -20,7 +20,11 @@ function category:Initialize( parent )
 	parent.panel.listview.Columns[ 1 ]:SetFixedWidth( 100 )
 	
 	for k,v in next, anus.Plugins do
-		parent.panel.listview:AddLine( k, v.help, v.usage, v.example )
+		local usage = ""
+		for a,b in next, v.usageargs do
+			usage = usage .. " " .. (b.optional and "[" or "<") .. b.desc .. (b.optional and "]" or ">")
+		end
+		parent.panel.listview:AddLine( k, v.help, usage, v.example )
 	end
 	parent.panel.listview:SortByColumn( 1, false )
 	parent.panel.listview.OnClickLine = function( pnl, line, bClear ) end

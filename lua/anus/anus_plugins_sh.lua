@@ -42,12 +42,13 @@ function anus.RegisterPlugin( tbl )
 
 		local str = v 
 		local pattern = "([%a=]+)"
-		local start, endpos, word = string.find( str, pattern )
+		local start, endpos, word = string.find( str, pattern )	
+		local desc = string.sub( str, endpos + 2, #str - 1)
 
 		local optional = string.sub( str, 1, 1 ) != " " and string.sub( str, 1, 1 ) or string.sub( str, 2, 2 )
 		optional = optional == "[" or false
 
-		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = { type=word, optional=optional }
+		anus.Plugins[ tbl.id ].usageargs[ #anus.Plugins[ tbl.id ].usageargs + 1 ] = { type=word, optional=optional, desc=desc}
 	end
 	
 	if tbl.hasDataFolder then
