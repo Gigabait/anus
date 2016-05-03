@@ -1,22 +1,25 @@
+local player = player
+local next = next
+local string = string
 function anus.FindPlayer( arg, argtype )
 	if not arg then return nil end
 	
 	local outputs = {}
 	if not argtype or argtype == "name" then
 		for k,v in next, player.GetAll() do
-			if string.lower(v:Nick()):find( arg:lower(), nil, true ) then
+			if string.find( string.lower( v:Nick() ), arg:lower(), nil, true ) then
 				outputs[ #outputs + 1 ] = v
 			end
 		end
 	else
 		for k,v in next, player.GetAll() do
-			if string.find(v:SteamID():lower(), arg:lower(), nil, true ) then
+			if string.find( string.lower( v:SteamID() ), arg:lower(), nil, true ) then
 				outputs[ #outputs + 1 ] = v
 			end
 		end
 	end
 	if arg == "*" and #outputs == 0 then
-		for k,v in pairs(player.GetAll()) do
+		for k,v in next, player.GetAll() do
 			outputs[ #outputs + 1 ] = v
 		end
 	end
@@ -31,7 +34,7 @@ end
 
 function string.NiceName( input )
 	if not input then return "" end
-	if tonumber(input) then return input end
+	if tonumber( input ) then return input end
 	
 	local sub1 = string.sub( input, 1, 1 )
 	local sub2 = string.sub( input, 2, #input )
@@ -283,7 +286,8 @@ else
 end
 
 
-if SERVER then	
+if SERVER then
+	local team = team
 	function anus.CreatePlayerList( arg )
 		local output = {}
 			-- no, i can't do #arg

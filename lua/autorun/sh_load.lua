@@ -153,6 +153,10 @@ end
 function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	if not SERVER or type( info ) != "table" then return end
 	
+	local next = next
+	local type = type
+	local tonumber = tonumber
+	local IsValid = IsValid
 	local function run( p, c, a, sargs)
 		if not a then return end
 		if not p:HasAccess( info.id ) then
