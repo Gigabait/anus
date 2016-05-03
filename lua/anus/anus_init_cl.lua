@@ -44,7 +44,7 @@ net.Receive( "anus_broadcastusers", function()
 end )
 
 concommand.Add( "+anus_menu", function( pl )
-	if IsValid(anus_MainMenu) then
+	if IsValid( anus_MainMenu ) then
 		anus_MainMenu:Remove()
 		anus_MainMenu = nil
 	else

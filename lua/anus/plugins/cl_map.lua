@@ -57,7 +57,15 @@ function category:Initialize( parent )
 		parent.panel.bottomPanel.buttonVoteMap:SetLeftOf( true )
 		parent.panel.bottomPanel.buttonVoteMap.DoClick = function( pnl )
 			if not parent.panel.listview:GetSelectedLine() then return end
-			--LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+			local str = ""
+			for k,v in next, parent.panel.listview:GetSelected() do
+				if k == #parent.panel.listview:GetSelected() then
+					str = str .. v:GetColumnText( 1 )
+				else
+					str = str .. v:GetColumnText( 1 ) .. " "
+				end
+			end
+			LocalPlayer():ConCommand( "anus votemap 15 " .. str )
 		end
 	end
 

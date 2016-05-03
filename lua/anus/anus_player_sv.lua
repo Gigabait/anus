@@ -16,6 +16,10 @@ local _R = debug.getregistry()
 	net.Send( pl )
 end]]
 
+function _R.Player:IsAnusSendable()
+	return self.UserGroup and anus.Groups[ self.UserGroup ] and anus.Groups[ self.UserGroup ][ "isadmin" ]
+end
+
 function anusSendPlayerPerms( ent )
 	local send = {}
 	for k,v in next, player.GetAll() do
@@ -24,17 +28,17 @@ function anusSendPlayerPerms( ent )
 		end
 	end
 
-	local send_pp = send
+	local send_pp = table.Copy( send )
 	send_pp[ #send_pp + 1 ] = ent
-	for _,v in next, send do
-		if v.IsBot and v:IsBot() then continue end
+	--for _,v in next, send do
+	---	if v.IsBot and v:IsBot() then continue end
 
 		net.Start( "anus_playerperms" )
-			net.WriteEntity( v )
-			net.WriteString( v.UserGroup )
-			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
-			net.WriteBit( anus.Groups[ v.UserGroup ].isadmin or false )
-			net.WriteBit( anus.Groups[ v.UserGroup ].issuperadmin or false )
+			net.WriteEntity( ent )
+			net.WriteString( ent.UserGroup )
+			net.WriteUInt( /*v == self and*/ ((save and time) and time) or 0, 18 )
+			net.WriteBit( anus.Groups[ ent.UserGroup ].isadmin or false )
+			net.WriteBit( anus.Groups[ ent.UserGroup ].issuperadmin or false )
 			
 			--[[net.WriteUInt( table.Count( v.Perms ), 8 )
 			for a,b in next, v.Perms do
@@ -46,9 +50,9 @@ function anusSendPlayerPerms( ent )
 						
 				net.WriteString( tostring( b ) )
 			end]]
-			net.WriteTable( v.Perms )
+			net.WriteTable( ent.Perms )
 		net.Send( send_pp )
-	end
+	--end
 	
 	return send
 end
@@ -74,6 +78,7 @@ function _R.Player:SetUserGroup( group, save, time )
 			self.Perms[ k ] = true
 		end
 	else
+		local type = type
 		for k,v in next, anus.Groups[ group ].Permissions do
 			if self.Perms[ k ] != false then
 				if type( v ) == "table" then
@@ -102,6 +107,7 @@ function _R.Player:SetUserGroup( group, save, time )
 			local perms = von.deserialize( file.Read( "anus/users/" .. f .. ".txt", "DATA" ) )
 			self.CustomPerms = self.CustomPerms or {}
 			
+			local type = type
 			for k,v in next, perms do
 				if type( v ) == "table" then
 					for a,b in next, v do
@@ -127,12 +133,12 @@ function _R.Player:SetUserGroup( group, save, time )
 	end
 	self.UserGroup = group
 
-	local send = anusSendPlayerPerms( self )
+	local send = anusSendPlayerPerms( self, save, time )
 	
 	if save then
 		if time then
-			anus.Users[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
-			anus.TempUsers[ self:SteamID() ] = {group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.Users[ self:SteamID() ] = { group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m"), customperms = self.CustomPerms != nil and self.CustomPerms or {} }
+			anus.TempUsers[ self:SteamID() ] = { group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		else
 			if group == "user" then
 				for k,v in next, anus.Users do
@@ -142,7 +148,7 @@ function _R.Player:SetUserGroup( group, save, time )
 					end
 				end
 			else
-				anus.Users[ self:SteamID() ] = {group = group, name = self:Nick()}
+				anus.Users[ self:SteamID() ] = { group = group, name = self:Nick(), customperms = self.CustomPerms != nil and self.CustomPerms or {} }
 			end
 		end
 		
@@ -164,13 +170,13 @@ function anus.SetPlayerGroup( steamid, group, time )
 	
 	if group != "user" then
 		if anus.Users[ steamid ] then		
-			anus.Users[ steamid ] = {group = group, name = anus.Users[ steamid ].name, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.Users[ steamid ] = { group = group, name = anus.Users[ steamid ].name, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m"), customperms = anus.Users[ steamid ].customperms }
 		else
-			anus.Users[ steamid ] = {group = group, name = steamid, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.Users[ steamid ] = { group = group, name = steamid, time = time and os.time() + time or nil, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m"), customperms = {} }
 		end
 		
 		if time then
-			anus.TempUsers[ steamid ] = {group = group, name = steamid, time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
+			anus.TempUsers[ steamid ] = { group = group, name = steamid, time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m") }
 		end
 	else
 		anus.Users[ steamid ] = nil
@@ -249,7 +255,21 @@ function _R.Player:GrantPermission( plugin, restrictions )
 		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
 	end
 	
+	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
+	customperms[ plugin ] = true
+
+	if anus.Users[ self:SteamID() ] then
+		anus.Users[ self:SteamID() ] = { group = anus.Users[ self:SteamID() ].group, name = anus.Users[ self:SteamID() ].name, time = anus.Users[ self:SteamID() ].time, promoted_year = anus.Users[ self:SteamID() ].promoted_year, promoted_month = anus.Users[ self:SteamID() ].promoted_month, promoted_day = anus.Users[ self:SteamID() ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ self:SteamID() ] = { group = self.UserGroup or "user", name = self:Nick(), customperms = customperms }
+	end
+	
 	anusSendPlayerPerms( self )
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
+	end
 end
 function anus.GrantPermission( steamid, plugin, restrictions )
 	local perms = {}
@@ -265,6 +285,22 @@ function anus.GrantPermission( steamid, plugin, restrictions )
 		
 		anusSendPlayerPerms( target )
 	end
+	
+	local customperms = anus.Users[ steamid ] and anus.Users[ steamid ].customperms or {}
+	customperms[ plugin ] = true
+
+	if anus.Users[ steamid ] then
+		anus.Users[ steamid ] = { group = anus.Users[ steamid ].group, name = anus.Users[ steamid ].name, time = anus.Users[ steamid ].time, promoted_year = anus.Users[ steamid ].promoted_year, promoted_month = anus.Users[ steamid ].promoted_month, promoted_day = anus.Users[ steamid ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ steamid ] = { group = self.UserGroup, name = steamid, customperms = customperms }
+	end
+	
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
+	end
+	
 	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
 end
 
@@ -276,6 +312,21 @@ function _R.Player:RevokePermission( plugin )
 	self.CustomPerms[ plugin ] = nil
 	
 	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	
+	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
+	customperms[ plugin ] = nil
+
+	if anus.Users[ self:SteamID() ] then
+		anus.Users[ self:SteamID() ] = { group = anus.Users[ self:SteamID() ].group, name = anus.Users[ self:SteamID() ].name, time = anus.Users[ self:SteamID() ].time, promoted_year = anus.Users[ self:SteamID() ].promoted_year, promoted_month = anus.Users[ self:SteamID() ].promoted_month, promoted_day = anus.Users[ self:SteamID() ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ self:SteamID() ] = { group = self.UserGroup, name = self:Nick(), customperms = customperms }
+	end
+	
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
+	end
 	
 	anusSendPlayerPerms( self )
 end
@@ -293,6 +344,22 @@ function anus.RevokePermission( steamid, plugin )
 		
 		anusSendPlayerPerms( target )
 	end
+	
+	local customperms = anus.Users[ steamid ] and anus.Users[ steamid ].customperms or {}
+	customperms[ plugin ] = nil
+
+	if anus.Users[ steamid ] then
+		anus.Users[ steamid ] = { group = anus.Users[ steamid ].group, name = anus.Users[ steamid ].name, time = anus.Users[ steamid ].time, promoted_year = anus.Users[ steamid ].promoted_year, promoted_month = anus.Users[ steamid ].promoted_month, promoted_day = anus.Users[ steamid ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ steamid ] = { group = self.UserGroup, name = steamid, customperms = customperms }
+	end
+	
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
+	end
+	
 	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
 end
 
@@ -304,6 +371,21 @@ function _R.Player:DenyPermission( plugin )
 		self.Perms[ plugin ] = false
 		self.CustomPerms[ plugin ] = false
 		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	end
+	
+	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
+	customperms[ plugin ] = false
+
+	if anus.Users[ self:SteamID() ] then
+		anus.Users[ self:SteamID() ] = { group = anus.Users[ self:SteamID() ].group, name = anus.Users[ self:SteamID() ].name, time = anus.Users[ self:SteamID() ].time, promoted_year = anus.Users[ self:SteamID() ].promoted_year, promoted_month = anus.Users[ self:SteamID() ].promoted_month, promoted_day = anus.Users[ self:SteamID() ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ self:SteamID() ] = { group = self.UserGroup, name = self:Nick(), customperms = customperms }
+	end
+	
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
 	end
 	
 	anusSendPlayerPerms( self )
@@ -322,6 +404,22 @@ function anus.DenyPermission( steamid, plugin )
 		
 		anusSendPlayerPerms( target )
 	end
+	
+	local customperms = anus.Users[ steamid ] and anus.Users[ steamid ].customperms or {}
+	customperms[ plugin ] = false
+
+	if anus.Users[ steamid ] then
+		anus.Users[ steamid ] = { group = anus.Users[ steamid ].group, name = anus.Users[ steamid ].name, time = anus.Users[ steamid ].time, promoted_year = anus.Users[ steamid ].promoted_year, promoted_month = anus.Users[ steamid ].promoted_month, promoted_day = anus.Users[ steamid ].promoted_day, customperms = customperms }
+	else
+		anus.Users[ steamid ] = { group = self.UserGroup, name = steamid, customperms = customperms }
+	end
+	
+	for k,v in next, player.GetAll() do
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
+	end
+	
 	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
 end
 	

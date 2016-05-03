@@ -61,7 +61,6 @@ net.Receive("anus_requestusers", function( len, pl )
 	anusBroadcastUsers( pl )
 end)
 
---hook.Add( "PlayerInitialSpawn", "anus_networktables", function( pl )
 hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
 	timer.CreatePlayer( pl, "networktables", 1, 1, function() 
 		if pl:HasAccess( "unban" ) then

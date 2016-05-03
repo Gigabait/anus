@@ -107,8 +107,10 @@ net.Receive( "anus_groups_editid", function( len, pl )
 		if v:HasAccess( "addgroup" ) then
 			anusBroadcastGroups( v )
 		end
-		
-		anusBroadcastUsers( v )
+
+		if v:IsAnusSendable() then
+			anusBroadcastUsers( v )
+		end
 	end
 end )
 

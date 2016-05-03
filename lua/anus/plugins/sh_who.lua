@@ -15,7 +15,11 @@ function plugin:OnRun( pl, arg, t, cmd )
 	end
 	
 	for k,v in next, player.GetAll() do
-		groups[ v:GetUserGroup() ][ v:Nick() ] = v:SteamID()
+		if pl:IsAnusSendable() then
+			groups[ v:GetUserGroup() ][ v:Nick() ] = v:SteamID()
+		else
+			groups[ "user" ][ v:Nick() ] = v:SteamID()
+		end
 	end
 	
 	local group_output = {}

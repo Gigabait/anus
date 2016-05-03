@@ -5,7 +5,6 @@ plugin.author = "Shinycow"
 plugin.usage = "<string:plugin>"
 plugin.help = "Loads and enables a previously disabled plugin"
 plugin.category = "Development"
-	-- chat command optional
 plugin.chatcommand = "pluginload"
 plugin.defaultAccess = "owner"
 
@@ -28,7 +27,6 @@ plugin.author = "Shinycow"
 plugin.usage = "<string:plugin>"
 plugin.help = "Unloads and disables a previously enabled plugin"
 plugin.category = "Development"
-	-- chat command optional
 plugin.chatcommand = "pluginunload"
 plugin.defaultAccess = "owner"
 

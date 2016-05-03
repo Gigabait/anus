@@ -19,7 +19,7 @@ function CATEGORY:Initialize( parent )
 	local count = 0
 	for k,v in next, anus.GetPlugins() do
 		count = count + 1
-		timer.Simple( 0.01 * count, function()
+		timer.Simple( 0.0125 * count, function()
 			if not parent or not parent.panel then return end
 
 			local line = parent.panel.listview:AddLine( v.name, v.category, anus.UnloadedPlugins[ k ] and "icon16/cross.png" or "icon16/accept.png" )

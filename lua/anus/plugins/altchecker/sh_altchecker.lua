@@ -45,7 +45,7 @@ function plugin:OnRun( pl, arg, t, cmd )
 			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of " .. util.SteamIDFrom64( alt ) )
 		end
 	else
-		print( "i think we checked " .. pl:Nick() )
+		print( "ANUS debug: i think we checked " .. pl:Nick() )
 	end
 	
 	for k,v in next, anus.Bans do
@@ -74,7 +74,6 @@ if SERVER then
 	end, plugin.id )
 	
 	anus.RegisterHook( "PlayerInitialSpawn", "altcheck", function( pl )
-		print( "steamid64" , pl:SteamID64() )
 		anus.GetPlugins()[ "altcheck" ].OnRun( self, NULL, nil, {pl}, nil )
 	end, plugin.id )
 end

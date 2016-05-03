@@ -68,6 +68,8 @@ ANUS_YEAR = 60 * 60 * 24 * 30 * 12.1666666166668
 
 	-- E.g 1d = 86400 seconds
 	-- returns in seconds
+local stringfind = string.find
+local stringsub = string.sub
 function anus.ConvertStringToTime( str )
 	if str == "0" then
 		return 0
@@ -77,17 +79,17 @@ function anus.ConvertStringToTime( str )
 	local place = 0
 	local lastFound = 0
 	while true do
-		local startpos, endpos = string.find( str, "%a", place )
+		local startpos, endpos = stringfind( str, "%a", place )
 		if not startpos then break end
 		
-		local match = string.sub( str, startpos, endpos )
+		local match = stringsub( str, startpos, endpos )
 		
 		local sub = nil
 		
 		if lastFound == 0 then
-			sub = string.sub( str, 1, endpos - 1 )
+			sub = stringsub( str, 1, endpos - 1 )
 		else
-			sub = string.sub( str, lastFound + 1, endpos - 1 )
+			sub = stringsub( str, lastFound + 1, endpos - 1 )
 		end
 		lastFound = endpos
 		
@@ -120,6 +122,7 @@ end
 	
 	-- if second argument is true
 	-- 86400 will return "1d"
+local mathfloor = math.floor
 function anus.ConvertTimeToString( time, convertable )
 	if time == 0 then
 		return "eternity"
@@ -134,37 +137,37 @@ function anus.ConvertTimeToString( time, convertable )
 	
 	while true do
 		if place >= ANUS_YEAR then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_YEAR )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_YEAR )
 			tbl2[ #tbl2 + 1 ] = { "y", "year" }
 			place = place - ( ANUS_YEAR * tbl[ #tbl ] )
 
 		elseif place >= ANUS_MONTH then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MONTH )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_MONTH )
 			tbl2[ #tbl2 + 1 ] = { "M", "month" }
 			place = place - ( ANUS_MONTH * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_WEEK then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_WEEK )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_WEEK )
 			tbl2[ #tbl2 + 1 ] = { "w", "week" }
 			place = place - ( ANUS_WEEK * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_DAY then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_DAY )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_DAY )
 			tbl2[ #tbl2 + 1 ] = { "d", "day" }
 			place = place - ( ANUS_DAY * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_HOUR then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_HOUR )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_HOUR )
 			tbl2[ #tbl2 + 1 ] = { "h", "hour" }
 			place = place - ( ANUS_HOUR * tbl[ #tbl ] )
 			
 		elseif place >= ANUS_MINUTE then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_MINUTE )
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_MINUTE )
 			tbl2[ #tbl2 + 1 ] = { "m", "minute" }
 			place = place - ( ANUS_MINUTE * tbl[ #tbl ] )
 			
 		elseif place < 60 then
-			tbl[ #tbl + 1 ] = math.floor( place / ANUS_SECOND)
+			tbl[ #tbl + 1 ] = mathfloor( place / ANUS_SECOND)
 			tbl2[ #tbl2 + 1 ] = { "s", "second" }
 			place = place - ( ANUS_SECOND * tbl[ #tbl ] )
 		end
@@ -234,6 +237,8 @@ if(SERVER) then
      
            
 	chat = chat or {}
+	local netWriteUInt = net.WriteUInt
+	local type = type
 	function chat.AddText(ply, ...)
 		local arg = {...}
 
@@ -242,18 +247,18 @@ if(SERVER) then
 			if type(v) == "function" then continue end
 				
 			if(type(v) == "string") or type(v) == "boolean" or type(v) == "number" then
-				net.WriteUInt(E_STR, BITS);
+				netWriteUInt(E_STR, BITS);
 				net.WriteString(tostring(v))
 			elseif(IsColor(v)) then
-				net.WriteUInt(E_COL, BITS);
+				netWriteUInt(E_COL, BITS);
 				if not v.r then continue end
-				net.WriteUInt(v.r, 8)
-				net.WriteUInt(v.g, 8)
-				net.WriteUInt(v.b, 8)
-				net.WriteUInt(v.a, 8)
+				netWriteUInt(v.r, 8)
+				netWriteUInt(v.g, 8)
+				netWriteUInt(v.b, 8)
+				netWriteUInt(v.a, 8)
 			end
 		end
-		net.WriteUInt(E_DUN, BITS);
+		netWriteUInt(E_DUN, BITS);
 		if(ply ~= nil) then
 			net.Send(ply)
 		else

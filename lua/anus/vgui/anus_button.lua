@@ -80,7 +80,11 @@ function PANEL:Paint( w, h )
 		-- Perimeter of button
 	draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
 		-- Content of button
-	draw.RoundedBox( 0, 0 + 1, 0 + 1, w - 2, h - 2, Color( 240, 240, 240, 255 ) )
+	if self:GetDisabled() then
+		draw.RoundedBox( 0, 0 + 1, 0 + 1, w - 2, h - 2, Color( 190, 190, 190, 255 ) )
+	else
+		draw.RoundedBox( 0, 0 + 1, 0 + 1, w - 2, h - 2, Color( 240, 240, 240, 255 ) )
+	end
 	
 	--
 	-- Draw the button text

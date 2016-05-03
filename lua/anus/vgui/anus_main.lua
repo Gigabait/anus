@@ -31,7 +31,7 @@ function panel:Init()
 
 	self:SetSize( psizew, psizeh )
 	self:Center()
-	self:SetKeyBoardInputEnabled( true )
+	self:SetKeyBoardInputEnabled( false )
 	gui.EnableScreenClicker( true )
 	
 	self.Categories = self:Add( "anus_scrollpanel" )
@@ -45,6 +45,26 @@ function panel:Init()
 			new_h = self.resizeNum
 		end
 		draw.RoundedBox( 0, 0, 0, w, new_h, color_white )
+	end
+	
+	self.topPanel = self:Add( "DPanel" )
+	self.topPanel:SetTall( 20 )
+	self.topPanel.Paint = function() end
+	self.topPanel:Dock( TOP )
+	
+	self.topPanel.CloseButton = self.topPanel:Add( "DButton" )
+	self.topPanel.CloseButton:SetText( "X" )
+	self.topPanel.CloseButton:SetFont( "anus_SmallText" )
+	self.topPanel.CloseButton:SetWide( 25 )
+	self.topPanel.CloseButton:Dock( RIGHT )
+	self.topPanel.CloseButton.Paint = function( pnl, w, h )
+	end
+	self.topPanel.CloseButton.DoClick = function( pnl )
+		if IsValid( anus_MainMenu ) then
+			anus_MainMenu:Remove()
+			anus_MainMenu = nil
+			gui.EnableScreenClicker( false )
+		end
 	end
 	
 	self.CategoryList = {}
@@ -113,14 +133,6 @@ function panel:Init()
 			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].DoClick( self )
 			self.CategoryLastClicked = self.CategoryList[ LocalPlayer().CategoryLastClickedName ]
 			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].Pressed = true
-			
-			--[[local num = 0
-			for k,v in next, menucategories do
-				if v == LocalPlayer().CategoryLastClickedName then
-					num = k
-				end
-			end
-			print( "location: " .. num )]]
 			
 			self.Categories:ScrollToChild( self.CategoryList[ LocalPlayer().CategoryLastClickedName ] )
 			

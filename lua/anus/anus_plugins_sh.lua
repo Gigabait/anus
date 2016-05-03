@@ -56,7 +56,7 @@ function anus.RegisterPlugin( tbl )
 	end
 	
 	if anus.UnloadedPlugins[ tbl.id ] then
-		print( "Unloaded plugin: " .. tbl.id )
+		print( "ANUS unloaded plugin: " .. tbl.id )
 		anus.Plugins[ tbl.id ].disabled = true
 		return
 	end
