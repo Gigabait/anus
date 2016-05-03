@@ -1,6 +1,7 @@
 local player = player
 local next = next
 local string = string
+local tableinsert = table.insert
 function anus.FindPlayer( arg, argtype )
 	if not arg then return nil end
 	
@@ -353,8 +354,8 @@ if SERVER then
 		local args = {...}
 			-- if it's not a table then we don't include the player name. meaning yes, you can opt out of this
 		if type(args[1]) != "boolean" then
-			table.insert( args, 1, plColor )
-			table.insert( args, 2, plName )
+			tableinsert( args, 1, plColor )
+			tableinsert( args, 2, plName )
 		else
 			table.remove(args, 1)
 		end
@@ -365,8 +366,6 @@ if SERVER then
 		local place_second = nil
 		local pl_places = {}
 		local white_places = {}
-		
-		local debug_islist = false
 		
 		for k,v in next, args do	
 			if type( v ) == "function" then
@@ -381,13 +380,12 @@ if SERVER then
 			else		
 				if place_first and k == (place_first + 1) then
 					resultant = anus.CreatePlayerList( v )
-					debug_islist = true
 				end
 			end
 		end
 		
 		for k,v in next, pl_places do
-			table.insert( args, k, team.GetColor( v:Team() ) )
+			tableinsert( args, k, team.GetColor( v:Team() ) )
 			args[ k + 1 ] = v:Nick()
 		end
 		
@@ -399,7 +397,7 @@ if SERVER then
 		end
 
 		for k,v in next, white_places do
-			table.insert( args, v + (k-1), color_white )
+			tableinsert( args, v + (k-1), color_white )
 		end
 		
 		local iLoop = 0
@@ -409,7 +407,7 @@ if SERVER then
 			
 			for k,v in next, resultant do
 				--table.insert( args, place_first + iLoop, v )
-				table.insert( args, 1 + place_first + iLoop, v )
+				tableinsert( args, 1 + place_first + iLoop, v )
 				iLoop = iLoop + 1
 			end
 		end

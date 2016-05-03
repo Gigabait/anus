@@ -17,10 +17,10 @@ if SERVER then
 		return ChatCommands
 	end
 	function chatcommand.Add( name, func )
-		ChatCommands[ "!" .. name ] = func
+		ChatCommands[ name ] = func
 	end
 	function chatcommand.Remove( name )
-		ChatCommands[ "!" .. name ] = nil
+		ChatCommands[ name ] = nil
 	end
 	
 	hook.Add( "PlayerSay", "anus_ChatCommandsHandler", function( pl, txt, all )
@@ -31,8 +31,12 @@ if SERVER then
 			local c = tab[ 1 ]
 			table.remove( tab, 1 )
 
-			func( pl, c, tab )
-			return txt
+			local showtxt = func( pl, c, tab )
+			if showtxt != nil and showtxt == true or showtxt == nil then
+				return txt
+			else
+				return ""
+			end
 		end
 		
 	end )

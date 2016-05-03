@@ -177,8 +177,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 				return
 			end]]
 
-			info.OnRun( self, p, a, {p} )
-			return
+			return info.OnRun( self, p, a, {p} )
 		end
 
 		local target = NULL
@@ -292,7 +291,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 		end
 		
 		if anus.Plugins[ info.id ].notarget or not hasPlayerTarg then
-			info.OnRun( self, p, a, {p}, sargs )
+			return info.OnRun( self, p, a, {p}, sargs )
 		else
 			target = IsValid( target ) and target or nil
 			if not target and a[ 1 ] == " " then
@@ -305,7 +304,7 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 			local args = a
 			table.remove( args, 1 )
 			
-			info.OnRun( self, p, args, type( target ) == "table" and target or {target}, sargs )
+			return info.OnRun( self, p, args, type( target ) == "table" and target or {target}, sargs )
 		end
 	end
 	
@@ -402,10 +401,10 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 	
 	
 	if info.chatcommand then
-		chatcommand.Add( info.chatcommand, function( p, c, a, sargs )
+		chatcommand.Add( ((info.chatcommandprefix and info.chatcommandprefix) or "!") .. "" .. info.chatcommand, function( p, c, a, sargs )
 			if not info.chatcommand then return end
 			if info.disabled then return end
-			run( p, c, a, sargs )
+			return run( p, c, a, sargs )
 		end )
 	end
 end
