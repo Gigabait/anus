@@ -24,7 +24,8 @@ function CATEGORY:Initialize( parent )
 		
 		sortable[ line ] = v:GetUserGroup()
 	end
-	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+	--	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+	parent.panel.listview.OnRowLeftClick = function( pnl, index, pnlRow )
 		local posx, posy = gui.MousePos()
 		local height = 0
 		--local sort = {}
@@ -191,9 +192,30 @@ function CATEGORY:Initialize( parent )
 		end
 		
 		if height + posy > ScrH() then
-			menu:SetPos( posx, posy - ( (height + posy) - ScrH() ) )
+			menu:SetPos( posx, posy - ( (height + posy) - ScrH() ) )			
+			menu:Open( posx, posy - ( (height + posy) - ScrH() ), true, pnl )
+		else
+			menu:Open( posx, posy, true, pnl )
 		end
 		
+	end
+	
+	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+		local posx, posy = gui.MousePos()
+		local height = 0
+		--local sort = {}
+		
+		local menu = vgui.Create( "DMenu" )
+		menu:SetPos( posx, posy )
+		menu:AddOption( "Visit Profile", function()
+			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 3 ) ) )
+		end )
+		menu.Think = function( pnl2 )
+			if not IsValid( pnl ) then
+				menu:Remove()
+			end
+		end
+		menu:Open( posx, posy, true, pnl )
 	end
 	
 	

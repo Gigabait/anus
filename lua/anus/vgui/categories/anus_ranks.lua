@@ -104,6 +104,7 @@ function CATEGORY:Initialize( parent )
 				menu:Remove()
 			end
 		end
+		menu:Open( posx, posy, true, pnl )
 		--DisableClipping( false )
 	end
 end

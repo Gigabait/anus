@@ -43,19 +43,24 @@ function CATEGORY:Initialize( parent )
 		for k,v in next, anus.Groups do
 			groupchange:AddOption( v.name, function()
 				LocalPlayer():ConCommand( "anus adduserid " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) .. " " .. k )
+				pnl:RequestFocus()
 			end )
 		end
-		menu:AddOption( "Change Permissions" )
+		menu:AddOption( "Change Permissions", function() pnl:RequestFocus() end )
 		menu:AddSpacer()
 		menu:AddOption( "Visit Profile", function()
 			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ) )
+			pnl:RequestFocus()
 		end )
-		menu:AddOption( "Close" )
+		menu:AddOption( "Close", function()
+			pnl:RequestFocus()
+		end )
 		menu.Think = function( pnl2 )
 			if not IsValid( pnl ) then
 				menu:Remove()
 			end
 		end
+		menu:Open( posx, posy, true, pnl )
 	end
 end
 

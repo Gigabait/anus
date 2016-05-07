@@ -40,7 +40,8 @@ function plugin:OnRun( pl, arg, t, cmd )
 	
 	if alt then
 		if anus.Bans[ util.SteamIDFrom64( alt ) ] then
-			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of currently banned user " .. anus.Bans[ util.SteamIDFrom64( alt ) ].Name .. " (" .. util.SteamIDFrom64( alt ) .. ")", true )
+			print( "printing alt from anus bans" )
+			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of currently banned user " .. anus.Bans[ util.SteamIDFrom64( alt ) ].name .. " (" .. util.SteamIDFrom64( alt ) .. ")", true )
 		else
 			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of " .. util.SteamIDFrom64( alt ) )
 		end
@@ -52,7 +53,7 @@ function plugin:OnRun( pl, arg, t, cmd )
 		if not v.ip then continue end
 			
 		if pl:IPAddress() == v.ip then
-			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of currently banned user " .. v.Name .. " (" .. k .. ")", true )
+			anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") is an alt of currently banned user " .. v.name .. " (" .. k .. ")", true )
 		end
 	end
 end

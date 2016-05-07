@@ -31,8 +31,10 @@ function panel:Init()
 
 	self:SetSize( psizew, psizeh )
 	self:Center()
-	self:SetKeyBoardInputEnabled( false )
-	gui.EnableScreenClicker( true )
+	self:MakePopup()
+	timer.Simple( 0.1, function()
+		self:SetKeyBoardInputEnabled( false )
+	end )
 	
 	self.Categories = self:Add( "anus_scrollpanel" )
 	self.Categories:SetSize( self:GetSize() / 7, self:GetTall() )
@@ -138,10 +140,21 @@ function panel:Init()
 			
 		end
 	end )
+	
+	timer.Create( "anus_CheckTextEntry" .. tostring( self ), 1, 1, function()
+		if not anus_MainMenu or not IsValid( anus_MainMenu ) then return end
+
+		hook.Add( "OnTextEntryGetFocus", anus_MainMenu, function( pnl )
+			anus_MainMenu:SetKeyboardInputEnabled( true )
+		end )
+		hook.Add( "OnTextEntryLoseFocus", anus_MainMenu, function( pnl )
+			anus_MainMenu:SetKeyboardInputEnabled( false )
+		end )
+	end )
 end
 
 function panel:Paint()
 	draw.RoundedBox( 4, 0, 0, psizew, psizeh, bgColor )
 end
-
-vgui.Register( "anus_mainmenu", panel )
+	
+vgui.Register( "anus_mainmenu", panel, "EditablePanel" )

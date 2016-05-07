@@ -115,9 +115,23 @@ function PANEL:OnMousePressed( mcode )
 		
 		return
 		
+	elseif mcode == MOUSE_LEFT then
+		
+			-- This is probably the expected behaviour..
+		if ( !self:IsLineSelected() ) then
+		
+			self:GetListView():OnClickLine( self, true )
+			self:OnSelect()
+
+		end
+		
+		self:GetListView():OnRowLeftClick( self:GetID(), self )
+		--self:OnLeftClick()
+		
+		return
 	end
 
-	self:GetListView():OnClickLine( self, true )
+	self:GetListView():OnClickLine( self, true, mcode == MOUSE_RIGHT )
 	self:OnSelect()
 
 end

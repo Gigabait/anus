@@ -170,7 +170,7 @@ function plugin:OnRun( pl, arg, target )
 		end
 	end
 
-	if anus.Users[ arg[ 1 ] ] and anus.GroupHasInheritanceFrom( anus.Groups[ anus.Users[ arg[ 1 ] ].group ], pl.UserGroup ) then
+	if anus.Users[ arg[ 1 ] ] and anus.GroupHasInheritanceFrom( anus.Users[ arg[ 1 ] ].group, pl.UserGroup ) then
 		pl:ChatPrint("Sorry, this player is higher ranked than you!")
 		return
 	end

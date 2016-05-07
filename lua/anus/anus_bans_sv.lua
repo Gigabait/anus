@@ -115,7 +115,8 @@ function anus.BanPlayer( caller, target, reason, time )
 	end )
 	
 	if time and time != 0 then
-		anus.BanExpiration[ info.steamid ] = time
+		--print( "registering ban for " .. info.steamid .. " : time: " .. time )
+		anus.BanExpiration[ info.steamid ] = os.time() + time
 	elseif not time or time == 0 and anus.BanExpiration[ info.steamid ] then
 		anus.BanExpiration[ info.steamid ] = nil
 	end
@@ -161,7 +162,7 @@ hook.Add( "InitPostEntity", "anus_CheckBannedPlayers", function()
 		end
 	end
 	
-	timer.Create( "anus_autounbanbanned", 3.5, 0, function()
+	timer.Create( "anus_autounbanbanned", 3, 0, function()
 		local ostime = os.time
 		local tonumber = tonumber
 		for k,v in next, anus.BanExpiration do
@@ -196,7 +197,7 @@ hook.Add("CheckPassword", "anus_DenyBannedPlayer", function( steamid, ip, svpw, 
 		if not lastRetry[ steamid ] or lastRetry[ steamid ] <= CurTime() then
 			anus.ServerLog( "Banned player " .. info.name .. " (" .. util.SteamIDFrom64( steamid ) .. " ) (" .. ip .. ") tried to connect.", true )
 			for k,v in next, player.GetAll() do
-				chat.AddText( v, color_white, "Banned player ", Color( 191, 255, 127, 255 ), info.name, color_white, "(", Color( 191, 255, 127, 255 ), util.SteamIDFrom64( steamid ), color_white, ") tried to connect." )
+				chat.AddText( v, color_white, "Banned player ", Color( 191, 255, 127, 255 ), info.name, color_white, " (", Color( 191, 255, 127, 255 ), util.SteamIDFrom64( steamid ), color_white, ") tried to connect." )
 			end
 		
 			lastRetry[ steamid ] = CurTime() + 5

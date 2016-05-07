@@ -63,46 +63,48 @@ function category:Initialize( parent )
 		parent.panel.listview.CreatePage( parent.panel.listview.CurrentPage )
 	end
 	
+	local sortable = {}
+	local count = 0
+	local bans = table.Copy( anus.Bans )
+	local totalbanned = 0
+	
 	parent.panel.topPanel.searchentry = parent.panel.topPanel:Add( "DTextEntry" )
 	parent.panel.topPanel.searchentry:SetText( "Search..." )
 	parent.panel.topPanel.searchentry:SetWide( 150 )
 	parent.panel.topPanel.searchentry:SetEditable( true )
 	parent.panel.topPanel.searchentry:Dock( RIGHT )
-	parent.panel.topPanel.searchentry.OnGetFocus = function( self )
-		--parent:GetParent():SetKeyBoardInputEnabled( false )
-		self:SetKeyboardInputEnabled( true )
-		self.IsFocused = true
-	end
-	--[[	-- its not grabbing input, so hacks.
-	keys = {}
-	for i=48, 57 do
-		if i == 48 then
-			keys[ _G[ "KEY_0" ] ] = true
-		elseif i == 57 then
-			keys[ _G[ "KEY_9" ] ] = true
-		else
-			keys[ _G[ "KEY_" .. string.char( i ) ] ] = true
-		end
-	end
-	for i=65, 90 do
-		keys[ _G[ "KEY_" .. string.char( i ) ] ] = true
-	end
-	hook.Add( "CreateMove", parent.panel, function()
-		if parent.panel.topPanel.searchentry.IsFocused then
-			if ( LocalPlayer().searchcheck and LocalPlayer().searchcheck < CurTime() )  or not LocalPlayer().searchcheck then
-				if input.IsKeyDown( KEY_BACKSPACE ) then
-					
-				for k,v in next, keys do
-					if input.IsKeyDown( k ) then
-						parent.panel.topPanel.searchentry
-
-						LocalPlayer().searchcheck = CurTime() + 0.15
-						break
-					end
+	parent.panel.topPanel.searchentry.OnChange = function( self )
+		parent.panel.listview.IsSearching = true
+		parent.panel.listview.SearchPage = {}
+		parent.panel.listview:Clear()
+		
+		local max = 100
+		local count = 0
+		local stringlower = string.lower
+		for k,v in next, bans do
+			if count >= max then continue end
+			if string.find( stringlower( k ), stringlower( self:GetText() ) )
+			or string.find( stringlower( v.name ), stringlower( self:GetText() ) ) then		
+				count = count + 1
+				
+				local time = v.time
+				if time == 0 or time == "0" then
+					time = "Never"
+				else
+					time = os.date( "%X - %d/%m/%Y", tonumber(time) )
 				end
+				
+				local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
+				if time != "Never" then
+					time = v.time
+				end
+				--sortable[ line ] = time
+				--sortable[ parent.panel.listview.CurrentPage ] = sortable[ parent.panel.listview.CurrentPage ] or {}
+				--sortable[ parent.panel.listview.CurrentPage ][ line ] = time
+				parent.panel.listview.SearchPage[ line ] = time
 			end
 		end
-	end )]]
+	end
 
 	parent.panel.listview = parent.panel:Add( "anus_listview" )
 	parent.panel.listview:SetMultiSelect( false )
@@ -115,11 +117,7 @@ function category:Initialize( parent )
 	parent.panel.listview.Columns[ 1 ]:SetFixedWidth( 150 )
 	
 	parent.panel.listview.CurrentPage = 1
-	
-	local sortable = {}
-	local count = 0
-	local bans = table.Copy( anus.Bans )
-	local totalbanned = 0
+
 	/*local*/ banpages = {}
 	for k,v in next, anus.Bans do
 		totalbanned = totalbanned + 1
@@ -148,6 +146,7 @@ function category:Initialize( parent )
 			timer.Create( "anus_addlines" .. count, (5*10^-3) * count, 1, function()
 				if not parent or not parent.panel then return end
 				if parent.panel.listview.CurrentPage != page then return end
+				if parent.panel.listview.IsSearching then return end
 				
 				local time = v.time
 				if time == 0 or time == "0" then
@@ -231,6 +230,7 @@ function category:Initialize( parent )
 				menu:Remove()
 			end
 		end
+		menu:Open( posx, posy, true, pnl )
 		
 		--DisableClipping( false )
 	end

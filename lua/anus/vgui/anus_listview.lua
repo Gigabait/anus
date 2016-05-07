@@ -654,6 +654,12 @@ function PANEL:OnRowRightClick( LineID, Line )
 
 end
 
+function PANEL:OnRowLeftClick( LineID, Line )
+
+	-- For Override
+	
+end
+
 --[[---------------------------------------------------------
    Name: Clear
 -----------------------------------------------------------]]
