@@ -77,40 +77,65 @@ hook.Add("Initialize", "anus_GrabDataInfo", function()
 	hook.Call( "anus_SVGroupsLoaded", nil )
 end)
 
-net.Receive( "anus_groups_editid", function( len, pl )
-	if not pl:HasAccess( "addgroup" ) then return end
+
+function anus.ChangeGroupName( group, name )
+	if not anus.Groups[ group ] then return false, "Incorrect group supplied" end
+	if #name > 28 then return false, "Name is too long" end
+	local foundchar = false
+	for i=1,#name do
+		if name[ i ] != " " then
+			foundchar = true
+			break
+		end
+	end
+	if not foundchar then return false, "Supply a valid name" end
 	
-	local groupid = net.ReadString()
-	local id = net.ReadString()
+	anus.Groups[ group ][ "name" ] = name
+	anus.SaveGroups( true )
 	
-	if not anus.Groups[ groupid ] then return end
-	if anus.Groups[ groupid ].hardcoded then return end
-	if anus.Groups[ id ] then return end
+	return true
+end
+
+function anus.ChangeGroupID( group, id )
+	if not anus.Groups[ group ] then return false end
+	if anus.Groups[ group ].hardcoded then return false end
+	if anus.Groups[ id ] then error( "Group id " .. id .. " already exists!" ) return false end
 	
-	local tbl = anus.GetGroupDirectInheritance( groupid )
-	anus.Groups[ id ] = table.Copy( anus.Groups[ groupid ] )
-	anus.Groups[ groupid ] = nil
+	local tbl = anus.GetGroupDirectInheritance( group )
+	anus.Groups[ id ] = table.Copy( anus.Groups[ group ] )
+	anus.Groups[ group ] = nil
 	
 	for k,v in next, tbl do
 		anus.Groups[ v ].Inheritance = id
 	end
-	anus.SaveGroups()
+	anus.SaveGroups( true )
 	
 	for k,v in next, anus.Users do
-		if v.group == groupid then
+		if v.group == group then
 			v.group = id
 		end
 	end
 	file.Write( "anus/users.txt", von.serialize( anus.Users ) )
 	
 	for k,v in next, player.GetAll() do
-		if v:HasAccess( "addgroup" ) then
-			anusBroadcastGroups( v )
-		end
-
 		if v:IsAnusSendable() then
 			anusBroadcastUsers( v )
 		end
+	end
+	
+	return true
+end
+
+net.Receive( "anus_groups_editid", function( len, pl )
+	if not pl:HasAccess( "addgroup" ) then return end
+	
+	local groupid = net.ReadString()
+	local id = net.ReadString()
+	
+	local changed = anus.ChangeGroupID( groupid, id )
+	
+	if changed then
+		anus.ServerLog( pl:Nick() .. " (" .. pl:SteamID() .. ") changed group id \"" .. groupid .. "\" to \"" .. id .. "\"" )
 	end
 end )
 

@@ -17,10 +17,13 @@ function plugin:OnRun( pl, arg )
 	
 	local name = anus.Groups[ arg[ 1 ] ].name
 	
-	anus.Groups[ arg[ 1 ] ][ "name" ] = arg[ 2 ]
-	anus.SaveGroups( true )
+	local changed, reason = anus.ChangeGroupName( arg[ 1 ], arg[ 2 ] )
 	
-	anus.NotifyPlugin( pl, plugin.id, "renamed group ", COLOR_STRINGARGS, name, " to ", COLOR_STRINGARGS, arg[ 2 ] )
+	if changed then
+		anus.NotifyPlugin( pl, plugin.id, "renamed group ", COLOR_STRINGARGS, name, " to ", COLOR_STRINGARGS, arg[ 2 ] )
+	else
+		pl:ChatPrint( reason or "" )
+	end
 end
 
 anus.RegisterPlugin( plugin )

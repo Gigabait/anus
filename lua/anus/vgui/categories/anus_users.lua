@@ -35,7 +35,7 @@ function CATEGORY:Initialize( parent )
 	end
 
 	parent.panel.listview:SortByColumn( 1, false )
-	parent.panel.listview.OnRowSelected = function( pnl, index, pnlRow )
+	parent.panel.listview.OnRowLeftClick = function( pnl, index, pnlRow )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )

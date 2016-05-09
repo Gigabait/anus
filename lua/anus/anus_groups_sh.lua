@@ -57,6 +57,7 @@ if (CLIENT and not anus.Groups) or (SERVER and serverDefault) then
 		},
 		color = Color( 95, 63, 127, 255 ),
 		icon = "icon16/shield.png",
+		hardcoded = true,
 	}
 
 	anus.Groups[ "superadmin" ] =
@@ -76,6 +77,7 @@ if (CLIENT and not anus.Groups) or (SERVER and serverDefault) then
 		},
 		color = Color( 255, 93, 0, 255 ),
 		icon = "icon16/shield_add.png",
+		hardcoded = true,
 	}
 
 	anus.Groups[ "owner" ] =

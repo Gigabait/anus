@@ -66,14 +66,12 @@ hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
 		if pl:HasAccess( "unban" ) then
 			anusBroadcastBans( pl )
 		end
-		
-		if pl:HasAccess( "addgroup" ) then
-			anusBroadcastGroups( pl )
-		end
+	
+		anusBroadcastGroups( pl )
 		
 		if pl:HasAccess( "pluginload" ) or pl:HasAccess( "pluginunload" ) then
 			anusBroadcastPlugins( pl )
 		end
-			
+
 	end )
 end )

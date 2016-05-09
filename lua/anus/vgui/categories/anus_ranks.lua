@@ -58,8 +58,7 @@ function CATEGORY:Initialize( parent )
 	
 
 	parent.panel.listview:SortByColumn( 1, false )
-	parent.panel.listview.OnRowSelected = function( pnl, index, pnlRow )
-		--DisableClipping( true )
+	local function runOnSelect( pnl, index, pnlRow )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
@@ -105,7 +104,12 @@ function CATEGORY:Initialize( parent )
 			end
 		end
 		menu:Open( posx, posy, true, pnl )
-		--DisableClipping( false )
+	end
+	parent.panel.listview.OnRowLeftClick = function( pnl, index, pnlRow )
+		runOnSelect( pnl, index, pnlRow )
+	end
+	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+		runOnSelect( pnl, index, pnlRow )
 	end
 end
 

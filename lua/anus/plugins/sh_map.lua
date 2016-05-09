@@ -21,7 +21,7 @@ function plugin:OnRun( pl, args, target )
 	if time != 0 then
 		anus.NotifyPlugin( pl, plugin.id, "is changing the map to ", COLOR_STRINGARGS, args[ 1 ], color_white, " in ", COLOR_STRINGARGS, time, " seconds." )
 	else
-		anus.NotifyPlugin( pl, plugin.id, "changed the map to ", COLOR_STRINGARGS, args[ 1 ],  color_white, "." )
+		anus.NotifyPlugin( pl, plugin.id, "changed the map to ", COLOR_STRINGARGS, args[ 1 ] )
 	end
 		-- Give it time to notify players.
 	timer.Create( "anusChangeMap", 0.5 + time, 1, function()
