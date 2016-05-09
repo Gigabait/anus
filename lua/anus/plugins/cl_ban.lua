@@ -50,7 +50,7 @@ function category:Initialize( parent )
 	parent.panel.topPanel.button2:SetLeftOf( true )
 	parent.panel.topPanel.button2:Dock( LEFT )
 	parent.panel.topPanel.button2.Think = function( self )
-		if parent.panel.listview and parent.panel.listview.CurrentPage == #banpages then
+		if parent.panel.listview and parent.panel.listview.CurrentPage == #parent.panel.banpages then
 			parent.panel.topPanel.button2:SetDisabled( true )
 		else
 			parent.panel.topPanel.button2:SetDisabled( false )
@@ -95,6 +95,7 @@ function category:Initialize( parent )
 				end
 				
 				local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
+				line.OldTime = v.time
 				if time != "Never" then
 					time = v.time
 				end
@@ -118,19 +119,19 @@ function category:Initialize( parent )
 	
 	parent.panel.listview.CurrentPage = 1
 
-	/*local*/ banpages = {}
+	parent.panel.banpages = {}
 	for k,v in next, anus.Bans do
 		totalbanned = totalbanned + 1
 		count = count + 1
 		
-		if count > (#banpages * 500) then
-			banpages[ #banpages + 1 ] = {}
-			banpages[ #banpages ][ k ] = v
+		if count > (#parent.panel.banpages * 500) then
+			parent.panel.banpages[ #parent.panel.banpages + 1 ] = {}
+			parent.panel.banpages[ #parent.panel.banpages ][ k ] = v
 		else
-			banpages[ #banpages ][ k ] = v
+			parent.panel.banpages[ #parent.panel.banpages ][ k ] = v
 		end
 	end
-	if #banpages == 1 then
+	if #parent.panel.banpages == 1 then
 		parent.panel.topPanel.button:Remove()
 		parent.panel.topPanel.button = nil
 		
@@ -140,7 +141,7 @@ function category:Initialize( parent )
 	
 	function parent.panel.listview.CreatePage( page )
 		count = 0
-		for k,v in next, banpages[ parent.panel.listview.CurrentPage ] do
+		for k,v in next, parent.panel.banpages[ parent.panel.listview.CurrentPage ] do
 			count = count + 1
 
 			timer.Create( "anus_addlines" .. count, (5*10^-3) * count, 1, function()
@@ -156,6 +157,7 @@ function category:Initialize( parent )
 				end
 				
 				local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
+				line.OldTime = v.time
 				if time != "Never" then
 					time = v.time
 				end
@@ -165,7 +167,7 @@ function category:Initialize( parent )
 			end )
 		end
 		
-		timer.Create( "anus_sortlines", table.Count( banpages[ parent.panel.listview.CurrentPage ] ) + (5*10^-3) + 0.1, 1, function()
+		timer.Create( "anus_sortlines", table.Count( parent.panel.banpages[ parent.panel.listview.CurrentPage ] ) + (5*10^-3) + 0.1, 1, function()
 			if not parent or not parent.panel then return end
 			if parent.panel.listview.CurrentPage != page then return end
 
@@ -181,45 +183,78 @@ function category:Initialize( parent )
 	
 	parent.panel.listview.CreatePage( 1 )
 	
+	hook.Add( "OnBanlistChanged", parent.panel, function( pnl, bantype, steamid )
+		if not bantype or not steamid then return end
+
+		for k,v in next, parent.panel.listview:GetLines() do
+			if v:GetColumnText( 2 ) == steamid then
+				if bantype == 1 then
+					v.customPaint = nil
+				else
+					v.customPaint = Color( 215, 35, 35, 255 )
+				end
+				v.IsUnbanned = bantype == 2
+			end
+		end
+		
+		for k,v in next, parent.panel.banpages do
+			if k == steamid then
+				if bantype == 1 then
+					v.customPaint = nil
+				else
+					v.customPaint = Color( 215, 35, 35, 255 )
+				end
+				v.IsUnbanned = bantype == 2
+			end
+		end
+	end )
+	
 	
 	parent.panel.listview:SortByColumn( 1, false )
 	parent.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
-		--DisableClipping( true )
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
-		menu:AddOption( "Change Time", function()
-			local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 )
-			Derma_StringRequest(
-				column2, 
-				"Change ban time",
-				anus.Bans[ column2 ][ "time" ] == "0" and anus.Bans[ column2 ][ "time" ] or anus.ConvertTimeToString( anus.Bans[ column2 ][ "time" ] - os.time(), true ),
-				function( txt )
-					net.Start( "anus_bans_edittime" )
-						net.WriteString( column2 )
-						net.WriteString( txt )
-					net.SendToServer()
-				end,
-				function( txt )
-				end
-			)
-		end )
-		menu:AddOption( "Change Reason", function() 
-			Derma_StringRequest( 
-				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
-				"Change ban reason",
-				parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 5 ),
-				function( txt )
-					net.Start( "anus_bans_editreason" )
-						net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
-						net.WriteString( txt )
-					net.SendToServer()
-				end,
-				function( txt ) 
-				end
-			)
-		end )
-		menu:AddOption( "View Details" )
+		if pnlRow.IsUnbanned then
+			menu:AddOption( "Revert Unban", function()
+				local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 )
+				local time = pnlRow.OldTime != 0 and pnlRow.OldTime != "0" and (pnlRow.OldTime - os.time()) or 0
+				LocalPlayer():ConCommand( "anus banid " .. column2 .. " " .. time .. " " .. pnlRow:GetColumnText( 5 ) )
+			end )
+		else
+			menu:AddOption( "Change Time", function()
+				local column2 = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 )
+				Derma_StringRequest(
+					column2, 
+					"Change ban time",
+					anus.Bans[ column2 ][ "time" ] == "0" and anus.Bans[ column2 ][ "time" ] or anus.ConvertTimeToString( anus.Bans[ column2 ][ "time" ] - os.time(), true ),
+					function( txt )
+						net.Start( "anus_bans_edittime" )
+							net.WriteString( column2 )
+							net.WriteString( txt )
+						net.SendToServer()
+					end,
+					function( txt )
+					end
+				)
+			end )
+			menu:AddOption( "Change Reason", function() 
+				Derma_StringRequest( 
+					parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
+					"Change ban reason",
+					parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 5 ),
+					function( txt )
+						net.Start( "anus_bans_editreason" )
+							net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+							net.WriteString( txt )
+						net.SendToServer()
+					end,
+					function( txt ) 
+					end
+				)
+			end )
+			menu:AddOption( "View Details" )
+		end
 		menu:AddSpacer()
 		menu:AddOption( "Visit Profile", function()
 			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ) )
@@ -231,8 +266,6 @@ function category:Initialize( parent )
 			end
 		end
 		menu:Open( posx, posy, true, pnl )
-		
-		--DisableClipping( false )
 	end
 	
 	parent.panel.bottomPanel = parent.panel:Add( "DPanel" )
@@ -250,14 +283,14 @@ function category:Initialize( parent )
 	
 	parent.panel.bottomPanel.pagenumber = parent.panel.bottomPanel:Add( "DLabel" )
 	parent.panel.bottomPanel.pagenumber.page = parent.panel.listview.CurrentPage
-	parent.panel.bottomPanel.pagenumber:SetText( "Page: " .. parent.panel.listview.CurrentPage .. " / " .. #banpages )
+	parent.panel.bottomPanel.pagenumber:SetText( "Page: " .. parent.panel.listview.CurrentPage .. " / " .. #parent.panel.banpages )
 	parent.panel.bottomPanel.pagenumber:SetTextColor( Color( 140, 140, 140, 255) )
 	parent.panel.bottomPanel.pagenumber:SetFont( "anus_SmallText" )
 	parent.panel.bottomPanel.pagenumber:SizeToContents()
 	parent.panel.bottomPanel.pagenumber:Dock( LEFT )
 	parent.panel.bottomPanel.pagenumber.Think = function( self )
 		if parent.panel.bottomPanel.pagenumber.page != parent.panel.listview.CurrentPage then
-			self:SetText( "Page: " .. parent.panel.listview.CurrentPage .. " / " .. #banpages )
+			self:SetText( "Page: " .. parent.panel.listview.CurrentPage .. " / " .. #parent.panel.banpages )
 			self:SizeToContents()
 			
 			parent.panel.bottomPanel.pagenumber.page = parent.panel.listview.CurrentPage

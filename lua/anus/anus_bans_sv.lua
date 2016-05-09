@@ -2,70 +2,71 @@ util.AddNetworkString("anus_requestbans")
 util.AddNetworkString("anus_broadcastbans")
 
 	-- chunk after 500 of these bad boys
-function anusBroadcastBans( pl )
-	--[[local num = 500
-	local numinc = 0
-	net.Start("anus_broadcastbans")
-		net.WriteUInt( num/*table.Count(anus.Bans)*/, 16 )
-		for k,v in next, anus.Bans do
-			--if numinc >= num then break end
-			--numinc = numinc + 1
-			net.WriteString( k )
-			net.WriteString( v.name )
-			net.WriteString( v.reason )
-			net.WriteString( v.time )
-			net.WriteString( v.admin )
-			net.WriteString( v.admin_steamid )
-		end
-	net.Send( pl )]]
-	
-	local count = table.Count( anus.Bans )
-	local bans = table.Copy( anus.Bans )
-	local chunk = 500
-	local sent = 0
-	local whattosend = math.ceil( count / chunk )
-	local timerCreate = timer.Create
-	local netStart = net.Start
-	local netWriteUInt = net.WriteUInt
-	local netWriteString = net.WriteString
-	local netSend = net.Send
-		-- chunkables by 500 bans, at 1816 thats 4
-	for i=1, whattosend do --math.ceil( count / chunk ) do
-			-- create a small delay between each chunk sent
-		timerCreate( "anus_broadcastbans_" .. pl:UserID() .. "_chunk_" .. i, 0.05 * i, 1, function()
-			if not IsValid( pl ) then return end
-	
-			local numinc = 0
+function anusBroadcastBans( pl, bIndividual, steamid )
+	if not bIndividual then
+		local count = table.Count( anus.Bans )
+		local bans = table.Copy( anus.Bans )
+		local chunk = 500
+		local sent = 0
+		local whattosend = math.ceil( count / chunk )
+		local timerCreate = timer.Create
+		local netStart = net.Start
+		local netWriteUInt = net.WriteUInt
+		local netWriteString = net.WriteString
+		local netSend = net.Send
+			-- chunkables by 500 bans, at 1816 thats 4
+		for i=1, whattosend do --math.ceil( count / chunk ) do
+				-- create a small delay between each chunk sent
+			timerCreate( "anus_broadcastbans_" .. pl:UserID() .. "_chunk_" .. i, 0.05 * i, 1, function()
+				if not IsValid( pl ) then return end
 		
-			netStart( "anus_broadcastbans" )
-					-- tell client how many chunks we are sending
-				netWriteUInt( whattosend, 8 )
-					-- tell client which chunk we are on
-				netWriteUInt( i, 8 )
-					-- tell client how many times to loop through
-				netWriteUInt( table.Count(bans) > chunk and chunk or table.Count(bans)/*table.Count( anus.Bans )*/, 18 )
-				for k,v in next, bans do
-					if numinc >= chunk then break end
-					sent = sent + 1 
-					numinc = numinc + 1
+				local numinc = 0
+			
+				netStart( "anus_broadcastbans" )
+						-- tell client how many chunks we are sending
+					--netWriteUInt( whattosend, 8 )
+					netWriteUInt( 0, 2 )
+						-- tell client which chunk we are on
+					netWriteUInt( i, 8 )
+						-- tell client how many times to loop through
+					netWriteUInt( table.Count(bans) > chunk and chunk or table.Count(bans), 18 )
+					for k,v in next, bans do
+						if numinc >= chunk then break end
+						sent = sent + 1 
+						numinc = numinc + 1
 
-					netWriteString( k )
-					netWriteString( v.name )
-					netWriteString( v.reason )
-					netWriteString( v.time )
-					netWriteString( v.admin )
-					netWriteString( v.admin_steamid )
-					
-					bans[ k ] = nil
-				end
-			netSend( pl )
-		end )
+						netWriteString( k )
+						netWriteString( v.name )
+						netWriteString( v.reason )
+						netWriteString( v.time )
+						netWriteString( v.admin )
+						netWriteString( v.admin_steamid )
+						
+						bans[ k ] = nil
+					end
+				netSend( pl )
+			end )
+		end
+		
+		pl.BroadcastedBans = true
+	else
+		local bans = anus.Bans[ steamid ]
+		net.Start( "anus_broadcastbans" )
+			net.WriteUInt( 1, 2 )
+			net.WriteString( steamid )
+			net.WriteString( bans.name )
+			net.WriteString( bans.reason )
+			net.WriteString( bans.time )
+			net.WriteString( bans.admin )
+			net.WriteString( bans.admin_steamid )
+		net.Send( pl )
 	end
-	--[[timer.Simple( 0.1 + (0.05 * math.ceil( count / chunk ) ), function()
-		print( "sENT TOTLA BANS: " .. sent )
-		print( "TOTAL BANS: " .. count )
-	end )]]
-				
+end
+function anusBroadcastUnban( pl, steamid )
+	net.Start( "anus_broadcastbans" )
+		net.WriteUInt( 2, 2 )
+		net.WriteString( steamid )
+	net.Send( pl )
 end
 
 net.Receive("anus_requestbans", function( len, pl )
@@ -109,7 +110,11 @@ function anus.BanPlayer( caller, target, reason, time )
 		anus.SaveBans()
 		for k,v in next, player.GetAll() do
 			if v:HasAccess( "unban" ) then
-				anusBroadcastBans( v )
+				if not v.BroadcastedBans then
+					anusBroadcastBans( v )
+				else
+					anusBroadcastBans( v, true, info.steamid )
+				end
 			end
 		end
 	end )
@@ -145,7 +150,11 @@ function anus.UnbanPlayer( caller, steamid, opt_reason )
 	
 	for k,v in next, player.GetAll() do
 		if anus.Groups[ v.UserGroup or "user" ]["Permissions"].unban then
-			anusBroadcastBans( v )
+			if not v.BroadcastedBans then
+				anusBroadcastBans( v )
+			else
+				anusBroadcastUnban( v, steamid )
+			end
 		end
 	end
 end

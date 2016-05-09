@@ -251,6 +251,11 @@ function PANEL:DataLayout( ListView )
 end
 
 function PANEL:Paint( w, h )
+
+	if self.customPaint then
+		draw.RoundedBox( 0, 0, 0, w, h, self.customPaint )
+		return
+	end
 	
 	if self:IsLineSelected() then
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 225, 225, 225, 255 ) )
