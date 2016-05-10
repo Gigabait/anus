@@ -210,6 +210,16 @@ function CATEGORY:Initialize( parent )
 		menu:AddOption( "Visit Profile", function()
 			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 3 ) ) )
 		end )
+		if LocalPlayer():HasAccess( "adduser" ) then
+			menu:AddSpacer()
+			local groupchange = menu:AddSubMenu( "Change Group" )
+			for k,v in next, anus.Groups do
+				groupchange:AddOption( v.name, function()
+					LocalPlayer():ConCommand( "anus adduser " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 3 ) .. " " .. k )
+					pnl:RequestFocus()
+				end )
+			end
+		end
 		menu.Think = function( pnl2 )
 			if not IsValid( pnl ) then
 				menu:Remove()

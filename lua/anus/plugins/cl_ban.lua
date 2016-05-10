@@ -229,10 +229,11 @@ function category:Initialize( parent )
 					"Change ban time",
 					anus.Bans[ column2 ][ "time" ] == "0" and anus.Bans[ column2 ][ "time" ] or anus.ConvertTimeToString( anus.Bans[ column2 ][ "time" ] - os.time(), true ),
 					function( txt )
-						net.Start( "anus_bans_edittime" )
+						--[[net.Start( "anus_bans_edittime" )
 							net.WriteString( column2 )
 							net.WriteString( txt )
-						net.SendToServer()
+						net.SendToServer()]]
+						LocalPlayer():ConCommand( "anus banid " .. column2 .. " " .. txt .. " " .. pnlRow:GetColumnText( 5 ) )
 					end,
 					function( txt )
 					end
@@ -289,6 +290,10 @@ function category:Initialize( parent )
 	parent.panel.bottomPanel.pagenumber:SizeToContents()
 	parent.panel.bottomPanel.pagenumber:Dock( LEFT )
 	parent.panel.bottomPanel.pagenumber.Think = function( self )
+		if not parent.panel.topPanel.button then
+			self:Remove()
+			return
+		end
 		if parent.panel.bottomPanel.pagenumber.page != parent.panel.listview.CurrentPage then
 			self:SetText( "Page: " .. parent.panel.listview.CurrentPage .. " / " .. #parent.panel.banpages )
 			self:SizeToContents()
@@ -308,14 +313,11 @@ function category:Initialize( parent )
 		parent.panel.bottomPanel.buttonAddban:SetLeftOf( true )
 		parent.panel.bottomPanel.buttonAddban.DoClick = function( pnl )
 			if not parent.panel.listview:GetSelectedLine() then return end
-			LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+			--LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+			LocalPlayer():ChatPrint( "its on my todo!" )
 		end
 	end
-	
-		-- instead of unban selected
-		-- unban steamid. 
-		-- if a line is highlighted copy that into the new menu that pops up
-		-- for cases of where theres a large amount of steams to sift through
+
 	parent.panel.bottomPanel.buttonUnban = parent.panel.bottomPanel:Add( "anus_button" )
 	parent.panel.bottomPanel.buttonUnban:SetText( "Unban Selected" )
 	parent.panel.bottomPanel.buttonUnban:SetTextColor( Color( 140, 140, 140, 255 ) )
@@ -326,7 +328,6 @@ function category:Initialize( parent )
 	parent.panel.bottomPanel.buttonUnban.DoClick = function( pnl )
 		if not parent.panel.listview:GetSelectedLine() then return end
 		LocalPlayer():ConCommand( "anus unban " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
-		parent.panel.listview:RemoveLine( parent.panel.listview:GetSelectedLine() )
 	end
 	
 end

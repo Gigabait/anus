@@ -89,7 +89,7 @@ function anus.BanPlayer( caller, target, reason, time )
 		target = string.gsub( target, "\"", "" )
 	end
 	
-	local info = { steamid = target, ip = "", name = target, reason = reason or "No reason given.", time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
+	local info = { steamid = target, ip = "", name = target, reason = reason or "No reason given.", dateofban = os.time(), time = iTime, admin = caller:Nick(), admin_steamid = caller:SteamID() }
 	if type( target ) != "string" and IsValid( target ) then
 		info.steamid = target:SteamID()
 		info.name = target:Nick()
@@ -105,7 +105,7 @@ function anus.BanPlayer( caller, target, reason, time )
 		anus.Bans = von.deserialize( file.Read( "anus/bans.txt", "DATA" ) )
 	end
 	timer.Create( "AddBannedPlayer" .. math.random(1,99999), 0.03, 1, function()
-		anus.Bans[ info.steamid ] = { name = info.name, ip = info.ip, reason = info.reason, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid }
+		anus.Bans[ info.steamid ] = { name = info.name, ip = info.ip, reason = info.reason, dateofban = info.dateofban, time = info.time, admin = info.admin, admin_steamid = info.admin_steamid }
 		
 		anus.SaveBans()
 		for k,v in next, player.GetAll() do
@@ -119,6 +119,8 @@ function anus.BanPlayer( caller, target, reason, time )
 		end
 	end )
 	
+	file.CreateDir( "anus/users/" .. anus.SafeSteamID( info.steamid ) )
+	
 	if time and time != 0 then
 		--print( "registering ban for " .. info.steamid .. " : time: " .. time )
 		anus.BanExpiration[ info.steamid ] = os.time() + time
@@ -130,7 +132,7 @@ end
 function anus.UnbanPlayer( caller, steamid, opt_reason )
 	opt_reason = opt_reason or "Unbanned"
 	local caller_color = Color( 10, 10, 10, 255 )
-	if IsValid(caller) then caller_color = team.GetColor( caller:Team() ) end
+	if IsValid( caller ) then caller_color = team.GetColor( caller:Team() ) end
 	if anus.Bans[ steamid ] then
 		for k,v in next, player.GetAll() do
 			chat.AddText( v, Color( 191, 255, 127, 255 ), steamid, color_white, " (", Color( 191, 255, 127, 255 ), anus.Bans[ steamid ].name, color_white, ") was unbanned by ", caller_color, caller:Nick(), color_white, " (", COLOR_STRINGARGS, opt_reason, color_white, ")" )
@@ -142,10 +144,20 @@ function anus.UnbanPlayer( caller, steamid, opt_reason )
 		end
 		print( steamid .. " was unbanned by " .. caller:Nick() )
 	end
-	anus.Bans[ steamid ] = nil
 	if anus.BanExpiration[ steamid ] then
 		anus.BanExpiration[ steamid ] = nil
+
+		local history = "anus/users/" .. anus.SafeSteamID( steamid ) .. "/banhistory.txt"
+		local bans = anus.Bans[ steamid ]
+		local data = {}
+		if file.Exists( history, "DATA" ) then
+			data = von.deserialize( file.Read( history, "DATA" ) )
+		end
+		
+		data[ #data + 1 ] = { admin_steamid = bans.admin_steamid, name = bans.name, reason = bans.reason, dateofban = bans.dateofban or nil, time = bans.time }
+		file.Write( history, von.serialize( data ) )
 	end
+	anus.Bans[ steamid ] = nil
 	anus.SaveBans()
 	
 	for k,v in next, player.GetAll() do

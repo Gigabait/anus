@@ -175,12 +175,12 @@ function plugin:OnRun( pl, arg, target )
 		return
 	end
 	
-	if not string.match( arg[ 1 ], "STEAM_0:[0-1]:[0-9]+" ) then
+	if not string.IsSteamID( arg[ 1 ] ) then
 		pl:ChatPrint("This isn't a valid steamid.")
 		return
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, true, COLOR_STEAMIDARGS, arg[1], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
+	anus.NotifyPlugin( pl, plugin.id, true, COLOR_STEAMIDARGS, arg[ 1 ], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
 	anus.BanPlayer( pl, arg[ 1 ], reason, time )
 end
 
@@ -221,7 +221,7 @@ plugin.chatcommand = "unban"
 plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, arg, target )
-	if not string.match( arg[ 1 ], "STEAM_0:[0-1]:[0-9]+" ) then
+	if not string.IsSteamID( arg[ 1 ] ) then
 		pl:ChatPrint("This isn't a valid steamid.")
 		return
 	end
@@ -236,5 +236,102 @@ function plugin:OnRun( pl, arg, target )
 	else		
 		anus.UnbanPlayer( pl, arg[ 1 ] )
 	end
+end
+anus.RegisterPlugin( plugin )
+
+local plugin = {}
+plugin.id = "banhistory"
+plugin.name = "Ban History"
+plugin.author = "Shinycow"
+plugin.usage = "<player:Player>"
+plugin.help = "Checks ban history for a player"
+plugin.example = "anus banhistory bot" 
+plugin.category = "Utility"
+plugin.chatcommand = "banhistory"
+plugin.defaultAccess = "superadmin"
+
+function plugin:OnRun( pl, arg, target )
+	target = target[ 1 ]
+
+	anus.NotifyPlugin( pl, plugin.id, "checked the ban history of ", target )
+	
+	if not target:HasBanHistory() then
+		pl:ChatPrint( "No ban history found for " .. target:Nick() )
+		return
+	end
+	
+	local data = target:GetBanHistory()
+	
+	pl:ChatPrint( "Check console for ban history of " .. target:Nick() )
+
+	pl:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
+	pl:PrintMessage( HUD_PRINTCONSOLE, target:Nick() .. " (" .. target:SteamID() .. ") ban history:" )
+
+	local last = false
+	for k,v in next, data do
+		if k == #data then
+			last = true
+		end
+		
+		--pl:PrintMessage( HUD_PRINTCONSOLE, "\tPrevious name: ".. v.name .. "\n\tDate of ban: " .. os.date( v.dateofban ) .. "\n\tBan Length: " .. anus.ConvertTimeToString( v.time ) )
+		pl:PrintMessage( HUD_PRINTCONSOLE, [[
+	Previous name: ]] .. v.name .. [[ 
+	Date of ban: ]] .. os.date( "%X - %d/%m/%Y", v.dateofban ) .. [[ 
+	Ban Length: ]] .. anus.ConvertTimeToString( v.time - v.dateofban ) .. [[ 
+	Ban Reason: ]] .. v.reason .. [[ 
+	Admin SteamID: ]] .. v.admin_steamid .. (last == false and "\n\n" or "")
+		)
+	end
+	pl:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
+end
+anus.RegisterPlugin( plugin )
+
+local plugin = {}
+plugin.id = "banhistoryid"
+plugin.name = "Ban History ID"
+plugin.author = "Shinycow"
+plugin.usage = "<string:SteamID>"
+plugin.help = "Checks ban history for a steamid"
+plugin.example = "anus banhistoryid STEAM_0:0:12345" 
+plugin.category = "Utility"
+plugin.chatcommand = "banhistoryid"
+plugin.defaultAccess = "superadmin"
+
+function plugin:OnRun( pl, arg, target )
+	if not string.IsSteamID( arg[ 1 ] ) then
+		pl:ChatPrint("This isn't a valid steamid.")
+		return
+	end
+	local steamid = arg[ 1 ]
+	anus.NotifyPlugin( pl, plugin.id, "checked the ban history of ", COLOR_STEAMIDARGS, steamid )
+	
+	if not anus.PlayerHasBanHistory( steamid ) then
+		pl:ChatPrint( "No ban history found for " .. steamid )
+		return
+	end
+	
+	local data = anus.PlayerGetBanHistory( steamid )
+	
+	pl:ChatPrint( "Check console for ban history of " .. steamid )
+
+	pl:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
+	pl:PrintMessage( HUD_PRINTCONSOLE, steamid .. " ban history:" )
+
+	local last = false
+	for k,v in next, data do
+		if k == #data then
+			last = true
+		end
+		
+		--pl:PrintMessage( HUD_PRINTCONSOLE, "\tPrevious name: ".. v.name .. "\n\tDate of ban: " .. os.date( v.dateofban ) .. "\n\tBan Length: " .. anus.ConvertTimeToString( v.time ) )
+		pl:PrintMessage( HUD_PRINTCONSOLE, [[
+	Previous name: ]] .. v.name .. [[ 
+	Date of ban: ]] .. os.date( "%X - %d/%m/%Y", v.dateofban ) .. [[ 
+	Ban Length: ]] .. anus.ConvertTimeToString( v.time - v.dateofban ) .. [[ 
+	Ban Reason: ]] .. v.reason .. [[ 
+	Admin SteamID: ]] .. v.admin_steamid .. (last == false and "\n\n" or "")
+		)
+	end
+	pl:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
 end
 anus.RegisterPlugin( plugin )

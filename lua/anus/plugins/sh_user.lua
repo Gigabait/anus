@@ -101,10 +101,11 @@ function plugin:OnRun( pl, args, target )
 	for k,v in next, player.GetAll() do
 		if v:SteamID() == steamid then
 			pl:ChatPrint( "You can't use this command on a player who is in the server! Use anus adduser instead!" )
+			return
 		end
 	end
 		
-	anus.SetPlayerGroup( steamid, args[2] )
+	anus.SetPlayerGroup( steamid, args[ 2 ] )
 	
 	anus.NotifyPlugin( pl, plugin.id, "added steamid ", COLOR_STEAMIDARGS, steamid, " to group ", COLOR_STRINGARGS, args[ 2 ] )
 end

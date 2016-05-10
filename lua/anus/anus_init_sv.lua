@@ -74,4 +74,6 @@ hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
 		end
 
 	end )
+	
+	file.CreateDir( "anus/users/" .. anus.SafeSteamID( pl:SteamID() ) )
 end )

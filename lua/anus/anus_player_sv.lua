@@ -252,7 +252,7 @@ function _R.Player:GrantPermission( plugin, restrictions )
 	if not restrictions then
 		self.Perms[ plugin ] = true
 		self.CustomPerms[ plugin ] = true
-		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( self.CustomPerms ) )
 	end
 	
 	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
@@ -273,8 +273,8 @@ function _R.Player:GrantPermission( plugin, restrictions )
 end
 function anus.GrantPermission( steamid, plugin, restrictions )
 	local perms = {}
-	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
-		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) )
 	end
 	
 	perms[ plugin ] = true
@@ -301,7 +301,7 @@ function anus.GrantPermission( steamid, plugin, restrictions )
 		end
 	end
 	
-	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( perms ) )
 end
 
 function _R.Player:RevokePermission( plugin )
@@ -311,7 +311,7 @@ function _R.Player:RevokePermission( plugin )
 	self.Perms[ plugin ] = nil
 	self.CustomPerms[ plugin ] = nil
 	
-	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( self.CustomPerms ) )
 	
 	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
 	customperms[ plugin ] = nil
@@ -332,8 +332,8 @@ function _R.Player:RevokePermission( plugin )
 end
 function anus.RevokePermission( steamid, plugin )
 	local perms = {}
-	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
-		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) )
 	end
 	
 	perms[ plugin ] = nil
@@ -360,7 +360,7 @@ function anus.RevokePermission( steamid, plugin )
 		end
 	end
 	
-	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( perms ) )
 end
 
 function _R.Player:DenyPermission( plugin )
@@ -370,7 +370,7 @@ function _R.Player:DenyPermission( plugin )
 	if not restrictions then
 		self.Perms[ plugin ] = false
 		self.CustomPerms[ plugin ] = false
-		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( self.CustomPerms ) )
+		file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( self.CustomPerms ) )
 	end
 	
 	local customperms = anus.Users[ self:SteamID() ] and anus.Users[ self:SteamID() ].customperms or {}
@@ -392,8 +392,8 @@ function _R.Player:DenyPermission( plugin )
 end
 function anus.DenyPermission( steamid, plugin )
 	local perms = {}
-	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) then
-		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. ".txt", "DATA" ) )
+	if file.Exists( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) then
+		perms = von.deserialize( file.Read( "anus/users/" .. anus.SafeSteamID( steamid ) .. "/customperms.txt", "DATA" ) )
 	end
 	
 	perms[ plugin ] = false
@@ -420,7 +420,7 @@ function anus.DenyPermission( steamid, plugin )
 		end
 	end
 	
-	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. ".txt", von.serialize( perms ) )
+	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( perms ) )
 end
 	
 
@@ -499,6 +499,32 @@ end
 
 function _R.Entity:Team()
 	return 0
+end
+
+function _R.Player:HasBanHistory()	
+	local history = "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/banhistory.txt"
+	if not file.Exists( history, "DATA" ) then return false end
+	
+	return true
+end
+
+function _R.Player:GetBanHistory()	
+	local history = "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/banhistory.txt"
+	
+	local data = von.deserialize( file.Read( history, "DATA" ) )
+	return data
+end
+function anus.PlayerHasBanHistory( steamid )
+	local history = "anus/users/" .. anus.SafeSteamID( steamid ) .. "/banhistory.txt"
+	if not file.Exists( history, "DATA" ) then return false end
+	
+	return true
+end
+function anus.PlayerGetBanHistory( steamid )
+	local history = "anus/users/" .. anus.SafeSteamID( steamid ) .. "/banhistory.txt"
+	
+	local data = von.deserialize( file.Read( history, "DATA" ) )
+	return data
 end
 
 function _R.Player:DisableSpawning()
