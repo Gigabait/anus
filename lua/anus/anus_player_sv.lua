@@ -20,11 +20,13 @@ function _R.Player:IsAnusSendable()
 	return self.UserGroup and anus.Groups[ self.UserGroup ] and anus.Groups[ self.UserGroup ][ "isadmin" ]
 end
 
-function anusSendPlayerPerms( ent )
+function anusSendPlayerPerms( ent, save, time, bNoBroadcast, target )
 	local send = {}
-	for k,v in next, player.GetAll() do
-		if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
-			send[ #send + 1 ] = v
+	if not bNoBroadcast then
+		for k,v in next, player.GetAll() do
+			if v.UserGroup and anus.Groups[ v.UserGroup ] and anus.Groups[ v.UserGroup ][ "isadmin" ] then
+				send[ #send + 1 ] = v
+			end
 		end
 	end
 
@@ -36,7 +38,7 @@ function anusSendPlayerPerms( ent )
 		net.Start( "anus_playerperms" )
 			net.WriteEntity( ent )
 			net.WriteString( ent.UserGroup )
-			net.WriteUInt( /*v == self and*/ ((save and time) and time) or 0, 18 )
+			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
 			net.WriteBit( anus.Groups[ ent.UserGroup ].isadmin or false )
 			net.WriteBit( anus.Groups[ ent.UserGroup ].issuperadmin or false )
 			

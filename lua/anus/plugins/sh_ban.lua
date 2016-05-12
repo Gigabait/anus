@@ -327,7 +327,7 @@ function plugin:OnRun( pl, arg, target )
 		pl:PrintMessage( HUD_PRINTCONSOLE, [[
 	Previous name: ]] .. v.name .. [[ 
 	Date of ban: ]] .. os.date( "%X - %d/%m/%Y", v.dateofban ) .. [[ 
-	Ban Length: ]] .. anus.ConvertTimeToString( v.time - v.dateofban ) .. [[ 
+	Ban Length: ]] .. anus.ConvertTimeToString( v.time != 0 and v.time - v.dateofban or v.time ) .. [[ 
 	Ban Reason: ]] .. v.reason .. [[ 
 	Admin SteamID: ]] .. v.admin_steamid .. (last == false and "\n\n" or "")
 		)

@@ -14,12 +14,12 @@ function PANEL:UpdateColours( skin )
 
 	if self.IconImage then return self:SetTextStyleColor( Color( 0, 0, 0, 0 ) ) end
 	
-	if ( self:GetParent():IsLineSelected() ) then return self:SetTextStyleColor( skin.Colours.Label.Bright ) end
+--	if ( self:GetParent():IsLineSelected() ) then print( "mo" )return self:SetTextStyleColor( skin.Colours.Label.Bright ) end
 
 	if self:GetParent().Colors and self:GetParent().Colors[ self.ColumnID ] then
 		return self:SetTextStyleColor( self:GetParent().Colors[ self.ColumnID ] )
 	end
-	
+
 	return self:SetTextStyleColor( skin.Colours.Label.Dark )
 
 end
@@ -118,12 +118,12 @@ function PANEL:OnMousePressed( mcode )
 	elseif mcode == MOUSE_LEFT then
 		
 			-- This is probably the expected behaviour..
-		if ( !self:IsLineSelected() ) then
+		--if ( !self:IsLineSelected() ) then
 		
 			self:GetListView():OnClickLine( self, true )
 			self:OnSelect()
 
-		end
+		--end
 		
 		self:GetListView():OnRowLeftClick( self:GetID(), self )
 		--self:OnLeftClick()

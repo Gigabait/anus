@@ -23,7 +23,7 @@ surface.CreateFont( "anus_BigTitle",
 	size = 26,
 } )
 
-local psizew,psizeh = nil, nil--= anus.UniversalWidth( 960 ), anus.UniversalHeight( 640 )
+local psizew,psizeh = nil, nil
 local bgColor = Color( 231, 230, 237, 255 )
 
 function panel:Init()
@@ -76,8 +76,7 @@ function panel:Init()
 	table.sort( menucategories, function( a, b )
 		return tostring( a ) < tostring( b )
 	end )
-	
-	--for k,v in next, anus.MenuCategories do
+
 	for i=1,#menucategories do
 		local k = menucategories[ i ]
 		local v = anus.MenuCategories[ k ]

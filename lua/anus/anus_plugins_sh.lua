@@ -256,9 +256,9 @@ function anus.PluginLoad( plugin, path )
 		net.Broadcast()
 		
 			-- eh
-		for k,v in next, player.GetAll() do
+		--[[for k,v in next, player.GetAll() do
 			anusSendPlayerPerms( v )
-		end
+		end]]
 	end
 	
 	hook.Call( "anus_PluginLoaded", nil, plugin )

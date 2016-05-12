@@ -61,18 +61,36 @@ net.Receive("anus_requestusers", function( len, pl )
 	anusBroadcastUsers( pl )
 end)
 
+local network =
+{
+[ "unban" ] = "Bans",
+[ "pluginload" ] = "Plugins",
+}
 hook.Add( "anus_PlayerAuthenticated", "anus_networktables", function( pl )
-	timer.CreatePlayer( pl, "networktables", 1, 1, function() 
-		if pl:HasAccess( "unban" ) then
-			anusBroadcastBans( pl )
-		end
+	local count = 0
+	for k,v in next, network do
+		count = count + 1
+		timer.CreatePlayer( pl, "networktables" .. k, 0.5 * count, 1, function()
+			if pl:HasAccess( k ) then
+				_G[ "anusBroadcast" .. v ]( pl )
+			end
+		end )
+	end
 	
+	timer.CreatePlayer( pl, "networktablesgroupsusers", 0.35, 1, function()
 		anusBroadcastGroups( pl )
 		
-		if pl:HasAccess( "pluginload" ) or pl:HasAccess( "pluginunload" ) then
-			anusBroadcastPlugins( pl )
-		end
+		if pl:IsAnusSendable() then
+			anusBroadcastUsers( pl )
+			anusSendPlayerPerms( pl, nil, nil, true )
+			for k,v in next, player.GetAll() do
+				if v == pl then continue end
 
+				timer.CreatePlayer( pl, "networktablesperms" .. v:UserID(), 0.3 * k, 1, function()
+					anusSendPlayerPerms( v, nil, nil, false, pl )
+				end )
+			end
+		end
 	end )
 	
 	file.CreateDir( "anus/users/" .. anus.SafeSteamID( pl:SteamID() ) )

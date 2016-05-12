@@ -125,9 +125,7 @@ function CATEGORY:Initialize( parent )
 			
 			v:SelectFromMenu( LocalPlayer(), menu, Player( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 1 ) ), parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ) )
 		end
-		
-		--[[print( "HOLDERS" )
-		PrintTable( holder )]]
+
 		menu.Think = function( pnl2 )
 			if not IsValid( pnl ) then
 				menu:Remove()

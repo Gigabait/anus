@@ -91,7 +91,7 @@ function category:Initialize( parent )
 				if time == 0 or time == "0" then
 					time = "Never"
 				else
-					time = os.date( "%X - %d/%m/%Y", tonumber(time) )
+					time = os.date( "%X - %d/%m/%Y", tonumber( time ) )
 				end
 				
 				local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
@@ -153,7 +153,7 @@ function category:Initialize( parent )
 				if time == 0 or time == "0" then
 					time = "Never"
 				else
-					time = os.date( "%X - %d/%m/%Y", tonumber(time) )
+					time = os.date( "%X - %d/%m/%Y", tonumber( time ) )
 				end
 				
 				local line = parent.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
@@ -186,6 +186,7 @@ function category:Initialize( parent )
 	hook.Add( "OnBanlistChanged", parent.panel, function( pnl, bantype, steamid )
 		if not bantype or not steamid then return end
 
+		local lineToUse = nil
 		for k,v in next, parent.panel.listview:GetLines() do
 			if v:GetColumnText( 2 ) == steamid then
 				if bantype == 1 then
@@ -194,6 +195,42 @@ function category:Initialize( parent )
 					v.customPaint = Color( 215, 35, 35, 255 )
 				end
 				v.IsUnbanned = bantype == 2
+				lineToUse = v
+			end
+			
+			if v == lineToUse and not v.IsUnbanned then
+				local columns =
+				{
+				"name",
+				"k",
+				"time",
+				"admin",
+				"reason",
+				}
+
+				local columntext = nil
+				for a,b in next, v.Columns do
+					columntext = v:GetColumnText( a )
+					if a == 2 then continue end
+					if a == 3 then
+						columntext = v.OldTime
+						if columntext != anus.Bans[ steamid ][ columns[ a ] ] then
+							local timenew = anus.Bans[ steamid ][ columns[ a ] ]
+							v.OldTime = timenew
+							if timenew == 0 or timenew == "0" then
+								timenew = "Never"
+							else
+								timenew = os.date( "%X - %d/%m/%Y", tonumber( timenew ) )
+							end
+							
+							v:SetColumnText( a, timenew )
+						end
+					else
+						if columntext != anus.Bans[ steamid ][ columns[ a ] ] then
+							v:SetColumnText( a, anus.Bans[ steamid ][ columns[ a ] ] )
+						end
+					end
+				end
 			end
 		end
 		
@@ -239,22 +276,26 @@ function category:Initialize( parent )
 					end
 				)
 			end )
-			menu:AddOption( "Change Reason", function() 
+			menu:AddOption( "Change Reason", function()
+				local column = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() )
 				Derma_StringRequest( 
-					parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ), 
+					column:GetColumnText( 2 ), 
 					"Change ban reason",
-					parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 5 ),
+					column:GetColumnText( 5 ),
 					function( txt )
-						net.Start( "anus_bans_editreason" )
+						--[[net.Start( "anus_bans_editreason" )
 							net.WriteString( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
 							net.WriteString( txt )
-						net.SendToServer()
+						net.SendToServer()]]
+						local time = column.OldTime != 0 and column.OldTime != "0" and (column.OldTime - os.time()) or 0
+						LocalPlayer():ConCommand( "anus banid " .. column:GetColumnText( 2 ) .. " " .. time .. " " .. txt )
 					end,
 					function( txt ) 
 					end
 				)
 			end )
 			menu:AddOption( "View Details" )
+			menu:AddOption( "View Ban History" )
 		end
 		menu:AddSpacer()
 		menu:AddOption( "Visit Profile", function()

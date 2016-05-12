@@ -144,20 +144,21 @@ function anus.UnbanPlayer( caller, steamid, opt_reason )
 		end
 		print( steamid .. " was unbanned by " .. caller:Nick() )
 	end
+	
+	local history = "anus/users/" .. anus.SafeSteamID( steamid ) .. "/banhistory.txt"
+	local bans = anus.Bans[ steamid ]
+	local data = {}
+	if file.Exists( history, "DATA" ) then
+		data = von.deserialize( file.Read( history, "DATA" ) )
+	end
+		
+	data[ #data + 1 ] = { admin_steamid = bans.admin_steamid, name = bans.name, reason = bans.reason, dateofban = bans.dateofban or nil, time = bans.time }
+	file.Write( history, von.serialize( data ) )
+	
+	anus.Bans[ steamid ] = nil
 	if anus.BanExpiration[ steamid ] then
 		anus.BanExpiration[ steamid ] = nil
-
-		local history = "anus/users/" .. anus.SafeSteamID( steamid ) .. "/banhistory.txt"
-		local bans = anus.Bans[ steamid ]
-		local data = {}
-		if file.Exists( history, "DATA" ) then
-			data = von.deserialize( file.Read( history, "DATA" ) )
-		end
-		
-		data[ #data + 1 ] = { admin_steamid = bans.admin_steamid, name = bans.name, reason = bans.reason, dateofban = bans.dateofban or nil, time = bans.time }
-		file.Write( history, von.serialize( data ) )
 	end
-	anus.Bans[ steamid ] = nil
 	anus.SaveBans()
 	
 	for k,v in next, player.GetAll() do
