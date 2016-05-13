@@ -67,8 +67,8 @@ ANUS_MINUTE = 60
 ANUS_HOUR = 60 * 60
 ANUS_DAY = 60 * 60 * 24
 ANUS_WEEK = 60 * 60 * 24 * 7
-ANUS_MONTH = 60 * 60 * 24 * 30
-ANUS_YEAR = 60 * 60 * 24 * 30 * 12.1666666166668
+ANUS_MONTH = 60 * 60 * 24 * (365.25/12)
+ANUS_YEAR = 60 * 60 * 24 * 365.25
 
 	-- E.g 1d = 86400 seconds
 	-- returns in seconds

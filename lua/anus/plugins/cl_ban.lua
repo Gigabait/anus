@@ -140,8 +140,10 @@ function category:Initialize( parent )
 	end
 	
 	function parent.panel.listview.CreatePage( page )
+		if #parent.panel.banpages < 1 then return end
+
 		count = 0
-		for k,v in next, parent.panel.banpages[ parent.panel.listview.CurrentPage ] do
+		for k,v in next, parent.panel.banpages[ parent.panel.listview.CurrentPage ] or {} do
 			count = count + 1
 
 			timer.Create( "anus_addlines" .. count, (5*10^-3) * count, 1, function()
