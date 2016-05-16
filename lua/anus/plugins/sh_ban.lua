@@ -180,7 +180,7 @@ function plugin:OnRun( pl, arg, target )
 		return
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, true, COLOR_STEAMIDARGS, arg[ 1 ], " has been banned for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
+	anus.NotifyPlugin( pl, plugin.id, "banned steamid ", COLOR_STEAMIDARGS, arg[ 1 ], " for ", COLOR_STRINGARGS, anus.ConvertTimeToString( time ), " (", COLOR_STRINGARGS, reason, ")" )
 	anus.BanPlayer( pl, arg[ 1 ], reason, time )
 end
 
