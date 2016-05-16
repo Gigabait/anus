@@ -15,6 +15,7 @@ function plugin:OnRun( pl, arg, t, cmd )
 	local output = cmd
 
 	game.ConsoleCommand( output .. "\n" )
+	anus.NotifyPlugin( pl, plugin.id, true, color_white, "ran rcon command: ", COLOR_STRINGARGS, cmd )
 
 	if #arg == 1 and cvars.String( output ) then
 		pl:ChatPrint( "CVar " .. output .. " returns: " .. cvars.String( output ) )
@@ -54,8 +55,9 @@ function plugin:OnRun( pl, arg, t, cmd )
 		end
 	
 	else
-		
+
 		res()
+		anus.NotifyPlugin( pl, plugin.id, true, color_white, "ran lua code: ", COLOR_STRINGARGS, cmd )
 		
 	end
 
