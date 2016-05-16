@@ -352,12 +352,25 @@ if SERVER then
 		end
 		
 		local args = {...}
+		local silent = false
 			-- if it's not a table then we don't include the player name. meaning yes, you can opt out of this
-		if type(args[1]) != "boolean" then
+		--[[if type( args[ 1 ] ) != "boolean" then
 			tableinsert( args, 1, plColor )
 			tableinsert( args, 2, plName )
 		else
 			table.remove(args, 1)
+		end]]
+		if type( args[ 1 ] ) != "boolean" then
+			tableinsert( args, 1, plColor )
+			tableinsert( args, 2, plName )
+		else
+			silent = true
+			table.remove( args, 1 )
+			tableinsert( args, 1, Color( 0, 161, 255, 255 ) )
+			tableinsert( args, 2, "(SILENT) " )
+			tableinsert( args, 3, plColor )
+			tableinsert( args, 4, plName )
+			--table.remove(args, 1)
 		end
 		
 		local resultant = {}
@@ -413,6 +426,8 @@ if SERVER then
 		end
 		
 		for k,v in next, player.GetAll() do
+			if silent and not v:HasAccess( "silentnotification" ) then continue end
+			
 			chat.AddText( v, unpack( args ) )
 		end
 		

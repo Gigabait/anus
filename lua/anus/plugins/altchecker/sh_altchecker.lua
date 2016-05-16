@@ -10,7 +10,7 @@ plugin.notRunnable = true
 plugin.defaultAccess = "superadmin"
 
 function plugin:OnRun( pl, arg, t, cmd )
-	if not plugin.customData[ "apikey" ] then
+	if not plugin.customData or not plugin.customData[ "apikey" ] then
 		ErrorNoHalt( "Alt checker plugin: No API key found!" )
 		return
 	end

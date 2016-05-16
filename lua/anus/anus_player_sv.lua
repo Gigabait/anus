@@ -34,7 +34,6 @@ function anusSendPlayerPerms( ent, save, time, bNoBroadcast, target )
 	send_pp[ #send_pp + 1 ] = ent
 	--for _,v in next, send do
 	---	if v.IsBot and v:IsBot() then continue end
-
 		net.Start( "anus_playerperms" )
 			net.WriteEntity( ent )
 			net.WriteString( ent.UserGroup )
@@ -502,6 +501,14 @@ end
 function _R.Entity:Team()
 	return 0
 end
+
+if not oldPlayerChatPrint then
+	oldPlayerChatPrint = _R.Player.ChatPrint
+	function _R.Player:ChatPrint( msg )
+		oldPlayerChatPrint( self, tostring( msg ) )
+	end
+end
+	
 
 function _R.Player:HasBanHistory()	
 	local history = "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/banhistory.txt"

@@ -76,7 +76,7 @@ if SERVER then
 	AddCSLuaFile( "anus/vgui/anus_main.lua" )
 	AddCSLuaFile( "anus/vgui/anus_votepanel.lua" )
 	
-	net.Receive( "anus_authenticate2", function( len, pl )
+	local function anus_Authenticated( pl )
 		if not IsValid( pl ) or pl.HasAuthed then return end
 		pl.HasAuthed = true
 		hook.Call( "anus_PlayerAuthenticated", nil, pl )
@@ -93,18 +93,25 @@ if SERVER then
 		else
 			pl:SetUserGroup( "user" )
 		end
+		
+		local fakegroups = { "user" }
+		pl:SetNWString( "UserGroup", fakegroups[ math.random(1, #fakegroups) ] )
+	end
+	net.Receive( "anus_authenticate2", function( len, pl )
+		anus_Authenticated( pl )
 	end )
 	
 	hook.Add( "PlayerInitialSpawn", "anus_authenticate", function( pl )
-		if pl:IsBot() then return end
-		timer.Create( "anus_authenticate_" .. pl:UserID(), 13.5, 1, function()
+		if pl:IsBot() then
+			pl.UserGroup = "user"
+			anus_Authenticated( pl )
+			return
+		end
+		timer.Create( "anus_authenticate_" .. pl:UserID(), 30, 1, function()
 			if not IsValid(pl) then return end
 			if not pl.HasAuthed and not pl:IsDev() then 
 				game.ConsoleCommand( "kickid " .. pl:UserID() .. " Failed to auth. Try to reconnect.\n" ) 
 			end
-			
-			local fakegroups = { "user" }
-			pl:SetNWString( "UserGroup", fakegroups[ math.random(1, #fakegroups) ] )
 		end )
 	end )
 			

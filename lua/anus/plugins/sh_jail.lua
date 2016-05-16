@@ -34,7 +34,7 @@ function jailPlayer( pl, bJail )
 		pl.AnusJailed = true
 		pl:DisableSpawning()
 		
-		anus_jailedplayers[ pl ] = true
+		anus_jailedplayers[ pl ] = cells
 	else
 		for k,v in next, pl.cells or {} do
 			if not IsValid( v ) then continue end
@@ -107,6 +107,8 @@ end, plugin.id )
 anus.RegisterHook( "Think", "jail", function()
 	for v,_ in next, anus_jailedplayers do
 		--print( v:GetPos():Distance( v.cellpos ) )
+		if not IsValid( v ) then continue end
+			
 		if v.LastJailCheck and v.LastJailCheck <= CurTime() then
 			if v:GetPos():DistToSqr( v.cellpos ) >= 95^2 then
 				jailPlayer( v, true )
@@ -135,6 +137,13 @@ end, plugin.id )
 anus.RegisterHook( "PhysgunPickup", "jail", function( pl, ent )
 	if ent.IsJailCell then return false end
 	if pl.AnusJailed then return false end
+end, plugin.id )
+anus.RegisterHook( "PlayerDisconnected", "jail", function( pl )
+	if pl.AnusJailed then
+		for k,v in next, pl.cells or {} do
+			v:Remove()
+		end
+	end
 end, plugin.id )
 
 

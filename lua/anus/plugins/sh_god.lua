@@ -29,15 +29,17 @@ function plugin:OnRun( pl, arg, target )
 	anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
 end
 
-function plugin:OnUnload()
-	for k,v in next, player.GetAll() do
-		if v.AnusGodded then
-			v.AnusGodded = false
-			v:GodDisable()
+if SERVER then
+	function plugin:OnUnload()
+		for k,v in next, player.GetAll() do
+			if v.AnusGodded then
+				v.AnusGodded = false
+				v:GodDisable()
+			end
 		end
 	end
 end
-
+	
 	-- pl: Player running command
 	-- parent: The DMenu
 	-- target: The player object of the line selected

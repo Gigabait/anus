@@ -1,6 +1,6 @@
 local CATEGORY = {}
 
-CATEGORY.pluginid = "watch"
+/*CATEGORY.pluginid = "watch"
 CATEGORY.CategoryName = "Watch"
 -- ignore this for now
 function CATEGORY:Initialize( parent )
@@ -58,5 +58,5 @@ function CATEGORY:Initialize( parent )
 end
 
 anus.RegisterCategory( CATEGORY )
-
+*/
 

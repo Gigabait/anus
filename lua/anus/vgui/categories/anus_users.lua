@@ -36,20 +36,27 @@ function CATEGORY:Initialize( parent )
 
 	parent.panel.listview:SortByColumn( 1, false )
 	parent.panel.listview.OnRowLeftClick = function( pnl, index, pnlRow )
+		local rowSteamID = parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 )
+		
 		local posx, posy = gui.MousePos() 
 		local menu = vgui.Create( "DMenu" )
 		menu:SetPos( posx, posy )
 		local groupchange = menu:AddSubMenu( "Change Group" )
 		for k,v in next, anus.Groups do
 			groupchange:AddOption( v.name, function()
-				LocalPlayer():ConCommand( "anus adduserid " .. parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) .. " " .. k )
+				local foundPl = anus.FindPlayer( rowSteamID, "steam" )
+				local command = "adduser"
+				if not foundPl then
+					command = command .. "id"
+				end
+				LocalPlayer():ConCommand( "anus " .. command .. " " .. rowSteamID .. " " .. k )
 				pnl:RequestFocus()
 			end )
 		end
 		menu:AddOption( "Change Permissions", function() pnl:RequestFocus() end )
 		menu:AddSpacer()
 		menu:AddOption( "Visit Profile", function()
-			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( parent.panel.listview:GetLine( parent.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) ) )
+			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( rowSteamID ) )
 			pnl:RequestFocus()
 		end )
 		menu:AddOption( "Close", function()
