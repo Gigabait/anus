@@ -127,14 +127,15 @@ function panel:Init()
 	for k,v in next, self.Categories.pnlCanvas:GetChildren() do
 		self.resizeNum = self.resizeNum + v:GetTall()
 	end
-
+	
+	self.Categories.VBar:SetWide( 1 )
 	timer.Simple( 5*10^-3, function()
 		if LocalPlayer().CategoryLastClickedName and self.CategoryList[ LocalPlayer().CategoryLastClickedName ] then
 	
 			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].DoClick( self )
 			self.CategoryLastClicked = self.CategoryList[ LocalPlayer().CategoryLastClickedName ]
 			self.CategoryList[ LocalPlayer().CategoryLastClickedName ].Pressed = true
-			
+
 			self.Categories:ScrollToChild( self.CategoryList[ LocalPlayer().CategoryLastClickedName ] )
 			
 		end
