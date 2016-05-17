@@ -18,6 +18,23 @@ function _R.Player:GetUserGroup()
 	return LocalPlayer().PlayerInfo and LocalPlayer().PlayerInfo[ self ] and LocalPlayer().PlayerInfo[ self ][ "group" ] or self:OldGetUserGroup()
 end
 
+hook.Add( "PostGamemodeLoaded", "anus_SteamName", function()
+	if not _R.Player.SteamName then
+		function _R.Entity:SteamName()
+			return self:Nick()
+		end
+	else
+		_R.Entity.OldSteamName = _R.Entity.OldSteamName or _R.Player.SteamName
+		function _R.Entity:SteamName()
+			if not IsValid( self ) then
+				return "CONSOLE"
+			else
+				return self:OldSteamName()
+			end
+		end
+	end
+end )
+
 	-- Checks if a player is in this group
 	-- or inherits from this group
 function _R.Player:CheckGroup( group )

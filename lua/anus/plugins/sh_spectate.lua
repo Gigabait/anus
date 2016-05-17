@@ -123,7 +123,7 @@ if CLIENT then
 			local txt = "Spectating " .. LocalPlayer().AnusSpectate:Nick()
 			local txtsizew, txtsizeh = surface.GetTextSize( txt )
 			
-			draw.SimpleText( txt, "anus_SmallText", ScrW() / 2 - txtsizew / 2, ScrH() / 2 - txtsizeh / 2 - 60, color_white )
+			draw.SimpleText( txt, "anus_SmallText", ScrW() / 2 - txtsizew / 2, ScrH() / 2 - txtsizeh / 2 - 80, color_white )
 		end
 	end, plugin.id )
 	anus.RegisterHook( "CreateMove", "spectate", function( cmd )

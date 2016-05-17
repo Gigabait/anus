@@ -497,6 +497,22 @@ function _R.Entity:Nick()
 		return self:OldNickP()
 	end
 end
+hook.Add( "PostGamemodeLoaded", "anus_SteamName", function()
+	if not _R.Player.SteamName then
+		function _R.Entity:SteamName()
+			return self:Nick()
+		end
+	else
+		_R.Entity.OldSteamName = _R.Entity.OldSteamName or _R.Player.SteamName
+		function _R.Entity:SteamName()
+			if not IsValid( self ) then
+				return "CONSOLE"
+			else
+				return self:OldSteamName()
+			end
+		end
+	end
+end )
 
 function _R.Entity:Team()
 	return 0

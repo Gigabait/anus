@@ -271,3 +271,22 @@ function anus.CreateGroupPluginCache( group, plugin )
 	
 	anus.GroupPluginCache[ group ][ plugin ] = true
 end
+
+function anus.GetPlayersInGroup( group )
+	local output = {}
+	if SERVER then
+		for k,v in next, anus.Users do
+			if v.group == group then
+				output[ #output + 1 ] = k
+			end
+		end
+	else
+		if not anus.Users[ group ] then return output end
+		
+		for k,v in next, anus.Users[ group ] do
+			output[ #output + 1 ] = k
+		end
+	end
+	
+	return output
+end

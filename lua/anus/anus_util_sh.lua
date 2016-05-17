@@ -12,6 +12,12 @@ function anus.FindPlayer( arg, argtype )
 				outputs[ #outputs + 1 ] = v
 			end
 		end
+	elseif argtype == "steamname" then
+		for k,v in next, player.GetAll() do
+			if string.find( string.lower( v:SteamName() ), arg:lower(), nil, true ) then
+				outputs[ #outputs + 1 ] = v
+			end
+		end
 	else
 		for k,v in next, player.GetAll() do
 			if string.find( string.lower( v:SteamID() ), arg:lower(), nil, true ) then

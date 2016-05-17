@@ -210,9 +210,11 @@ function anus.AddCommand( info, tbl_autocomplete, func, chatcmd )
 				if usageargs.type == "player" then
 					local foundPlayer = false
 					if k == 1 and v != " " then
-						foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
+						foundPlayer = anus.FindPlayer( v, "name" ) != nil and anus.FindPlayer( v, "name" ) 
+						or anus.FindPlayer( v, "steamname" ) != nil and anus.FindPlayer( v, "steamname" ) or anus.FindPlayer( v )
 					elseif k != 1 then
-						foundPlayer = anus.FindPlayer( v ) != nil and anus.FindPlayer( v ) or anus.FindPlayer( v, "steam" )
+						foundPlayer = anus.FindPlayer( v, "name" ) != nil and anus.FindPlayer( v, "name" ) 
+						or anus.FindPlayer( v, "steamname" ) != nil and anus.FindPlayer( v, "steamname" ) or anus.FindPlayer( v )
 					end
 					
 					if usageargs.optional then

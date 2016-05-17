@@ -165,7 +165,22 @@ end
    Name: DoRightClick
 -----------------------------------------------------------]]
 function PANEL:DoRightClick()
+	if not self.RightClickEntries then return end
+	
+	local posx, posy = gui.MousePos()
+	local height = 0
 
+	local menu = vgui.Create( "DMenu" )
+	menu:SetPos( posx, posy )
+	for k,v in next, self.RightClickEntries do
+		menu:AddOption( k, function() v() end )
+	end
+	menu.Think = function( pnl2 )
+		if not IsValid( self ) then
+			menu:Remove()
+		end
+	end
+	menu:Open( posx, posy, true, self )
 end
 
 --[[---------------------------------------------------------
