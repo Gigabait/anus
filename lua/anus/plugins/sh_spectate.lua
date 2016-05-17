@@ -52,7 +52,6 @@ if SERVER then
 			pl:SetPos( pl.OldSpectatePos )
 			pl.OldSpectatePos = nil
 			pl.AnusSpectate = false
-			--plugin:SpectatePlayer( pl, target, pl.AnusSpectate )
 			pl:EnableSpawning()
 		else
 			if not pl.OldSpectatePos then
@@ -60,7 +59,6 @@ if SERVER then
 			end
 			pl:SetPos( Vector( 9999, 9999, 99999 ) )
 			pl.AnusSpectate = target
-			--plugin:SpectatePlayer( pl, target )
 			pl:DisableSpawning()
 		end
 		net.Start( "anus_plugins_spectate" )

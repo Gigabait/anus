@@ -88,9 +88,10 @@ function panel:Init()
 		self.CategoryList[ k ]:SetFont( "anus_SmallTitle" )
 		self.CategoryList[ k ]:SetSize( self.Categories:GetWide(), self.Categories:GetWide() - 9 )
 		self.CategoryList[ k ]:Dock( TOP )
+		self.CategoryList[ k ].PaintOverride = 255
 		self.CategoryList[ k ].Paint = function( pnl, w, h )
 				-- Perimeter of button
-			draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
+			draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, pnl.PaintOverride ) )
 			
 			local height = h - 1
 			if self.Categories.pnlCanvas:GetChildren()[ #self.Categories.pnlCanvas:GetChildren() ] == pnl and pnl.Pressed then
@@ -98,7 +99,7 @@ function panel:Init()
 			end
 			
 				-- interior of button
-			draw.RoundedBox( 0, 0, 0, w - 1, height, pnl.Pressed and Color( 225, 225, 225, 255 ) or color_white )
+			draw.RoundedBox( 0, 0, 0, w - 1, height, pnl.Pressed and Color( 225, 225, 225, pnl.PaintOverride ) or Color( 255, 255, 255, pnl.PaintOverride ) )
 		end
 		self.CategoryList[ k ].DoClick = function( pnl )
 			if self.CategoryLastClicked then
@@ -141,7 +142,7 @@ function panel:Init()
 		end
 	end )
 	
-	timer.Create( "anus_CheckTextEntry" .. tostring( self ), 1, 1, function()
+	timer.Create( "anus_CheckTextEntry" .. tostring( self ), 0.35, 1, function()
 		if not anus_MainMenu or not IsValid( anus_MainMenu ) then return end
 
 		hook.Add( "OnTextEntryGetFocus", anus_MainMenu, function( pnl )
@@ -150,11 +151,26 @@ function panel:Init()
 		hook.Add( "OnTextEntryLoseFocus", anus_MainMenu, function( pnl )
 			anus_MainMenu:SetKeyboardInputEnabled( false )
 		end )
+		
+		hook.Add( "StartChat", anus_MainMenu, function()
+			anus_MainMenu.ChatBoxOpen = true
+			for k,v in next, anus_MainMenu.CategoryList do
+				v.PaintOverride = 50
+			end
+		end )
+		hook.Add( "FinishChat", anus_MainMenu, function()
+			anus_MainMenu.ChatBoxOpen = false
+			for k,v in next, anus_MainMenu.CategoryList do
+				v.PaintOverride = 255
+			end
+		end )
 	end )
 end
 
 function panel:Paint()
-	draw.RoundedBox( 4, 0, 0, psizew, psizeh, bgColor )
+	local bgColor2 = bgColor
+	bgColor2.a = self.ChatBoxOpen and 80 or 255
+	draw.RoundedBox( 4, 0, 0, psizew, psizeh, bgColor2 )		
 end
 	
 vgui.Register( "anus_mainmenu", panel, "EditablePanel" )

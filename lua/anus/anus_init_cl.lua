@@ -95,6 +95,11 @@ hook.Add( "ChatText", "anus_RemoveKickBan", function( index, name, text, type )
 		return true
 	end
 end )
+hook.Add( "OnPlayerChat", "anus_ToggleMenu", function( pl, txt )
+	if pl == LocalPlayer() and txt == "!menu" then
+		RunConsoleCommand( "anus_menu" )
+	end
+end )
 
 hook.Add( "OnPlayerGroupsChanged", "anus_RequestBans", function()
 	net.Start( "anus_requestbans" )
