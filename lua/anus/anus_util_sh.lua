@@ -87,13 +87,16 @@ function anus.ConvertStringToTime( str )
 		if not startpos then break end
 		
 		local match = stringsub( str, startpos, endpos )
+		--print( "match", match )
 		
 		local sub = nil
 		
 		if lastFound == 0 then
 			sub = stringsub( str, 1, endpos - 1 )
+			if sub == "_" then sub = nil end
 		else
 			sub = stringsub( str, lastFound + 1, endpos - 1 )
+			if sub == "_" then sub = nil end
 		end
 		lastFound = endpos
 		

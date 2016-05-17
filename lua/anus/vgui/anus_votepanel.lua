@@ -40,7 +40,7 @@ function panel:Think()
 	if not self.RegisteredNum and self.Num then
 		local newText = self.Num .. ". " .. self.OptionText:GetText()
 		local txtsizew, txtsizeh = surface.GetTextSize( newText )
-	
+
 		self.OptionText = self.OptionText or vgui.Create( "DLabel", self )
 		self.OptionText:SetText( newText )
 		self.OptionText:SetFont( "anus_SmallText" )
@@ -126,6 +126,12 @@ function panel:SetTitle( strTitle )
 	self.TitlePanel.Title:SetFont( "anus_SmallTitleHeavy" )
 	self.TitlePanel.Title:SetPos( 10, 10 )
 	self.TitlePanel.Title:SizeToContents()
+	
+	surface.SetFont( "anus_SmallTitleHeavy" )
+	local txtsizew, txtsizeh = surface.GetTextSize( self.strTitle )
+	if txtsizew > self:GetWide() then
+		self:SetWide( math.Clamp( txtsizew + 20, self:GetWide(), self:GetWide() + 55 + 20 ) )
+	end
 end
 
 function panel:SetTime( time )
@@ -149,7 +155,7 @@ function panel:Paint( w, h )
 	if self.numTime then
 		self.AlphaPanel = self.AlphaPanel or 255
 		self.AlphaPanel = math.Approach( self.AlphaPanel, 0, ( 255 / self.numTime ) * FrameTime() )
-		
+
 		self.TitlePanel.Paint = function( pnl, w2, h2 )
 			local bgColor2 = bgColor
 			bgColor2.a = self.AlphaPanel

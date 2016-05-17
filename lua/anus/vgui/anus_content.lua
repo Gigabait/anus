@@ -7,13 +7,6 @@ surface.CreateFont( "anus_SmallText",
 	size = 16,
 } )
 
-surface.CreateFont( "anus_SmallTitleBolded",
-{
-	font = "Verdana",
-	weight = 610,
-	size = 18,
-} )
-
 function panel:Init()
 	self:DockPadding( 0, 20, 0, 20 )
 end

@@ -11,6 +11,12 @@ surface.CreateFont( "anus_SmallTitleHeavy",
 	weight = 900,
 	size = 21,
 } )
+surface.CreateFont( "anus_SmallTitleBolded",
+{
+	font = "Verdana",
+	weight = 610,
+	size = 18,
+} )
 surface.CreateFont( "anus_MediumTitle",
 {
 	font = "Verdana",

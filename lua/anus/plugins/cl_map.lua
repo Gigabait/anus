@@ -47,7 +47,7 @@ function category:Initialize( parent )
 	parent.panel.bottomPanel.totalbanned:Dock( LEFT )
 	
 	
-	if LocalPlayer():HasAccess( "votemap" ) then
+	if LocalPlayer():HasAccess( "votemap" ) and not anus.GetPlugins()[ "votemap" ].disabled then
 		parent.panel.bottomPanel.buttonVoteMap = parent.panel.bottomPanel:Add( "anus_button" )
 		parent.panel.bottomPanel.buttonVoteMap:SetText( "Start Vote" )
 		parent.panel.bottomPanel.buttonVoteMap:SetTextColor( Color( 140, 140, 140, 255 ) )
@@ -59,7 +59,10 @@ function category:Initialize( parent )
 			if not parent.panel.listview:GetSelectedLine() then return end
 			local str = ""
 			for k,v in next, parent.panel.listview:GetSelected() do
-				if k == #parent.panel.listview:GetSelected() then
+				if k == #parent.panel.listview:GetSelected() and k == 1 then
+					LocalPlayer():ConCommand( "anus votemap2 15 " .. v:GetColumnText( 1 ) )
+					return
+				elseif k == #parent.panel.listview:GetSelected() then
 					str = str .. v:GetColumnText( 1 )
 				else
 					str = str .. v:GetColumnText( 1 ) .. " "
