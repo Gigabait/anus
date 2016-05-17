@@ -65,3 +65,10 @@ function plugin:OnRun( pl, arg, t, cmd )
 end
 anus.RegisterPlugin( plugin )
 
+anus.RegisterHook( "LuaError", "lua", function( ... )
+	local args = {...}
+	if string.sub( args[ 1 ], 1, 9 ) == "[anus]:1:" and IsValid( ME ) then
+		ME:ChatPrint( "Error found in code: " .. args[ 1 ] )
+	end
+end, plugin.id )
+

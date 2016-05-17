@@ -68,4 +68,13 @@ hook.Add( "player_disconnect", "props_DestroyPlayerTimers", function( data )
 		timer.Destroy( k )
 	end
 end )
-	
+
+	-- meep
+local _R = debug.getregistry()
+if not OLD_ERROR then
+	OLD_ERROR = _R[ 1 ]
+	_R[ 1 ] = function( ... )
+		pcall( hook.Call, "LuaError", gmod.GetGamemode(), ... )
+		return OLD_ERROR( ... )
+	end
+end
