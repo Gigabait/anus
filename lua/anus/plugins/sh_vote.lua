@@ -162,12 +162,12 @@ function plugin:OnRun( pl, args )
 		
 		if winner then
 			ChatPrint( "Votemap2 winner is " .. res.args[ winner ] .. ". (" .. votecount .. "/" .. res.voters .. ")" )
-			ChatPrint( "Changing map to " .. res.args[ winner ] .. " in 5 seconds." )
+			ChatPrint( "Changing map to " .. title .. " in 5 seconds." )
 			timer.Create( "anus_VotemapSuccessful", 5, 1, function()
 				if anus.GetPlugins()[ "map" ] and not anus.GetPlugins()[ "map" ].disabled then
-					anus.RunCommand_map( NULL, nil, { res.args[ winner ] }, res.args[ winner ] )
+					anus.RunCommand_map( NULL, nil, { title }, title )
 				else
-					game.ConsoleCommand( "anus map " .. res.args[ winner ] .. "\n" )
+					game.ConsoleCommand( "anus map " .. title .. "\n" )
 				end
 			end )
 		else
