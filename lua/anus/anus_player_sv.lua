@@ -142,11 +142,10 @@ function _R.Player:SetUserGroup( group, save, time )
 			anus.TempUsers[ self:SteamID() ] = { group = group, name = self:Nick(), time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m")}
 		else
 			if group == "user" then
-				for k,v in next, anus.Users do
-					if k == self:SteamID() then
-						anus.Users[ k ] = nil
-						break
-					end
+				if anus.Users[ self:SteamID() ] and table.Count( anus.Users[ self:SteamID() ].customperms ) == 0 then
+					anus.Users[ self:SteamID() ] = nil
+				else
+					anus.Users[ self:SteamID() ] = { group = group, name = self:Nick(), customperms = self.CustomPerms != nil and self.CustomPerms or {} }
 				end
 			else
 				anus.Users[ self:SteamID() ] = { group = group, name = self:Nick(), customperms = self.CustomPerms != nil and self.CustomPerms or {} }
@@ -180,7 +179,11 @@ function anus.SetPlayerGroup( steamid, group, time )
 			anus.TempUsers[ steamid ] = { group = group, name = steamid, time = os.time() + time, promoted_year = os.date("%Y"), promoted_month = os.date("%m"), promoted_day = os.date("%m") }
 		end
 	else
-		anus.Users[ steamid ] = nil
+		if table.Count( anus.Users[ steamid ].customperms ) == 0 then
+			anus.Users[ steamid ] = nil
+		else
+			anus.Users[ steamid ] = { group = group, name = steamid, customperms = anus.Users[ steamid ].customperms }
+		end
 	end
 	
 	file.Write("anus/users.txt", von.serialize( anus.Users ))
@@ -422,6 +425,12 @@ function anus.DenyPermission( steamid, plugin )
 	end
 	
 	file.Write( "anus/users/" .. anus.SafeSteamID( self:SteamID() ) .. "/customperms.txt", von.serialize( perms ) )
+end
+
+function _R.Player:GetCustomPermissions()
+	if not anus.Users[ self:SteamID() ] or table.Count( anus.Users[ self:SteamID() ].customperms ) == 0 then return {} end
+	
+	return anus.Users[ self:SteamID() ].customperms
 end
 	
 

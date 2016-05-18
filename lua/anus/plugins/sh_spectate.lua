@@ -135,11 +135,3 @@ if CLIENT then
 	end, plugin.id )
 		
 end
---[[anus.RegisterHook( "PlayerDeath", "god", function( pl )
-	pl.AnusGodded = false
-end, plugin.id )
-anus.RegisterHook( "PlayerSpawn", "god", function( pl )
-	if pl.AnusGodded then
-		pl:GodEnable()
-	end
-end, plugin.id )]]
