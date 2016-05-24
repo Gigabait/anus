@@ -102,7 +102,7 @@ function PANEL:UpdateColours( skin )
 	if ( self.Depressed || self.m_bSelected )	then return self:SetTextStyleColor( skin.Colours.Button.Down ) end
 	if ( self.Hovered )							then return self:SetTextStyleColor( skin.Colours.Button.Hover ) end
 
-	return self:SetTextStyleColor( skin.Colours.Button.Normal )
+	return self:SetTextStyleColor( Color( 82, 82, 82, 255 ) )--skin.Colours.Button.Normal )
 
 end
 
@@ -133,10 +133,11 @@ function PANEL:PerformLayout()
 end
 
 function PANEL:SizeToContents()
+	surface.SetFont( self:GetFont() )
 	local txtsizew, txtsizeh = surface.GetTextSize( self:GetText() )
 	
-	self:SetWide( txtsizew + 5 )
-	self:SetTall( txtsizeh + 5 )
+	self:SetWide( txtsizew + 10 )
+	self:SetTall( txtsizeh + 10 )
 end
 
 --[[---------------------------------------------------------

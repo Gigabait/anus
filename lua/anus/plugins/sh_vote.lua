@@ -189,3 +189,29 @@ anus.RegisterHook( "InitPostEntity", "votemap2", function()
 		anus_votemaps[ string.StripExtension( v ) ] = k
 	end
 end, plugin.id )
+
+
+	-- votemap2: votes a single map, yes or no
+local plugin = {}
+plugin.id = "cancelvote"
+plugin.name = "Cancel Vote"
+plugin.author = "Shinycow"
+plugin.usage = ""
+plugin.help = "Cancels the current vote"
+plugin.category = "Voting"
+	-- chat command optional
+plugin.chatcommand = "cancelvote"
+plugin.defaultAccess = "superadmin"
+
+function plugin:OnRun( pl, args )
+
+	if not anus.VoteExists() then
+		pl:ChatPrint( "There is no vote going on!" )
+		return
+	end
+	
+	local title = anus.CancelVote()
+	anus.NotifyPlugin( pl, plugin.id, "canceled vote ", COLOR_STRINGARGS, "\"" .. title .. "\"" )
+end
+
+anus.RegisterPlugin( plugin )

@@ -48,7 +48,11 @@ function anus.ServerLog( msg, isdebug )
 end
 
 function anus.SafeSteamID( steam )
-	return string.gsub( steam, ":", "_" )
+	if type( steam ) == "string" then
+		return string.gsub( steam, ":", "_" )
+	else
+		return string.gsub( steam:SteamID(), ":", "_" )
+	end
 end
 
 function timer.CreatePlayer( pl, identifier, delay, reps, callback )

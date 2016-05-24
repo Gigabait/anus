@@ -49,15 +49,15 @@ if SERVER then
 		--pl:Freeze( unspectate == nil )
 		if pl.AnusSpectate and pl.AnusSpectate == target or not IsValid( target ) then
 				-- todo: do a check to see if theres an object there
-			pl:SetPos( pl.OldSpectatePos )
-			pl.OldSpectatePos = nil
+			--pl:SetPos( pl.OldSpectatePos )
+			--pl.OldSpectatePos = nil
 			pl.AnusSpectate = false
 			pl:EnableSpawning()
 		else
 			if not pl.OldSpectatePos then
-				pl.OldSpectatePos = pl:GetPos()
+			--	pl.OldSpectatePos = pl:GetPos()
 			end
-			pl:SetPos( Vector( 9999, 9999, 99999 ) )
+			--pl:SetPos( Vector( 9999, 9999, 99999 ) )
 			pl.AnusSpectate = target
 			pl:DisableSpawning()
 		end
@@ -84,7 +84,7 @@ if SERVER then
 	end, plugin.id )
 	anus.RegisterHook( "FinishMove", "spectate", function( pl )
 		if pl.AnusSpectate then
-			return true
+			--return true
 		end
 	end, plugin.id )
 end
@@ -108,14 +108,26 @@ if CLIENT then
 	end )
 	anus.RegisterHook( "CalcView", "spectate", function( pl, pos, angles, fov )
 		if LocalPlayer().AnusSpectate and IsValid( LocalPlayer().AnusSpectate ) then
+			--LocalPlayer():SetEyeAngles( LocalPlayer().AnusSpectateAng )
+			--print( LocalPlayer().AnusSpectateXOffset )
+		
 			local view = {}
-			view.origin = LocalPlayer().AnusSpectate:EyePos() - ( angles:Forward() * 50 )
-			view.angles = angles
+			view.angles = LocalPlayer().AnusSpectateXOffset and Angle( LocalPlayer().AnusSpectateYOffset or 0, LocalPlayer().AnusSpectateXOffset, 0 ) or angles
+			view.origin = LocalPlayer().AnusSpectate:EyePos() - ( view.angles:Forward() * 50 )
 			view.fov = fov
 			view.drawviewer = true
 
 			return view
 		end
+	end, plugin.id )
+	local sensitivity = GetConVar( "sensitivity" )
+	anus.RegisterHook( "InputMouseApply", "spectate", function( cmd, x, y, ang )
+		local bonus = sensitivity:GetInt()
+		local bonusx = x != 0 and ( bonus / (bonus / x) * 0.02 ) or 0--( bonus / ( 3 / x ) * 0.01 ) or 0
+		local bonusy = y != 0 and ( bonus / (bonus / y) * 0.02 ) or 0--( bonus / ( 3 / y ) * 0.01 ) or 0
+		LocalPlayer().AnusSpectateXOffset = math.NormalizeAngle( (LocalPlayer().AnusSpectateXOffset or ang.y) - bonusx )
+		LocalPlayer().AnusSpectateYOffset = math.NormalizeAngle( (LocalPlayer().AnusSpectateYOffset or ang.p) + bonusy )
+		--print( LocalPlayer().AnusSpectateYOffset )
 	end, plugin.id )
 	anus.RegisterHook( "HUDPaint", "spectate", function()
 		if LocalPlayer().AnusSpectate and IsValid( LocalPlayer().AnusSpectate )then
@@ -130,6 +142,7 @@ if CLIENT then
 		if LocalPlayer().AnusSpectate then
 			--cmd:ClearButtons()
 			--cmd:ClearMovement()
+			cmd:SetViewAngles( LocalPlayer().AnusSpectateAng )
 			return true
 		end
 	end, plugin.id )

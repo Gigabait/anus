@@ -42,6 +42,21 @@ function anus.FinishVote()
 	anus.Votes = {}
 end
 
+function anus.CancelVote()
+	for k,v in next, player.GetAll() do
+		v.AnusVoted = false
+	end
+	
+	local vote = table.Copy( anus.Votes[ 1 ] )
+	anus.Votes = {}
+	
+	return vote.title
+end
+
+function anus.VoteExists()
+	return anus.Votes and anus.Votes[ 1 ]
+end
+
 function anus.HandleVoting( pl, cmd, arg )
 	if not anus.Votes or not anus.Votes[ 1 ] then
 		pl:ChatPrint( "There is no vote going on!" )
