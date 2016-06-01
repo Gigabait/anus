@@ -450,6 +450,69 @@ if SERVER then
 		anus.ServerLog( resultant_string ) 
 	end
 	
+	function anus.PlayerNotification( pl, ... )
+		--if not pl or not IsValid( pl ) then return end
+		
+		local args = {...}
+		
+		local resultant = {}
+		local place_first = nil
+		local place_first2 = nil
+		local place_second = nil
+		local pl_places = {}
+		local white_places = {}
+				
+		tableinsert( args, 1, Color( 0, 127, 127, 255 ) )
+		tableinsert( args, 2, "[ANUS] " )
+
+		for k,v in next, args do	
+			if type( v ) == "function" then
+				if not place_first then
+					place_first = k
+					place_first2 = k + 1
+				else
+					place_second = k
+				end
+			elseif type( v ) == "Player" then
+				pl_places[ k ] = v
+			else		
+				if place_first and k == (place_first + 1) then
+					resultant = anus.CreatePlayerList( v )
+				end
+			end
+		end
+		
+		for k,v in next, pl_places do
+			tableinsert( args, k, team.GetColor( v:Team() ) )
+			args[ k + 1 ] = v:Nick()
+		end
+		
+		local white_places = {}
+		for k,v in next, args do
+			if type( v ) == "string" and type( args[ k - 1 ] ) != "table" then
+				white_places[ #white_places + 1 ] = k
+			end
+		end
+
+		for k,v in next, white_places do
+			tableinsert( args, v + (k-1), color_white )
+		end
+		
+		local iLoop = 0
+		if #resultant > 0 then
+			place_first2 = nil
+			place_second = nil
+			
+			for k,v in next, resultant do
+				--table.insert( args, place_first + iLoop, v )
+				tableinsert( args, 1 + place_first + iLoop, v )
+				iLoop = iLoop + 1
+			end
+		end
+		
+		chat.AddText( pl, unpack( args ) )
+	end
+	
 end
 
 function anus.DebugNotify( msg )

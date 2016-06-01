@@ -1,6 +1,12 @@
 	-- my own.
-function anus.TeleportPlayer( from, to, bForce, testenum )
-	if not to:IsInWorld() and not bForce then return false end
+function anus.TeleportPlayer( from, to, bForce )
+	local pl = NULL
+	if type( to ) == "Player" then
+		pl = to
+		to = to:GetPos()
+	end
+	
+	if not util.IsInWorld( to ) and not bForce then return false end
 	
 	local pos = {}
 	local tries = 10
@@ -11,13 +17,22 @@ function anus.TeleportPlayer( from, to, bForce, testenum )
 		local x = 45 * math.cos( rad )
 		local y = 45 * math.sin( rad )
 	
-		pos[ #pos + 1 ] = to:GetPos() + Vector( x, y, 0 )
+		pos[ #pos + 1 ] = to + Vector( x, y, 0 )
+	end
+	
+	if not IsValid( pl ) then
+		for k,v in next, ents.GetAll() do
+			if v:GetPos() == to then
+				pl = v
+				break
+			end
+		end
 	end
 	
 	local tr = {}
-	tr.start = to:GetPos()
+	tr.start = to
 	tr.endpos = pos[ 1 ]
-	tr.filter = to
+	tr.filter = pl
 	
 	local tried = 1
 	
@@ -66,7 +81,6 @@ function timer.CreatePlayer( pl, identifier, delay, reps, callback )
 	pl.RemoveTimerDC[ identifier .. "_" .. pl:UserID() ] = true
 end
 
-gameevent.Listen( "player_disconnect" )
 hook.Add( "player_disconnect", "props_DestroyPlayerTimers", function( data )
 	for k,v in next, Player( data.userid ).RemoveTimerDC or {} do
 		timer.Destroy( k )

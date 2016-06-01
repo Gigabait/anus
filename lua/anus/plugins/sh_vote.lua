@@ -70,7 +70,7 @@ function plugin:OnRun( pl, args )
 	for k,v in next, args or {} do
 		if k == 1 then continue end
 		if #options > 9 then break end
-		if not anus_votemaps[ v ] then
+		if not anus_votemaps[ v:lower() ] then
 			pl:ChatPrint( "Map \"" .. v .. "\" was not found." )
 			return
 		end
@@ -98,7 +98,7 @@ function plugin:OnRun( pl, args )
 		if winner then
 			ChatPrint( "Votemap winner is " .. res.args[ winner ] .. ". (" .. votecount .. "/" .. res.voters .. ")" )
 			ChatPrint( "Changing map to " .. res.args[ winner ] .. " in 5 seconds." )
-			timer.Create( "anus_VotemapSuccessful", 5, 1, function()
+			timer.Create( "anus_VotemapSuccessful", hook.Call( "anus_VotemapChangeTime", nil ), 1, function()
 				if anus.GetPlugins()[ "map" ] and not anus.GetPlugins()[ "map" ].disabled then
 					anus.RunCommand_map( NULL, nil, { res.args[ winner ] }, res.args[ winner ] )
 				else
@@ -121,8 +121,12 @@ anus.RegisterHook( "InitPostEntity", "votemap", function()
 	
 	local maps = file.Find( "maps/*.bsp", "GAME" )
 	for k,v in next, maps do
-		anus_votemaps[ string.StripExtension( v ) ] = k
+		anus_votemaps[ string.StripExtension( v ):lower() ] = k
 	end
+end, plugin.id )
+
+anus.RegisterHook( "anus_VotemapChangeTime", "votemap", function()
+	return 5
 end, plugin.id )
 
 	-- votemap2: votes a single map, yes or no
@@ -139,7 +143,7 @@ plugin.defaultAccess = "admin"
 
 function plugin:OnRun( pl, args )
 
-	if not anus_votemaps[ args[ 2 ] ] then
+	if not anus_votemaps[ args[ 2 ]:lower() ] then
 		pl:ChatPrint( "Map \"" .. args[ 2 ] .. "\" was not found." )
 		return
 	end
@@ -163,7 +167,7 @@ function plugin:OnRun( pl, args )
 		if winner then
 			ChatPrint( "Votemap2 winner is " .. res.args[ winner ] .. ". (" .. votecount .. "/" .. res.voters .. ")" )
 			ChatPrint( "Changing map to " .. title .. " in 5 seconds." )
-			timer.Create( "anus_VotemapSuccessful", 5, 1, function()
+			timer.Create( "anus_VotemapSuccessful", hook.Call( "anus_Votemap2ChangeTime", nil ), 1, function()
 				if anus.GetPlugins()[ "map" ] and not anus.GetPlugins()[ "map" ].disabled then
 					anus.RunCommand_map( NULL, nil, { title }, title )
 				else
@@ -186,8 +190,11 @@ anus.RegisterHook( "InitPostEntity", "votemap2", function()
 	
 	local maps = file.Find( "maps/*.bsp", "GAME" )
 	for k,v in next, maps do
-		anus_votemaps[ string.StripExtension( v ) ] = k
+		anus_votemaps[ string.StripExtension( v ):lower() ] = k
 	end
+end, plugin.id )
+anus.RegisterHook( "anus_Votemap2ChangeTime", "votemap2", function()
+	return 5
 end, plugin.id )
 
 

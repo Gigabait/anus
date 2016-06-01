@@ -31,7 +31,7 @@ function plugin:OnRun( pl, arg, t, cmd )
 		end
 	end
 	
-	local final_output = ""
+	--[[local final_output = ""
 	for k,v in next, group_output do
 		if #v == 0 then
 			final_output = final_output .. k .. "\n"
@@ -39,7 +39,11 @@ function plugin:OnRun( pl, arg, t, cmd )
 			final_output = final_output .. k .. "\n" .. v
 		end
 	end
-
 	pl:PrintMessage( HUD_PRINTCONSOLE, "anus who\n\n" .. final_output )
+	]]
+	pl:PrintMessage( HUD_PRINTCONSOLE, "anus who\n\n" )
+	for k,v in next, group_output do
+		pl:PrintMessage( HUD_PRINTCONSOLE, k .. "\n" .. v )
+	end
 end
 anus.RegisterPlugin( plugin )

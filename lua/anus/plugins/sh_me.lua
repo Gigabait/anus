@@ -22,7 +22,7 @@ function plugin:OnRun( pl, args, target )
 	end
 	
 	for k,v in next, player.GetAll() do
-		v:ChatPrint( pl:Nick() .. str )
+		v:ChatPrint( "* " .. pl:Nick() .. str )
 	end
 	
 	pl.MeDelay = CurTime() + 3

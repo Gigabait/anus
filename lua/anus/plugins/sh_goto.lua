@@ -45,11 +45,13 @@ function plugin:OnRun( pl, args, target )
 		if #Message == 24 then
 			pl:SetMoveType( MOVETYPE_NOCLIP )
 			pl.AnusNoclipped = true
+			pl.AnusTeleportPos = pl:GetPos()
 			pl:SetPos( target:GetPos() )
 		else
 			return
 		end
 	else
+		pl.AnusTeleportPos = pl:GetPos()
 		pl:SetPos( pos )
 		pl:SetLocalVelocity( Vector( 0, 0, 0 ) )
 	end

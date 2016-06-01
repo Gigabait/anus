@@ -12,7 +12,7 @@ plugin.hasDataFolder = true
 
 function plugin:OnRun( pl, args, target )
 
-	if not anus_maps[ args[ 1 ] ] then
+	if not anus_maps[ args[ 1 ]:lower() ] then
 		pl:ChatPrint( "Map \"" .. args[ 1 ] .. "\" was not found." )
 		return
 	end
@@ -35,7 +35,7 @@ local function gathermaps()
 	
 	local maps = file.Find( "maps/*.bsp", "GAME" )
 	for k,v in next, maps do
-		anus_maps[ string.StripExtension( v ) ] = k
+		anus_maps[ string.StripExtension( v ):lower() ] = k
 	end
 end
 

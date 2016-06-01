@@ -42,6 +42,8 @@ if SERVER then
 	end )
 end
 
+gameevent.Listen( "player_disconnect" )
+
 if SERVER then
 
 	include( "anus/von.lua" )
@@ -75,6 +77,7 @@ if SERVER then
 	AddCSLuaFile( "anus/anus_plugins_sh.lua" )]]
 	AddCSLuaFile( "anus/vgui/anus_main.lua" )
 	AddCSLuaFile( "anus/vgui/anus_votepanel.lua" )
+	AddCSLuaFile( "anus/vgui/anus_groupeditor.lua" )
 	
 	local function anus_Authenticated( pl )
 		if not IsValid( pl ) or pl.HasAuthed then return end
@@ -96,6 +99,8 @@ if SERVER then
 		
 		local fakegroups = { "user" }
 		pl:SetNWString( "UserGroup", fakegroups[ math.random(1, #fakegroups) ] )
+		
+		pl:AssignID()
 	end
 	net.Receive( "anus_authenticate2", function( len, pl )
 		anus_Authenticated( pl )

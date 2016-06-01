@@ -20,7 +20,7 @@ function PANEL:UpdateColours( skin )
 		return self:SetTextStyleColor( self:GetParent().Colors[ self.ColumnID ] )
 	end
 
-	return self:SetTextStyleColor( skin.Colours.Label.Dark )
+	return self:SetTextStyleColor( Color( 10, 10, 10, 255 ) )--skin.Colours.Label.Dark )
 
 end
 

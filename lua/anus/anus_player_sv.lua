@@ -36,7 +36,7 @@ function anusSendPlayerPerms( ent, save, time, bNoBroadcast, target )
 	---	if v.IsBot and v:IsBot() then continue end
 		net.Start( "anus_playerperms" )
 			net.WriteEntity( ent )
-			net.WriteString( ent.UserGroup )
+			net.WriteString( ent.UserGroup or "user" )
 			net.WriteUInt( v == self and ((save and time) and time) or 0, 18 )
 			net.WriteBit( anus.Groups[ ent.UserGroup ].isadmin or false )
 			net.WriteBit( anus.Groups[ ent.UserGroup ].issuperadmin or false )
@@ -587,55 +587,50 @@ end
 	-- This is assigned to admins.
 	-- Regenerated each reconnect.
 	
-	local tblz = {}
-	for i=48,57 do
-		tblz[ i ] = string.char( i )
-	end
-	for i=65,90 do
-		tblz[ i - 7 ] = string.char( i )
-	end
-	for i=97,122 do
-		tblz[ i - (6 + 7) ] = string.char( i )
-	end
+local tblchar = {}
+for i=48,57 do
+	tblchar[ i ] = string.char( i )
+end
+for i=65,90 do
+	tblchar[ i - 7 ] = string.char( i )
+end
+for i=97,122 do
+	tblchar[ i - (6 + 7) ] = string.char( i )
+end
 local function CreateID()
 	local id = ""
-	--[[for i=1,6 do
-		local rand = math.random( 1, 3 )
-		rand = rand != 1 and math.random( 3, 99 ) or string.char( math.random( 97, 122 ) )
-		id = id .. rand
-		if i % 2 == 0 and i != 6 then
-			id = id .. "-"
-		end
-	end]]
-	--[[local reps = 8
-	for i=1,reps do
-		local rand = string.char( math.random( 97, 122 ) )
-		id = id .. rand
-		if i % 4 == 0 and i != reps then
-			id = id .. "-"
-		end
-	end
-	id = id .. "-" .. (math.random( 1, 3 ) == 1 and string.char( math.random( 65, 90 ) ) or string.char( math.random( 97, 122 ) ))
-	id = id .. math.random( 100, 999 )--string.char( math.random( 97, 122 ) )]]
-	
-	--PrintTable( tblz )
-	
 	local reps = 6
+
 	for i=1,reps do
-		local rand = tblz[ math.random( 48, 109 ) ]
-		--print( rand )
+	
+		local rand = tblchar[ math.random( 48, 109 ) ]
 		id = id .. rand
+		
 		if i % 3 == 0 and i != reps then
 			id = id .. "-"
 		end
+
 	end
 
 	return id
 end
 
+local tblids = {}
 function _R.Player:AssignID()
 	local id = CreateID()
-	self:ChatPrint( "id   " .. id .. "   " .. string.len( id ) )
+	
+	if tblids[ id ] then
+		self:AssignID()
+	else	
+		tblids[ id ] = true
+		self.ANUS_ASSIGNEDID = id
+	
+		print( self:Nick() .. " (" .. self:SteamID() .. ") has been assigned id " .. id )
+	end
+end
+
+function _R.Player:GetAssignedID()
+	return self.ANUS_ASSIGNEDID
 end
 
 

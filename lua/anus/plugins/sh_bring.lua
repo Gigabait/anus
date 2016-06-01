@@ -39,6 +39,7 @@ function plugin:OnRun( pl, args, target )
 			
 			local pos = anus.TeleportPlayer( v, pl, (force or v:GetMoveType() == "MOVETYPE_NOCLIP") )
 			if pos then
+				v.AnusTeleportPos = v:GetPos()
 				v:SetPos( pos )
 				v:SetLocalVelocity( Vector( 0, 0, 0 ) )
 				target_tele[ #target_tele + 1 ] = v
@@ -49,6 +50,7 @@ function plugin:OnRun( pl, args, target )
 				for a,b in next, target_tele do
 					pos2 = anus.TeleportPlayer( v, b, ( force or v:GetMoveType() == "MOVETYPE_NOCLIP" ) )
 					if pos2 then
+						v.AnusTeleportPos = v:GetPos()
 						v:SetPos( pos2 )
 						v:SetLocalVelocity( Vector( 0, 0, 0 ) )
 						target_tele[ #target_tele + 1 ] = v
@@ -90,6 +92,7 @@ function plugin:OnRun( pl, args, target )
 		local pos = anus.TeleportPlayer( target, pl, (force or target:GetMoveType() == "MOVETYPE_NOCLIP") )
 		if not pos then pl:ChatPrint("Couldn't find a spot to put " .. target:Nick() .. " in.") return end
 		
+		target.AnusTeleportPos = target:GetPos()
 		target:SetPos( pos )
 		target:SetLocalVelocity( Vector( 0, 0, 0 ) )
 		
