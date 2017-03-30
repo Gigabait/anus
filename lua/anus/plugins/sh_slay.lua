@@ -1,30 +1,29 @@
 local plugin = {}
 plugin.id = "slay"
+plugin.chatcommand = { "!slay" }
 plugin.name = "Slay"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>"
-plugin.help = "Slays a player"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.description = "Slays a player"
 plugin.category = "Fun"
-	-- chat command optional
-plugin.chatcommand = "slay"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	--local exempt = {}
+	for k,v in ipairs( target ) do
+		--[[if not caller:isGreaterOrEqualTo( v ) or not v:Alive() then
+			exempt[ #exempt + 1 ] =v
 			target[ k ] = nil
 			continue
-		end
-
-		if not v:Alive() then
-			target[ k ] = nil
-			continue 
-		end
+		end]]
 
 		v:Kill()
-	end	
-	anus.NotifyPlugin( pl, plugin.id, "slayed ", anus.StartPlayerList, target, anus.EndPlayerList )
+	end
+	---if #exempt > 0 then anus.playerNotification( caller, "Couldn't slay ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "slayed ", target )
 end
 
 	-- pl: Player running command
@@ -33,10 +32,9 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

@@ -1,0 +1,34 @@
+local plugin = {}
+plugin.id = "logjoinleave"
+plugin.name = "Log Join Leave"
+plugin.author = "Shinycow"
+plugin.description = "Logs when a player leaves during connection process... not to be used outside dev"
+plugin.example = ""
+plugin.notRunnable = true
+plugin.hasDataFolder = true
+plugin.category = "Connecting"
+plugin.defaultAccess = "owner"
+
+function plugin:OnLoad()
+end
+
+anus.registerPlugin( plugin )
+
+if SERVER then
+	anus_connects = {}
+	anus.registerHook( "player_connect", "logjoinleave", function( data )
+		anus_connects[ data.userid ] = SysTime()
+	end, plugin.id )
+	anus.registerHook( "PlayerInitialSpawn", "logjoinleave", function( pl )
+		anus_connects[ pl:UserID() ] = nil
+	end, plugin.id )
+	anus.registerHook( "player_disconnect", "logjoinleave", function( data )
+		if anus_connects[ data.userid ] then
+			--PrintTable( data )
+			print( data.networkid .. " disconnected after ", SysTime() - anus_connects[ data.userid ] .. " seconds" )
+			anus.playerNotification( nil, anus.Colors.String, data.name, " (", anus.Colors.String, data.networkid, ") disconnected after connecting for ", anus.Colors.String, SysTime() - anus_connects[ data.userid ], " seconds" )
+			
+			anus_connects[ data.userid ] = nil
+		end
+	end, plugin.id )
+end

@@ -1,38 +1,52 @@
 local plugin = {}
 
 plugin.id = "help"
+plugin.chatcommand = { "!help" }
 plugin.name = "Help"
 plugin.author = "Shinycow"
-plugin.usage = "[string:Command]"
-plugin.help = "When all else fails"
+plugin.arguments = {
+	{ Command = "string" }
+}
+plugin.optionalarguments = 
+{
+	"Command"
+}
+plugin.description = "When all else fails"
 plugin.category = "Utility"
-plugin.chatcommand = "help"
 plugin.defaultAccess = "user"
 
-function plugin:OnRun( pl, arg )
+function plugin:OnRun( caller, cmd )
+	if not cmd then
+		local output = {}
 
-	if not arg[ 1 ] then
-		for k,v in pairs( anus.Plugins ) do
-			pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. k .. "\"\n" )
+		for k,v in next, anus.getPlugins() do
+			output[ #output + 1 ] = k
 		end
-		
-		pl:PrintMessage( HUD_PRINTCONSOLE, "\tType one of the above for more information on that plugin" )
-		
+		table.sort( output )
+
+		for k,v in ipairs( output ) do
+			local Tabs = 2
+			if #v <= 3 then Tabs = 3 end
+			
+			caller:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. v .. "\"" .. string.rep( "\t", Tabs ) .. "" .. anus.getPlugin( v ).description .. "\n" )
+		end
+
+		caller:PrintMessage( HUD_PRINTCONSOLE, "\tType one of the above for more information on that plugin" )
 		return
 	end
 
-	if not anus.Plugins[ arg[ 1 ] ] then return end
-	
-	local plugin = anus.Plugins[ arg[ 1 ] ]
+	if not anus.isValidPlugin( cmd ) then return end
+
+	local plugin = anus.getPlugins()[ cmd ]
 	local calls =
 	{
 	{
 		"Command help",
-		"help",
+		"description",
 	},
 	{
 		"Usage",
-		"usage",
+		"argsAsString",
 	},
 	{
 		"Example",
@@ -45,7 +59,23 @@ function plugin:OnRun( pl, arg )
 		output = output .. v[ 1 ] .. ": " .. (plugin[ v[ 2 ] ] or "No information available") .. "\n"
 	end
 
-	pl:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. arg[ 1 ] .. "\"\n" .. output )
-
+	caller:PrintMessage( HUD_PRINTCONSOLE, "anus help \"" .. cmd .. "\"\n" .. output )
 end
-anus.RegisterPlugin( plugin )
+
+function plugin:GetCustomSuggestions( args ) 
+	local output = {}
+	if args[ 1 ] then
+		for k,v in next, anus.getPlugins() do
+			if not LocalPlayer():hasAccess( k ) or v.disabled then continue end
+			if string.find( k, args[ 1 ] ) then
+				output[ #output + 1 ] = k
+			end
+		end
+	end
+
+		-- outputs additional outputs
+		-- second argument overrides default behavior
+	return output, false
+end
+
+anus.registerPlugin( plugin )

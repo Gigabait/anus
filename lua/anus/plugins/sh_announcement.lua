@@ -4,23 +4,25 @@ end
 
 local plugin = {}
 plugin.id = "announce"
+plugin.chatcommand = { "!announce" }
 plugin.name = "Announce"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>; <string:Text>"
-plugin.help = "Blind a player with an announcement"
-plugin.category = "Management"
-	-- chat command optional
-plugin.chatcommand = "announce"
+plugin.arguments = {
+	{ Target = "player" },
+	{ Text = "string" },
+}
+plugin.description = "Blind a player with an announcement"
+plugin.category = "Communication"
 plugin.defaultAccess = "superadmin"
 
-function plugin:OnRun( pl, arg, target, cmd )
-	local res = table.concat( arg, " " )
-	
+function plugin:OnRun( caller, target, text )
+	target = target[ 1 ]
 	net.Start( "anus_announcepanel" )
-		net.WriteString( res )
+		net.WriteString( text )
 	net.Send( target )
-		
-	anus.NotifyPlugin( pl, plugin.id, true, "sent an announcement to ", anus.StartPlayerList, target, anus.EndPlayerList )
+	
+	anus.serverLog( caller:Nick() .. " sent an announcement to " .. target:Nick() .. " saying: " .. text, true )
+	anus.notifyPlugin( caller, plugin.id, true, "sent an announcement to ", target )
 end
 
 	-- pl: Player running command
@@ -36,38 +38,37 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 			"Display Text",
 			"",
 			function( txt )
-				local runtype = target:Nick()
+				local runtype = "\"" .. target:Nick() .. "\""
 
-				pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. txt )
+				pl:ConCommand( "anus " .. self.id .. " " .. runtype .. " " .. txt )
 			end,
 			function( txt ) 
 			end
 		)
 	end )
 end
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )
 
 
 
 local plugin = {}
 plugin.id = "announceall"
+plugin.chatcommand = { "!announceall" }
 plugin.name = "Announce All"
 plugin.author = "Shinycow"
-plugin.usage = "<string:Text>"
-plugin.help = "Blind everyone with an announcement"
-plugin.category = "Management"
-	-- chat command optional
-plugin.chatcommand = "announceall"
+plugin.arguments = {
+	{ Text = "string" }
+}
+plugin.description = "Blind everyone with an announcement"
+plugin.category = "Communication"
 plugin.defaultAccess = "superadmin"
 
-function plugin:OnRun( pl, arg, target )
-	local res = table.concat( arg, " " )
-	
+function plugin:OnRun( caller, text )
 	net.Start( "anus_announcepanel" )
-		net.WriteString( res )
+		net.WriteString( text )
 	net.Broadcast()
 		
-	anus.NotifyPlugin( pl, plugin.id, true, "broadcasted an announcement stating ", COLOR_STRINGARGS, res )
+	anus.notifyPlugin( caller, plugin.id, true, "sent an announcement to everyone stating ", anus.Colors.String, text )
 end
 
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

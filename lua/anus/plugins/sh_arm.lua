@@ -1,36 +1,41 @@
 local plugin = {}
 plugin.id = "arm"
+plugin.chatcommand = { "!arm" }
 plugin.name = "Arm"
 plugin.author = "Shinycow"
-plugin.usage = "[player:Player]"
-plugin.help = "Gives a player their original weapons"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.optionalarguments =
+{
+	"Target"
+}
+plugin.description = "Gives a player their original weapons"
 plugin.category = "Fun"
-	-- chat command optional
-plugin.chatcommand = "arm"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
+function plugin:OnRun( caller, target )
+	--local exempt = {}
 	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-			continue
-		end
-			
-		if not v:Alive() then
+		--[[if not caller:isGreaterThan( v ) or not v:Alive() and caller != v then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
-		end
+		end]]
 			
 		if v.OldWeapons then
 			for _,b in next, v.OldWeapons do
 				v:Give( b )
 			end
+			v.OldWeapons = nil
 		else
 			GAMEMODE:PlayerLoadout( v )
 		end
 	end
-		
-	anus.NotifyPlugin( pl, plugin.id, "has armed ", anus.StartPlayerList, target, anus.EndPlayerList )
+	
+	--if #exempt > 0 then anus.playerNotification( caller, "Couldn't arm ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "has armed ", target )
 end
 
 	-- pl: Player running command
@@ -39,10 +44,9 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = target:Nick()
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " \"" .. runtype .. "\"" )
 	end )
 end
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

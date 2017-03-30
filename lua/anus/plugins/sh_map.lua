@@ -1,33 +1,60 @@
 local plugin = {}
 plugin.id = "map"
+plugin.chatcommand = { "!map" }
 plugin.name = "Map"
 plugin.author = "Shinycow"
-plugin.usage = "<string:Map>; [number:Time]"
-plugin.help = "Changes the map"
+plugin.arguments = {
+	{ Map = "string" },
+	{ Time = "number", 10 }
+}
+plugin.optionalarguments = 
+{
+	"Time"
+}
+plugin.description = "Changes the map"
 plugin.example = "!map gm_flatgrass"
 plugin.category = "Utility"
-plugin.chatcommand = "map"
+plugin.noCmdMenu = true
 plugin.defaultAccess = "superadmin"
 plugin.hasDataFolder = true
 
-function plugin:OnRun( pl, args, target )
+function plugin:OnRun( caller, map, time )
 
-	if not anus_maps[ args[ 1 ]:lower() ] then
-		pl:ChatPrint( "Map \"" .. args[ 1 ] .. "\" was not found." )
+	if not anus_maps[ map:lower() ] then
+		caller:ChatPrint( "Map \"" .. map .. "\" was not found." )
 		return
 	end
-	local time = args[ 2 ] and math.Clamp( args[ 2 ], 0, 5*60 ) or 0
+	time = time and math.Clamp( time, 0, 5*60 ) or 0
 	
 	if time != 0 then
-		anus.NotifyPlugin( pl, plugin.id, "is changing the map to ", COLOR_STRINGARGS, args[ 1 ], color_white, " in ", COLOR_STRINGARGS, time, " seconds." )
+		anus.notifyPlugin( caller, plugin.id, "is changing the map to ", anus.Colors.String, map, " in ", anus.Colors.String, time, " seconds." )
+		timer.Create( "anusChangeMapNotification", 0.3 + time, 1, function()
+			if not IsValid( caller ) then return end
+			
+			anus.notifyPlugin( caller, plugin.id, "changed the map to ", anus.Colors.String, map )
+		end )
 	else
-		anus.NotifyPlugin( pl, plugin.id, "changed the map to ", COLOR_STRINGARGS, args[ 1 ] )
+		anus.notifyPlugin( caller, plugin.id, "changed the map to ", anus.Colors.String, map )
 	end
 		-- Give it time to notify players.
 	timer.Create( "anusChangeMap", 0.5 + time, 1, function()
-		RunConsoleCommand( "changelevel", args[ 1 ] )
+		RunConsoleCommand( "changelevel", map )
 	end )
 
+end
+
+function plugin:GetCustomSuggestions( args )
+	local output = {}
+	
+	if args[ 1 ] then
+		for k,v in next, anus_maps do
+			if string.find( k:lower(), args[ 1 ]:lower() ) then
+				output[ #output + 1 ] = k
+			end
+		end
+	end
+	
+	return output
 end
 
 local function gathermaps()
@@ -73,12 +100,12 @@ else
 end
 			
 
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )
 if SERVER then
-	anus.RegisterHook( "InitPostEntity", "map", function()
+	anus.registerHook( "InitPostEntity", "map", function()
 		gathermaps()
 		
-		/*local*/ anus_mappopularitysaveable = {}
+		local anus_mappopularitysaveable = {}
 		local total = 1
 		anus_mappopularity = {}
 		
@@ -92,7 +119,7 @@ if SERVER then
 				if k == game.GetMap() then
 					anus_mappopularitysaveable[ k ] = v + 1
 				else
-					anus_mappopularitysaveable[ k ] = --[[( anus_mappopularitysaveable[ k ] and anus_mappopularity[ k ] or 0 ) +]] v
+					anus_mappopularitysaveable[ k ] = v
 				end
 				total = total + v
 			end
@@ -107,4 +134,34 @@ if SERVER then
 		end )
 		
 	end, plugin.id )
+else
+	anus.registerHook( "InitPostEntity", "map", function()
+		net.Start( "anus_requestmaps" )
+		net.SendToServer()
+	end, plugin.id )
 end
+
+
+local plugin = {}
+plugin.id = "cancelmap"
+plugin.chatcommand = { "!cancelmap" }
+plugin.name = "Cancel Map"
+plugin.author = "Shinycow"
+plugin.description = "Cancels a map change in progress."
+plugin.category = "Utility"
+plugin.defaultAccess = "superadmin"
+	// todo: implement
+plugin.pluginDependent = "map"
+
+function plugin:OnRun( caller )
+	if not timer.Exists( "anusChangeMap" ) then
+		anus.playerNotification( caller, "There is no pending map change." )
+		return
+	end
+	
+	timer.Remove( "anusChangeMap" )
+	timer.Remove( "anusChangeMapNotification" )
+	anus.notifyPlugin( caller, plugin.id, "canceled the upcoming map change." )
+end
+
+anus.registerPlugin( plugin )

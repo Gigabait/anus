@@ -2,18 +2,17 @@ local plugin = {}
 plugin.id = "antinoob"
 plugin.name = "Anti Noob"
 plugin.author = "Shinycow"
-plugin.usage = ""
-plugin.help = "Stops players from spawning huge props."
+plugin.description = "Stops players from spawning huge props."
 plugin.example = ""
 plugin.notRunnable = true
 plugin.hasDataFolder = true
 plugin.defaultAccess = "owner"
 plugin.customData = plugin.customData or {}
-plugin.customData[ "autoremove" ] = 5*10^6
+plugin.customData[ "autoremove" ] = 6.9*10^6
 plugin.customData[ "volumewhitelist" ] = plugin.customData[ "volumewhitelist" ] or {}
 plugin.customData[ "volumewhitelist" ][ "models/props_combine/breen_tube.mdl" ] = true
 
-function plugin:OnRun( pl, arg )
+function plugin:OnRun( caller )
 end
 
 local function CreateBlockedModels()
@@ -29,25 +28,26 @@ function plugin:OnLoad()
 	CreateBlockedModels()
 end
 
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )
 
-anus.RegisterHook( "InitPostEntity", "createblockedmodels", function()
+anus.registerHook( "InitPostEntity", "createblockedmodels", function()
 	CreateBlockedModels()
 end, plugin.id )
-anus.RegisterHook( "PlayerSpawnProp", "checkforbigmodel", function( pl, mdl )
-	if anus_blockedmodels[ string.lower( mdl ) ] then
+anus.registerHook( "PlayerSpawnProp", "checkforbigmodel", function( pl, mdl )
+	if anus_blockedmodels[ mdl:lower() ] then
 		pl:ChatPrint( mdl .. " is too big to spawn!" )
 		return false
 	end
 end, plugin.id )
 	-- this won't catch other methods
 	-- I probably won't bother overriding cleanup.Add.
-anus.RegisterHook( "PlayerSpawnedProp", "checkforbigmodels", function( pl, mdl, ent )
+anus.registerHook( "PlayerSpawnedProp", "checkforbigmodels", function( pl, mdl, ent )
 	local phys = ent:GetPhysicsObject()
+	if not IsValid( phys ) then return end
 
-	if phys:GetVolume() >= plugin.customData[ "autoremove" ] and not plugin.customData.volumewhitelist[ string.lower( ent:GetModel() ) ] then
+	if phys:GetVolume() >= plugin.customData[ "autoremove" ] and not plugin.customData.volumewhitelist[ ent:GetModel():lower() ] then
 		pl:ChatPrint( "Prop removed: It was too large" )
-		anus_blockedmodels[ string.lower( ent:GetModel() ) ] = true
+		anus_blockedmodels[ ent:GetModel():lower() ] = true
 		ent:Remove()
 		return
 	end

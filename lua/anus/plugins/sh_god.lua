@@ -1,20 +1,27 @@
 local plugin = {}
 plugin.id = "god"
+plugin.chatcommand = { "!god", "!godmode" }
 plugin.name = "God"
 plugin.author = "Shinycow"
-plugin.usage = "[player:Player]"
-plugin.help = "Enable player's godmode"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.optionalarguments = 
+{
+	"Target"
+}
+plugin.description = "Enable player's godmode"
 plugin.category = "Fun"
-plugin.chatcommand = "god"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	--local exempt = {}
+	for k,v in ipairs( target ) do
+		--[[if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
-		end
+		end]]
 			
 		if not v:Alive() then
 			target[ k ] = nil
@@ -25,8 +32,10 @@ function plugin:OnRun( pl, arg, target )
 			 
 		v:GodEnable()
 	end
-		
-	anus.NotifyPlugin( pl, plugin.id, color_white, "enabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
+	
+	--if #exempt > 0 then anus.playerNotification( caller, "Couldn't enable godmode for ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "enabled godmode on ", target )
 end
 
 if SERVER then
@@ -46,47 +55,56 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
-anus.RegisterPlugin( plugin )
-anus.RegisterHook( "PlayerDeath", "god", function( pl )
+anus.registerPlugin( plugin )
+anus.registerHook( "PlayerDeath", "god", function( pl )
 	pl.AnusGodded = false
 end, plugin.id )
-anus.RegisterHook( "PlayerSpawn", "god", function( pl )
+anus.registerHook( "PlayerSpawn", "god", function( pl )
 	if pl.AnusGodded then
 		pl:GodEnable()
 	end
 end, plugin.id )
 
 
-
 local plugin = {}
 plugin.id = "ungod"
+plugin.chatcommand = { "!ungod", "!ungodmode" }
 plugin.name = "Ungod"
 plugin.author = "Shinycow"
-plugin.usage = "[player:Player]"
-plugin.help = "Disables player's godmode"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.optionalarguments = 
+{
+	"Target"
+}
+plugin.description = "Disables player's godmode"
 plugin.category = "Fun"
-plugin.chatcommand = "ungod"
+plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
-	for k,v in pairs(target) do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint("Sorry, you can't target " .. v:Nick())
+function plugin:OnRun( caller, target )
+	--local exempt = {}
+	for k,v in ipairs( target ) do	
+		--[[if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
+			target[ k ] = nil
 			continue
-		end
+		end]]
 			
 		if not v:Alive() then continue end
 			
-		v.AnusGodded = false		 
+		v.AnusGodded = false
 		v:GodDisable()
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, "disabled godmode on ", anus.StartPlayerList, target, anus.EndPlayerList )
+	--if #exempt > 0 then anus.playerNotification( caller, "Couldn't disable godmode for ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "disabled godmode on ", target )
 end
 
 	-- pl: Player running command
@@ -95,10 +113,9 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

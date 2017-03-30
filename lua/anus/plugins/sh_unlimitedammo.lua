@@ -1,17 +1,24 @@
 local plugin = {}
 plugin.id = "unlimitedammo"
+plugin.chatcommand = { "!unlimitedammo" }
 plugin.name = "Unlimited Ammo"
 plugin.author = "Shinycow"
-plugin.usage = "[player:Player]"
-plugin.help = "Give me more bullets to fire"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.optionalarguments = 
+{
+	"Target"
+}
+plugin.description = "Give me more bullets to fire"
 plugin.category = "Fun"
-plugin.chatcommand = "unlimitedammo"
 plugin.defaultAccess = "superadmin"
 
-function plugin:OnRun( pl, args, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	local exempt = {}
+	for k,v in next, target do		
+		if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
 		end
@@ -19,12 +26,26 @@ function plugin:OnRun( pl, args, target )
 		v.AnusUnlimitedAmmo = true
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, "granted unlimited ammo to ", anus.StartPlayerList, target, anus.EndPlayerList )
+	if #exempt > 0 then anus.playerNotification( caller, "Can't grant unlimited ammo to ", exempt ) end
+	if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "granted unlimited ammo to ", target )
 end
 
-anus.RegisterPlugin( plugin )
+	-- pl: Player running command
+	-- parent: The DMenu
+	-- target: The player object of the line selected
+	-- line: The DListViewLine itself
+function plugin:SelectFromMenu( pl, parent, target, line )
+	parent:AddOption( self.name, function()
+		local runtype = target:Nick()
 
-anus.RegisterHook( "EntityFireBullets", "unlimitedammo", function( ent, data )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
+	end )
+end
+
+anus.registerPlugin( plugin )
+
+anus.registerHook( "EntityFireBullets", "unlimitedammo", function( ent, data )
 	if ent.AnusUnlimitedAmmo and IsValid( ent:GetActiveWeapon() ) then
 		local bullets = data.Num
 		ent:GetActiveWeapon():SetClip1( ent:GetActiveWeapon():Clip1() + bullets )
@@ -33,18 +54,25 @@ end, plugin.id )
 
 local plugin = {}
 plugin.id = "limitedammo"
+plugin.chatcommand = { "!limitedammo" }
 plugin.name = "Limited Ammo"
 plugin.author = "Shinycow"
-plugin.usage = "[player:Player]"
-plugin.help = "Stop with the bullets"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.optionalarguments =
+{
+	"Target"
+}
+plugin.description = "Stop with the bullets"
 plugin.category = "Fun"
-plugin.chatcommand = "limitedammo"
 plugin.defaultAccess = "superadmin"
 
-function plugin:OnRun( pl, args, target )
+function plugin:OnRun( caller, target )
+	local exempt = {}
 	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+		if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
 		end
@@ -52,6 +80,21 @@ function plugin:OnRun( pl, args, target )
 		v.AnusUnlimitedAmmo = false
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, "revoked unlimited ammo from ", anus.StartPlayerList, target, anus.EndPlayerList )
+	if #exempt > 0 then anus.playerNotification( caller, "Couldn't revoke unlimited ammo from ", exempt ) end
+	if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "revoked unlimited ammo from ", target )
 end
-anus.RegisterPlugin( plugin )
+
+	-- pl: Player running command
+	-- parent: The DMenu
+	-- target: The player object of the line selected
+	-- line: The DListViewLine itself
+function plugin:SelectFromMenu( pl, parent, target, line )
+	parent:AddOption( self.name, function()
+		local runtype = target:Nick()
+
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
+	end )
+end
+
+anus.registerPlugin( plugin )

@@ -53,31 +53,40 @@ local cmdInverse =
 
 local plugin = {}
 plugin.id = "disorient"
+plugin.chatcommand = { "!disorient" }
 plugin.name = "Disorient"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player> [string:Time]"
-plugin.help = "Disorients a player"
-plugin.example = "!disorient bot 30s"
+plugin.arguments = {
+	{ Target = "player" },
+	{ Time = "number" }
+}
+plugin.optionalarguments =
+{
+	"Time"
+}
+plugin.description = "Disorients a player"
 plugin.category = "Fun"
-plugin.chatcommand = "disorient"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, args, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	--local exempt = {}
+	for k,v in ipairs( target ) do
+		--[[if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
-		end
+		end]]
 			
 		disorientPlayer( v )
 	end
-		
-	anus.NotifyPlugin( pl, plugin.id, "disoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
+
+	--if #exempt > 0 then anus.playerNotification( caller, "Couldn't disorient ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "disoriented ", target )
 end
 
 function plugin:OnUnload()
-	for k,v in next, player.GetAll() do
+	for k,v in ipairs( player.GetAll() ) do
 		disorientPlayer( v, true )
 	end
 end
@@ -89,15 +98,14 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
 
-anus.RegisterPlugin( plugin )
-anus.RegisterHook( "StartCommand", "disorient", function( pl, cmd )
+anus.registerPlugin( plugin )
+anus.registerHook( "StartCommand", "disorient", function( pl, cmd )
 	if CLIENT and pl.AnusDisoriented then
 		for k,v in next, cmdInverse do
 			if cmd:KeyDown( k ) then
@@ -107,7 +115,7 @@ anus.RegisterHook( "StartCommand", "disorient", function( pl, cmd )
 		end
 	end
 end, plugin.id )
-anus.RegisterHook( "SetupMove", "disorient", function( pl, mv, cmd )
+anus.registerHook( "SetupMove", "disorient", function( pl, mv, cmd )
 	if pl.AnusDisoriented then
 		for k,v in next, mvInverse do
 			if mv:KeyDown( k ) then
@@ -118,7 +126,7 @@ anus.RegisterHook( "SetupMove", "disorient", function( pl, mv, cmd )
 	end
 end, plugin.id )
 if CLIENT then
-	anus.RegisterHook( "player_spawn", "disorient", function( data )
+	anus.registerHook( "player_spawn", "disorient", function( data )
 		if Player( data.userid ) == LocalPlayer() then
 			timer.Create( "Reinitialize_disorient", 0.1, 1, function()
 				if LocalPlayer().AnusDisoriented then
@@ -134,27 +142,31 @@ end
 
 local plugin = {}
 plugin.id = "reorient"
+plugin.chatcommand = { "!reorient", "!orient", "!undisorient" }
 plugin.name = "Reorient"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>"
-plugin.help = "Reorients a player"
-plugin.example = "!reorient bot"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.description = "Reorients a player"
 plugin.category = "Fun"
-plugin.chatcommand = "reorient"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, args, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	--local exempt = {}
+	for k,v in ipairs( target ) do
+		--[[if not caller:isGreaterOrEqualTo( v ) then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
-		end
+		end]]
 
 		disorientPlayer( v, true )
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, "reoriented ", anus.StartPlayerList, target, anus.EndPlayerList )
+	--if #exempt > 0 then anus.playerNotification( caller, "Couldn't reorient ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "reoriented ", target )
 end
 
 	-- pl: Player running command
@@ -163,11 +175,10 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
 
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

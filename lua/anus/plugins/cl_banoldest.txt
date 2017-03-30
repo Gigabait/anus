@@ -1,0 +1,582 @@
+local Category = {}
+	
+	-- After 1000 bans, add option for next page.
+	-- After about 1085 everything goes blank.
+	
+	-- add a search feature
+
+
+	-- Optional: Player must be able to run this command to view this Category
+Category.pluginid = { "ban", "unban" }
+Category.CategoryName = "Bans"
+
+function Category:Initialize( parent )
+	
+	self.panel = parent:Add( "anus_contentpanel" )
+	self.panel:SetTitle( "Manage Bans" )
+	self.panel:Dock( FILL )
+	
+	self.panel.topPanel = self.panel:Add( "DPanel" )
+	self.panel.topPanel:SetTall( 20 )
+	self.panel.topPanel.Paint = function() end
+	self.panel.topPanel:Dock( TOP )
+
+	self.panel.topPanel.button = self.panel.topPanel:Add( "anus_button" )
+	self.panel.topPanel.button:SetText( "Previous Page" )
+	self.panel.topPanel.button:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.topPanel.button:SetFont( "anus_SmallText" )
+	self.panel.topPanel.button:SizeToContents()
+	self.panel.topPanel.button:SetDisabled( true )
+	self.panel.topPanel.button:Dock( LEFT )
+	self.panel.topPanel.button.Think = function( pnl )
+		if self.panel.listview and self.panel.listview.CurrentPage == 1 then
+			pnl:SetDisabled( true )
+		else
+			pnl:SetDisabled( false )
+		end
+	end
+	self.panel.topPanel.button.DoClick = function( pnl )
+		self.panel.listview:Clear()
+		self.panel.listview.CurrentPage = self.panel.listview.CurrentPage - 1
+		
+		self.panel.listview.CreatePage( self.panel.listview.CurrentPage )
+	end
+	
+	self.panel.topPanel.button2 = self.panel.topPanel:Add( "anus_button" )
+	self.panel.topPanel.button2:SetText( "Next Page" )
+	self.panel.topPanel.button2:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.topPanel.button2:SetFont( "anus_SmallText" )
+	self.panel.topPanel.button2:SizeToContents()
+	self.panel.topPanel.button2:SetLeftOf( true )
+	self.panel.topPanel.button2:Dock( LEFT )
+	self.panel.topPanel.button2.Think = function( pnl )
+		if self.panel.listview and self.panel.listview.CurrentPage == #self.panel.banpages then
+			pnl:SetDisabled( true )
+		else
+			pnl:SetDisabled( false )
+		end
+	end
+	self.panel.topPanel.button2.DoClick = function( pnl )
+		self.panel.listview:Clear()
+		self.panel.listview.CurrentPage = self.panel.listview.CurrentPage + 1
+		
+		self.panel.listview.CreatePage( self.panel.listview.CurrentPage )
+	end
+	
+	local sortable = {}
+	local count = 0
+	local bans = table.Copy( anus.Bans )
+	local totalbanned = 0
+	
+	self.panel.topPanel.searchentry = self.panel.topPanel:Add( "DTextEntry" )
+	self.panel.topPanel.searchentry:SetText( "Search..." )
+	self.panel.topPanel.searchentry:SetWide( 150 )
+	self.panel.topPanel.searchentry:SetEditable( true )
+	self.panel.topPanel.searchentry:Dock( RIGHT )
+	self.panel.topPanel.searchentry.OnChange = function( pnl )
+		self.panel.listview.IsSearching = true
+		self.panel.listview.SearchPage = {}
+		self.panel.listview:Clear()
+		
+		local max = 100
+		local count = 0
+		for k,v in next, bans do
+			if count >= max then continue end
+			if string.find( k:lower(), pnl:GetText():lower() )
+			or string.find( v.name:lower(), pnl:GetText():lower() ) then		
+				count = count + 1
+				
+				local time = v.unbandate
+				if time == 0 or time == "0" then
+					time = "Never"
+				else
+					time = os.date( "%X - %d/%m/%Y", tonumber( time ) )
+				end
+				
+				local line = self.panel.listview:AddLine( v.name, k, time, v.admin, v.reason:lower() )
+				line.OldTime = v.unbandate
+				if time != "Never" then
+					time = v.unbandate
+				end
+				--sortable[ line ] = time
+				--sortable[ self.panel.listview.CurrentPage ] = sortable[ self.panel.listview.CurrentPage ] or {}
+				--sortable[ self.panel.listview.CurrentPage ][ line ] = time
+				self.panel.listview.SearchPage[ line ] = time
+			end
+		end
+	end
+	--[[self.panel.topPanel.searchentry.GetAutoComplete = function( self, txt )
+		print( txt )
+		return { "test", "test2" }
+	end]]
+
+	self.panel.listview = self.panel:Add( "anus_listview" )
+	self.panel.listview:SetMultiSelect( false )
+	self.panel.listview:AddColumn( "Name" )
+	self.panel.listview:AddColumn( "SteamID" )
+	self.panel.listview:AddColumn( "Unban Date" )
+	self.panel.listview:AddColumn( "Admin" )
+	self.panel.listview:AddColumn( "Reason" )
+	self.panel.listview:Dock( FILL )
+	self.panel.listview:DockMargin( 60, 0, 0, 60 )
+	self.panel.listview.Columns[ 1 ]:SetFixedWidth( 150 )
+	
+	self.panel.listview.CurrentPage = 1
+
+	self.panel.banpages = {}
+	for k,v in next, anus.Bans do
+		totalbanned = totalbanned + 1
+		count = count + 1
+		
+		if count > (#self.panel.banpages * 500) then
+			self.panel.banpages[ #self.panel.banpages + 1 ] = {}
+			self.panel.banpages[ #self.panel.banpages ][ k ] = v
+		else
+			self.panel.banpages[ #self.panel.banpages ][ k ] = v
+		end
+	end
+
+	if #self.panel.banpages == 0 or #self.panel.banpages == 1 then
+		self.panel.topPanel.button:Remove()
+		self.panel.topPanel.button = nil
+		
+		self.panel.topPanel.button2:Remove()
+		self.panel.topPanel.button2 = nil
+	end
+	
+	function self.panel.listview.CreatePage( page )
+		if #self.panel.banpages < 1 then return end
+
+		count = 0
+		for k,v in next, self.panel.banpages[ self.panel.listview.CurrentPage ] or {} do
+			count = count + 1
+
+			timer.Create( "anus_addlines" .. count, (5*10^-3) * count, 1, function()
+				if not parent or not self.panel then return end
+				if self.panel.listview.CurrentPage != page then return end
+				if self.panel.listview.IsSearching then return end
+				
+				local time = v.unbandate
+				if time == 0 or time == "0" then
+					time = "Never"
+				else
+					time = os.date( "%X - %d/%m/%Y", tonumber( time ) )
+				end
+				
+				local line = self.panel.listview:AddLine( v.name, k, time, v.admin, v.reason )
+				line.OldTime = v.unbandate
+				if time != "Never" then
+					time = v.unbandate
+				end
+				--sortable[ line ] = time
+				sortable[ self.panel.listview.CurrentPage ] = sortable[ self.panel.listview.CurrentPage ] or {}
+				sortable[ self.panel.listview.CurrentPage ][ line ] = time
+			end )
+		end
+		
+		timer.Create( "anus_sortlines", table.Count( self.panel.banpages[ self.panel.listview.CurrentPage ] ) + (5*10^-3) + 0.1, 1, function()
+			if not parent or not self.panel or not self.panel.listview then return end
+			if self.panel.listview.CurrentPage != page then return end
+
+			for k,v in next, sortable[ self.panel.listview.CurrentPage ] do
+				if not k.SetSortValue then break end
+
+				k:SetSortValue( 3,
+					v
+				)
+			end
+		end )
+	end
+	
+	self.panel.listview.CreatePage( 1 )
+	
+	hook.Add( "OnBanlistChanged", self.panel, function( pnl, bantype, steamid )
+		if not bantype or not steamid then return end
+
+		local lineToUse = nil
+		for k,v in ipairs( self.panel.listview:GetLines() ) do
+			if v:GetColumnText( 2 ) == steamid then
+				if bantype == 1 then
+					v.customPaint = nil
+				else
+					v.customPaint = Color( 215, 35, 35, 255 )
+				end
+				v.IsUnbanned = bantype == 2
+				lineToUse = v
+			end
+			
+			if v == lineToUse and not v.IsUnbanned then
+				local columns =
+				{
+				"name",
+				"k",
+				"time",
+				"admin",
+				"reason",
+				}
+
+				local columntext = nil
+				for a,b in next, v.Columns do
+					columntext = v:GetColumnText( a )
+					if a == 2 then continue end
+					if a == 3 then
+						columntext = v.OldTime
+						if columntext != anus.Bans[ steamid ][ columns[ a ] ] then
+							local timenew = anus.Bans[ steamid ][ columns[ a ] ]
+							v.OldTime = timenew
+							if timenew == 0 or timenew == "0" then
+								timenew = "Never"
+							else
+								timenew = os.date( "%X - %d/%m/%Y", tonumber( timenew ) )
+							end
+							
+							v:SetColumnText( a, timenew )
+						end
+					else
+						if columntext != anus.Bans[ steamid ][ columns[ a ] ] then
+							v:SetColumnText( a, anus.Bans[ steamid ][ columns[ a ] ] )
+						end
+					end
+				end
+			end
+		end
+		
+		for k,v in next, self.panel.banpages do
+			if k == steamid then
+				if bantype == 1 then
+					v.customPaint = nil
+				else
+					v.customPaint = Color( 215, 35, 35, 255 )
+				end
+				v.IsUnbanned = bantype == 2
+			end
+		end
+	end )
+	
+	
+	self.panel.listview:SortByColumn( 1, false )
+	self.panel.listview.OnRowRightClick = function( pnl, index, pnlRow )
+		local posx, posy = gui.MousePos() 
+		local menu = vgui.Create( "DMenu" )
+		menu:SetPos( posx, posy )
+		if pnlRow.IsUnbanned then
+			menu:AddOption( "Revert Unban", function()
+				local column2 = pnlRow:GetColumnText( 2 )
+				local time = pnlRow.OldTime != 0 and pnlRow.OldTime != "0" and (pnlRow.OldTime - os.time()) or 0
+				LocalPlayer():ConCommand( "anus banid " .. column2 .. " " .. time .. " " .. pnlRow:GetColumnText( 5 ) )
+			end )
+		else
+			menu:AddOption( "Change Time", function()
+				local column2 = pnlRow:GetColumnText( 2 )
+				Derma_StringRequest(
+					column2, 
+					"Change ban time",
+					anus.Bans[ column2 ].unbandate == "0" and anus.Bans[ column2 ].unbandate or anus.convertTimeToString( anus.Bans[ column2 ].unbandate - os.time(), true ),
+					function( txt )
+						--[[net.Start( "anus_bans_edittime" )
+							net.WriteString( column2 )
+							net.WriteString( txt )
+						net.SendToServer()]]
+						LocalPlayer():ConCommand( "anus banid " .. column2 .. " " .. txt .. " " .. pnlRow:GetColumnText( 5 ) )
+					end,
+					function( txt )
+					end
+				)
+			end )
+			menu:AddOption( "Change Reason", function()
+				Derma_StringRequest( 
+					pnlRow:GetColumnText( 2 ), 
+					"Change ban reason",
+					pnlRow:GetColumnText( 5 ),
+					function( txt )
+						local time = pnlRow.OldTime != 0 and pnlRow.OldTime != "0" and (pnlRow.OldTime - os.time()) or 0
+						LocalPlayer():ConCommand( "anus banid " .. pnlRow:GetColumnText( 2 ) .. " " .. time .. " " .. txt )
+					end,
+					function( txt ) 
+					end
+				)
+			end )
+			menu:AddOption( "View Details" )
+			menu:AddOption( "View Ban History", function()
+				LocalPlayer():ConCommand( "anus banhistoryid " .. pnlRow:GetColumnText( 2 ) )
+			end )
+		end
+		menu:AddSpacer()
+		menu:AddOption( "Visit Profile", function()
+			gui.OpenURL( "http://steamcommunity.com/profiles/" .. util.SteamIDTo64( pnlRow:GetColumnText( 2 ) ) )
+		end )
+		menu:AddOption( "Close" )
+		menu.Think = function( pnl2 )
+			if not IsValid( pnl ) or not anus_mainMenu or not anus_mainMenu:IsVisible() then
+				menu:Remove()
+			end
+		end
+		menu:Open( posx, posy, true, pnl )
+	end
+	
+	self.panel.bottomPanel = self.panel:Add( "DPanel" )
+	self.panel.bottomPanel:SetTall( 20 )
+	self.panel.bottomPanel.Paint = function() end
+	self.panel.bottomPanel:Dock( BOTTOM )
+	
+	self.panel.bottomPanel.totalbanned = self.panel.bottomPanel:Add( "DLabel" )
+	self.panel.bottomPanel.totalbanned:SetText( "Total bans: " .. (totalbanned or 0) )--#self.panel.listview:GetLines() )
+	self.panel.bottomPanel.totalbanned:SetTextColor( Color( 140, 140, 140, 255) )
+	self.panel.bottomPanel.totalbanned:SetFont( "anus_SmallText" )
+	self.panel.bottomPanel.totalbanned:SizeToContents()
+	self.panel.bottomPanel.totalbanned:Dock( LEFT )
+	self.panel.bottomPanel.totalbanned:DockMargin( 0, 0, 25, 0 )
+	
+	self.panel.bottomPanel.pagenumber = self.panel.bottomPanel:Add( "DLabel" )
+	self.panel.bottomPanel.pagenumber.page = self.panel.listview.CurrentPage
+	self.panel.bottomPanel.pagenumber:SetText( "Page: " .. self.panel.listview.CurrentPage .. " / " .. #self.panel.banpages )
+	self.panel.bottomPanel.pagenumber:SetTextColor( Color( 140, 140, 140, 255) )
+	self.panel.bottomPanel.pagenumber:SetFont( "anus_SmallText" )
+	self.panel.bottomPanel.pagenumber:SizeToContents()
+	self.panel.bottomPanel.pagenumber:Dock( LEFT )
+	self.panel.bottomPanel.pagenumber.Think = function( pnl )
+		if not self.panel.topPanel.button then
+			pnl:Remove()
+			return
+		end
+		if pnl.page != self.panel.listview.CurrentPage then
+			pnl:SetText( "Page: " .. self.panel.listview.CurrentPage .. " / " .. #self.panel.banpages )
+			pnl:SizeToContents()
+			
+			pnl.page = self.panel.listview.CurrentPage
+		end
+	end
+	
+	
+	if LocalPlayer():hasAccess( "ban" ) then
+		self.panel.bottomPanel.buttonAddban = self.panel.bottomPanel:Add( "anus_button" )
+		self.panel.bottomPanel.buttonAddban:SetText( "Add ban" )
+		self.panel.bottomPanel.buttonAddban:SetTextColor( Color( 140, 140, 140, 255 ) )
+		self.panel.bottomPanel.buttonAddban:SetFont( "anus_SmallText" )
+		self.panel.bottomPanel.buttonAddban:SizeToContents()
+		self.panel.bottomPanel.buttonAddban:Dock( RIGHT )
+		self.panel.bottomPanel.buttonAddban:SetLeftOf( true )
+		self.panel.bottomPanel.buttonAddban.DoClick = function( pnl )
+			vgui.Create( "anus_addban" ) 
+		end
+	end
+
+	self.panel.bottomPanel.buttonUnban = self.panel.bottomPanel:Add( "anus_button" )
+	self.panel.bottomPanel.buttonUnban:SetText( "Unban Selected" )
+	self.panel.bottomPanel.buttonUnban:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.bottomPanel.buttonUnban:SetFont( "anus_SmallText" )
+	self.panel.bottomPanel.buttonUnban:SizeToContents()
+	self.panel.bottomPanel.buttonUnban:Dock( RIGHT )
+	self.panel.bottomPanel.buttonUnban:SetLeftOf( true )
+	self.panel.bottomPanel.buttonUnban.DoClick = function( pnl )
+		if not self.panel.listview:GetSelectedLine() then return end
+		LocalPlayer():ConCommand( "anus unban " .. self.panel.listview:GetLine( self.panel.listview:GetSelectedLine() ):GetColumnText( 2 ) )
+	end
+
+	self.panel.bottomPanel.buttonRefresh = self.panel.bottomPanel:Add( "anus_button" )
+	self.panel.bottomPanel.buttonRefresh:SetText( "Refresh Bans" )
+	self.panel.bottomPanel.buttonRefresh:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.bottomPanel.buttonRefresh:SetFont( "anus_SmallText" )
+	self.panel.bottomPanel.buttonRefresh:SizeToContents()
+	self.panel.bottomPanel.buttonRefresh:Dock( RIGHT )
+	self.panel.bottomPanel.buttonRefresh:SetLeftOf( true )
+	self.panel.bottomPanel.buttonRefresh.DoClick = function( pnl )
+		net.Start( "anus_ban_requestbans" )
+		net.SendToServer()
+	end
+	
+end
+
+function Category:Refresh( parent )
+	
+end
+
+anus.registerCategory( Category )
+
+
+local panel = {}
+
+function panel:Init()
+	self:SetSize( 500, 300 )
+	self:Center()
+	self:MakePopup()
+	
+	self.panel = self:Add( "anus_contentpanel" )
+	self.panel:SetTitle( "Add Ban" )
+	self.panel:Dock( FILL )
+	
+	self.panel.Form = self.panel:Add( "DForm" )
+	self.panel.Form:SetName( "" )
+	self.panel.Form:SetAutoSize( true )
+	self.panel.Form:Dock( FILL )
+	self.panel.Form:SetWide( 60 )
+	self.panel.Form.Paint = function( pnl, w, h )
+		draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
+		draw.RoundedBox( 0, 1, 1, w - 2, h - 2, color_white )
+	end
+	self.panel.Form.Header:SetTall( 1 )
+	
+	self.panel.Form.ComboBoxEditable = function( pnl, strLabel, strConVar )
+		local left = vgui.Create( "DLabel", pnl )
+		left:SetText( strLabel )
+		left:SetDark( true )
+
+		local right = vgui.Create( "DComboBoxEditable", pnl )
+		right:SetConVar( strConVar )
+		right:Dock( FILL )
+		function right:OnSelect( index, value, data )
+			if ( !pnl.m_strConVar ) then return end
+			RunConsoleCommand( pnl.m_strConVar, tostring( data or value ) )
+		end
+
+		pnl:AddItem( left, right )
+
+		return right, left
+	end
+	
+	--[[self.panel.Form.Check = vgui.Create( "DCheckBoxLabel" )
+	self.panel.Form.Check:SetText( "aids?" )
+	self.panel.Form.Check:SetValue( 1 )
+	self.panel.Form.Check:SizeToContents()
+	self.panel.Form:AddItem( self.panel.Form.Check )]]
+	
+	self.panel.Form.Identity = self.panel.Form:ComboBoxEditable( "Name/SteamID", "a" )
+	self.panel.Form.Identity.GetAutoComplete = function( pnl, txt )
+		local Output = {}
+		local Name = anus.findPlayer( txt, nil, LocalPlayer() )
+		
+		if Name and not istable( Name ) then
+			Output[ #Output + 1 ] = Name:Nick()
+		elseif Name then
+			for k,v in ipairs( Name ) do
+				Output[ #Output + 1 ] = v:Nick()
+			end
+		end
+		
+		local Steam, Matching = anus.findPlayer( txt, "steam", LocalPlayer() )
+		
+		if Steam and not istable( Steam ) and Matching != "*" and Matching != "@" and Matching != "^" then
+			Output[ #Output + 1 ] = Steam:Nick()
+		elseif Steam and Matching != "*" and Matching != "@" and Matching != "^" then
+			for k,v in ipairs( Steam ) do
+				Output[ #Output + 1 ] = v:Nick()
+			end
+		end
+
+		return Output
+	end
+		-- default autocomplete is broken.
+		-- due to losing focus
+	self.panel.Form.Identity.OpenAutoComplete = function( pnl, tab )
+
+		if ( !tab ) then return end
+		if ( #tab == 0 ) then return end
+
+		pnl.Menu = DermaMenu()
+		pnl.Menu:SetParent( pnl )
+
+		for k, v in pairs( tab ) do
+
+			pnl.Menu:AddOption( v, function() pnl:SetText( v ) pnl:SetCaretPos( v:len() ) pnl:RequestFocus() end )
+
+		end
+
+		local x, y = pnl:LocalToScreen( 0, pnl:GetTall() )
+		pnl.Menu:SetMinimumWidth( pnl:GetWide() )
+		pnl.Menu:Open( x, y, true, pnl ) 
+		pnl.Menu:SetPos( x, y )
+		pnl.Menu:SetMaxHeight( ( ScrH() - y ) - 10 )
+
+	end
+	for k,v in ipairs( player.GetAll() ) do
+		self.panel.Form.Identity:AddChoice( v:Nick() )
+	end
+	self.panel.Form:AddItem( self.panel.Form.Identity )
+	
+	
+	
+	local BanTimes = {
+		{ "1 Hour", ANUS_HOUR },
+		{ "1 Day", ANUS_DAY },
+		{ "3 Days", ANUS_DAY*3 },
+		{ "1 Week", ANUS_WEEK },
+		{ "1 Month", ANUS_MONTH },
+		{ "Permanent", 0 }
+	}
+	
+	self.panel.Form.BanLength = self.panel.Form:ComboBox( "Ban Length" )
+	self.panel.Form.BanLength:SetSortItems( false )
+	for k,v in ipairs( BanTimes ) do
+		self.panel.Form.BanLength:AddChoice( v[ 1 ] )
+	end
+	self.panel.Form:AddItem( self.panel.Form.BanLength )
+	
+	local BanReasons = {
+		"Rule Breaker",
+		"Spammer",
+		"Troll",
+		"Bad Language",
+	}
+	
+	self.panel.Form.BanReason = self.panel.Form:ComboBoxEditable( "Ban Reason" )
+	for k,v in ipairs( BanReasons ) do
+		self.panel.Form.BanReason:AddChoice( v )
+	end
+	self.panel.Form:AddItem( self.panel.Form.BanReason )
+	self.panel.Form.BanReason:GetParent():DockPadding( 10, 10, 10, 10 )
+	
+	self.panel.BottomPanel = self.panel:Add( "DPanel" )
+	self.panel.BottomPanel:Dock( BOTTOM )
+	self.panel.BottomPanel.Paint = function() end
+	
+	self.panel.Cancel = self.panel.BottomPanel:Add( "anus_button" )
+	self.panel.Cancel:SetText( "Cancel" )
+	self.panel.Cancel:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.Cancel:SetFont( "anus_SmallText" )
+	self.panel.Cancel:SizeToContents()
+	self.panel.Cancel:Dock( RIGHT )
+	self.panel.Cancel:DockMargin( 15, 0, 0, 0 )
+	self.panel.Cancel.DoClick = function( pnl )
+		--QUICKBAN:Remove()
+		--QUICKBAN = nil
+		self:Remove()
+	end
+	
+	self.panel.Accept = self.panel.BottomPanel:Add( "anus_button" )
+	self.panel.Accept:SetText( "Accept" )
+	self.panel.Accept:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.panel.Accept:SetFont( "anus_SmallText" )
+	self.panel.Accept:SizeToContents()
+	self.panel.Accept:Dock( RIGHT ) 
+end
+
+function panel:SetTitle( strTitle )
+	self.strTitle = strTitle
+
+	self.Title = self:Add( "DLabel" )
+	self.Title:SetText( strTitle )
+	self.Title:SetTextColor( Color( 140, 140, 140, 255 ) )
+	self.Title:SetFont( "anus_MediumTitle" )
+	self.Title:SetPos( 20, 20 )
+	self.Title:SizeToContents()
+end
+
+function panel:Paint( w, h )
+	draw.RoundedBox( 0, 0, 0, w, h, Color( 140, 140, 140, 255 ) )
+	draw.RoundedBox( 0, 1, 1, w - 2, h - 2, color_white )
+end
+
+function panel:Think()
+end
+
+vgui.Register( "anus_addban", panel, "EditablePanel" )
+
+--[[concommand.Add( "testquickban", function()
+	if QUICKBAN then
+		QUICKBAN:Remove()
+		QUICKBAN = nil
+	end
+	
+	QUICKBAN = vgui.Create( "anus_addban" )
+end )]]
+

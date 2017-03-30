@@ -1,68 +1,44 @@
 local plugin = {}
 plugin.id = "kick"
+plugin.chatcommand = { "!kick" }
 plugin.name = "Kick"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>; [string:Reason]"
-	-- String;Default reason
-plugin.args = {"String;No reason given."}
-plugin.help = "Kicks a player from the server"
+plugin.arguments = {
+	{ Target = "player" },
+	{ Reason = "string", "No reason given." }
+}
+plugin.optionalarguments =
+{
+	"Reason"
+}
+plugin.description = "Kicks a player from the server"
 plugin.example = "!kick bot Breaking server rules"
 plugin.category = "Utility"
-plugin.chatcommand = "kick"
-	-- won't show who kicked the player (unless they type it in chat ha)
-plugin.anonymous = true
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
-	local reason = "No reason given."
+function plugin:OnRun( caller, target, reason )
+	--local exempt = {}
 	
-	if #arg > 0 then
-		reason = table.concat( arg, " " )
+	for k,v in ipairs( target ) do
+			-- don't kick ourselves
+		--[[if not caller:isGreaterOrEqualTo( v ) or (caller == v and #target > 1) then
+			exempt[ #exempt + 1  ] = v
+			target[ k ] = nil
+			continue
+		end]]
+
+		v:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
+		v:PrintMessage( HUD_PRINTCONSOLE, "Kicked from server by " .. caller:SteamID() .. " for " .. reason )
+		v:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
+		timer.Create( "anus_kick_" .. tostring( v ), 0.05 * k, 1, function()
+			if not IsValid( v ) then return end
+			v:Kick( "Kicked (" .. reason .. ") Check console for details" )
+		end )
 	end
 	
-	if type(target) == "table" then
-	
-		for k,v in pairs(target) do
-			if not pl:IsGreaterOrEqualTo( v ) then
-				pl:ChatPrint("Sorry, you can't target " .. v:Nick())
-				target[ k ] = nil
-				continue
-			end
-				-- if we're kicking a table of players, lets not kick ourselves yes?
-			if pl == v then
-				target[ k ] = nil
-				continue
-			end
-
-			v:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-			v:PrintMessage( HUD_PRINTCONSOLE, "Kicked from server by " .. pl:SteamID() .. " for " .. reason )
-			v:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-			timer.Create("anus_kick_" .. tostring(v), 0.1, 1, function()
-				if not IsValid(v) then return end
-				v:Kick( "Kicked for " .. reason .. " Check console for details" )
-			end)
-		end
-		
-		anus.NotifyPlugin( pl, plugin.id, "has kicked ", anus.StartPlayerList, target, anus.EndPlayerList,  " (", Color( 180, 180, 255, 255 ), reason, ")" ) 
-	
-	else
-		
-		if not pl:IsGreaterOrEqualTo( target ) then
-			pl:ChatPrint("Sorry, you can't target " .. target:Nick())
-			return
-		end
-
-		anus.NotifyPlugin( pl, plugin.id, "has kicked ", target, " (", Color( 180, 180, 255, 255 ), reason, ")" )
-		
-		target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-		target:PrintMessage( HUD_PRINTCONSOLE, "Kicked from server by " .. pl:SteamID() .. " for " .. reason )
-		target:PrintMessage( HUD_PRINTCONSOLE, "------------------------" )
-		timer.Simple(0.1, function()
-			if not IsValid(target) then return end
-			target:Kick( "Kicked for " .. reason .. ". Check console for details" )
-		end)
-	
-	end
+	--if #exempt > 0 then anus.notifyPlayer( caller, "Couldn't kick ", exempt ) end
+	--if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "has kicked ", target, " (", anus.Colors.String, reason, ")" ) 
 end
 
 	-- pl: Player running command
@@ -82,10 +58,9 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	
 	for i=1,#reasons do
 		menu:AddOption( reasons[ i ], function()
-			local runtype = target:SteamID()
-			if target:IsBot() then runtype = target:Nick() end
+			local runtype = "\"" .. target:Nick() .. "\""
 
-			pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. reasons[ i ] )
+			pl:ConCommand( "anus " .. self.id .. " " .. runtype .. " " .. reasons[ i ] )
 		end )
 	end
 	
@@ -95,10 +70,9 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 			"Custom kick reason",
 			"No reason given",
 			function( txt )
-				local runtype = target:SteamID()
-				if target:IsBot() then runtype = target:Nick() end
+				local runtype = "\"" .. target:Nick() .. "\""
 
-				pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype .. " " .. txt )
+				pl:ConCommand( "anus " .. self.id .. " " .. runtype .. " " .. txt )
 			end,
 			function( txt ) 
 			end
@@ -106,4 +80,4 @@ function plugin:SelectFromMenu( pl, parent, target, line )
 	end )
 	
 end
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

@@ -1,33 +1,29 @@
 local plugin = {}
 plugin.id = "me"
+plugin.chatcommand = { "/me" }
 plugin.name = "Me"
 plugin.author = "Shinycow"
-plugin.usage = "[string:Text]"
-plugin.help = "Me"
+plugin.arguments = {
+	{ Text = "string" }
+}
+plugin.description = "Me"
 plugin.category = "Fun"
-	-- chat command optional
-plugin.chatcommand = "me"
-plugin.chatcommandprefix = "/"
 plugin.defaultAccess = "user"
 
-function plugin:OnRun( pl, args, target )
-	if pl.MeDelay and pl.MeDelay > CurTime() then
-		pl:ChatPrint( "ME IS TIRED" )
-		return
+function plugin:OnRun( caller, text )
+	if caller.MeDelay and caller.MeDelay > CurTime() then
+		caller:ChatPrint( string.format( "Wait %s seconds until using /me", math.Round( caller.MeDelay - CurTime(), 2 ) ) )
+		return false
+	end
+	if caller.AnusChatMuted then return false end
+
+	for k,v in ipairs( player.GetAll() ) do
+		v:ChatPrint( "* " .. caller:Nick() .. " " .. text )
 	end
 	
-	local str = ""
-	for k,v in next, args do
-		str = str .. " " .. v
-	end
-	
-	for k,v in next, player.GetAll() do
-		v:ChatPrint( "* " .. pl:Nick() .. str )
-	end
-	
-	pl.MeDelay = CurTime() + 3
+	caller.MeDelay = CurTime() + 3
 	
 	return false
 end
 
-anus.RegisterPlugin( plugin )
+anus.registerPlugin( plugin )

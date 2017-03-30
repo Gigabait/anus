@@ -1,31 +1,35 @@
 local plugin = {}
 plugin.id = "strip"
+plugin.chatcommand = { "!strip" }
 plugin.name = "Strip Weapons"
 plugin.author = "Shinycow"
-plugin.usage = "<player:Player>"
-plugin.help = "Strips a player of their weapons"
+plugin.arguments = {
+	{ Target = "player" }
+}
+plugin.description = "Strips a player of their weapons"
 plugin.category = "Fun"
-	-- chat command optional
-plugin.chatcommand = "strip"
 plugin.defaultAccess = "admin"
 
-function plugin:OnRun( pl, arg, target )
-	for k,v in next, target do
-		if not pl:IsGreaterOrEqualTo( v ) then
-			pl:ChatPrint( "Sorry, you can't target " .. v:Nick() )
+function plugin:OnRun( caller, target )
+	local exempt = {}
+	for k,v in ipairs( target ) do
+		if not caller:isGreaterOrEqualTo( v ) or not v:Alive() then
+			exempt[ #exempt + 1 ] = v
 			target[ k ] = nil
 			continue
 		end
 				
 		v.OldWeapons = {}
-		for _,b in next, v:GetWeapons() do
+		for _,b in ipairs( v:GetWeapons() ) do
 			v.OldWeapons[ #v.OldWeapons + 1 ] = b:GetClass()
 		end
 
 		v:StripWeapons()
 	end
 
-	anus.NotifyPlugin( pl, plugin.id, "stripped the weapons of ", anus.StartPlayerList, target, anus.EndPlayerList )
+	if #exempt > 0 then anus.playerNotification( caller, "Couldn't strip the weapons of ", exempt ) end
+	if #target == 0 then return end
+	anus.notifyPlugin( caller, plugin.id, "stripped the weapons of ", target )
 end
 
 	-- pl: Player running command
@@ -34,13 +38,12 @@ end
 	-- line: The DListViewLine itself
 function plugin:SelectFromMenu( pl, parent, target, line )
 	parent:AddOption( self.name, function()
-		local runtype = target:SteamID()
-		if target:IsBot() then runtype = target:Nick() end
+		local runtype = "\"" .. target:Nick() .. "\""
 
-		pl:ConCommand( "anus " .. self.chatcommand .. " " .. runtype )
+		pl:ConCommand( "anus " .. self.id .. " " .. runtype )
 	end )
 end
-anus.RegisterPlugin( plugin )
-anus.RegisterHook( "PlayerDeath", "strip", function( pl )
+anus.registerPlugin( plugin )
+anus.registerHook( "PlayerDeath", "strip", function( pl )
 	pl.OldWeapons = nil
 end, plugin.id )

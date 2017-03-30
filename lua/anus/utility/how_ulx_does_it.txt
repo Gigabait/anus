@@ -1,0 +1,20 @@
+hook into network strings and rcc strings
+
+find how ulx applies ban time restrictions and the like on my PK server
+
+ok: an example would be
+ulx userallow "Shinycow" "ulx ban" "* 1:18h <aaa,faa>"
+
+seperate by spaces for args
+
+so in example "*" == first arg, can ban everyone
+1:18h == second arg, minimum 1 minute, max 18 hours
+<aaa,faa> == third arg, <> == strings allowed, so ban reasons can be either aaa or faa
+
+another example
+
+ulx userallow "Shinycow" "ulx banid" "<STEAM_0:0:29257121,STEAM_0:0:12345> :45m <noob,gay>"
+
+<STEAM_0:0:29257121,STEAM_0:0:12345> == first arg, only can banthese people
+:45m == second arg, no minimum ban time, max is 45 minutes
+<noob,gay> == third arg, ban reasons allowed.

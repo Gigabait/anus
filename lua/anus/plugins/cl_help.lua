@@ -1,36 +1,33 @@
-local category = {}
+local Category = {}
 
-	-- Optional: Player must be able to run this command to view this category
-category.pluginid = "help"
-category.CategoryName = "Help"
+	-- Optional: Player must be able to run this command to view this Category
+Category.pluginid = "help"
+Category.CategoryName = "Help"
 
-function category:Initialize( parent )
+function Category:Initialize( parent )
 	
-	parent.panel = parent:Add( "anus_contentpanel" )
-	parent.panel:SetTitle( "Command Help" )
-	parent.panel:Dock( FILL )
+	self.panel = parent:Add( "anus_contentpanel" )
+	self.panel:SetTitle( "Command Help" )
+	self.panel:Dock( FILL )
 	
-	parent.panel.listview = parent.panel:Add( "anus_listview" )
-	parent.panel.listview:SetMultiSelect( false )
-	parent.panel.listview:AddColumn( "Command" )
-	parent.panel.listview:AddColumn( "Description" )
-	parent.panel.listview:AddColumn( "Usage" )
-	parent.panel.listview:AddColumn( "Example" )
-	parent.panel.listview:Dock( FILL )
-	parent.panel.listview.Columns[ 1 ]:SetFixedWidth( 100 )
+	self.panel.listview = self.panel:Add( "anus_listview" )
+	self.panel.listview:SetMultiSelect( false )
+	self.panel.listview:AddColumn( "Command" )
+	self.panel.listview:AddColumn( "Description" )
+	self.panel.listview:AddColumn( "Usage" )
+	self.panel.listview:AddColumn( "Example" )
+	self.panel.listview:Dock( FILL )
+	self.panel.listview.Columns[ 1 ]:SetFixedWidth( 100 )
 	
-	for k,v in next, anus.Plugins do
-		local usage = ""
-		for a,b in next, v.usageargs do
-			usage = usage .. " " .. (b.optional and "[" or "<") .. b.desc .. (b.optional and "]" or ">")
-		end
-		parent.panel.listview:AddLine( k, v.help, usage, v.example )
+	for k,v in next, anus.getPlugins() do
+		if not LocalPlayer():hasAccess( k ) then continue end
+		self.panel.listview:AddLine( k, v.description, v.argsAsString, v.example )
 	end
-	parent.panel.listview:SortByColumn( 1, false )
-	parent.panel.listview.OnClickLine = function( pnl, line, bClear ) end
+	self.panel.listview:SortByColumn( 1, false )
+	self.panel.listview.OnClickLine = function( pnl, line, bClear ) end
 
 end
 
-anus.RegisterCategory( category )
+anus.registerCategory( Category )
 
 
